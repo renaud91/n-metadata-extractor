@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaDataExtractor", "MetaDataExtractor.csproj", "{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}.Debug.ActiveCfg = Debug|.NET
+		{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}.Debug.Build.0 = Debug|.NET
+		{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}.Release.ActiveCfg = Release|.NET
+		{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

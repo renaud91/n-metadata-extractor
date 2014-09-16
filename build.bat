@@ -1,0 +1,11 @@
+resgen resources/CanonMarkernote.txt CanonMarkernote.resources
+resgen resources/CasioMarkernote.txt CasioMarkernote.resources
+resgen resources/Commons.txt Commons.resources
+resgen resources/ExifInteropMarkernote.txt ExifInteropMarkernote.resources
+resgen resources/ExifMarkernote.txt ExifMarkernote.resources
+resgen resources/FujiFilmMarkernote.txt FujiFilmMarkernote.resources
+resgen resources/GpsMarkernote.txt GpsMarkernote.resources
+resgen resources/IptcMarkernote.txt IptcMarkernote.resources
+resgen resources/JpegMarkernote.txt JpegMarkernote.resources
+resgen resources/NikonTypeMarkernote.txt NikonTypeMarkernote.resources
+resgen resources/OlympusMarkernote.txt OlympusMarkernote.resources

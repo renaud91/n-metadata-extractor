@@ -1,0 +1,413 @@
+<VisualStudioProject>
+    <CSHARP
+        ProjectType = "Local"
+        ProductVersion = "7.10.3077"
+        SchemaVersion = "2.0"
+        ProjectGuid = "{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}"
+    >
+        <Build>
+            <Settings
+                ApplicationIcon = "App.ico"
+                AssemblyKeyContainerName = ""
+                AssemblyName = "MetaDataExtractor"
+                AssemblyOriginatorKeyFile = ""
+                DefaultClientScript = "JScript"
+                DefaultHTMLPageLayout = "Grid"
+                DefaultTargetSchema = "IE50"
+                DelaySign = "false"
+                OutputType = "Exe"
+                PreBuildEvent = ""
+                PostBuildEvent = ""
+                RootNamespace = ""
+                RunPostBuildEvent = "OnBuildSuccess"
+                StartupObject = "com.Run"
+            >
+                <Config
+                    Name = "Debug"
+                    AllowUnsafeBlocks = "false"
+                    BaseAddress = "285212672"
+                    CheckForOverflowUnderflow = "false"
+                    ConfigurationOverrideFile = ""
+                    DefineConstants = "DEBUG;TRACE"
+                    DocumentationFile = ""
+                    DebugSymbols = "true"
+                    FileAlignment = "4096"
+                    IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
+                    Optimize = "false"
+                    OutputPath = "bin\Debug\"
+                    RegisterForComInterop = "false"
+                    RemoveIntegerChecks = "false"
+                    TreatWarningsAsErrors = "false"
+                    WarningLevel = "4"
+                />
+                <Config
+                    Name = "Release"
+                    AllowUnsafeBlocks = "false"
+                    BaseAddress = "285212672"
+                    CheckForOverflowUnderflow = "false"
+                    ConfigurationOverrideFile = ""
+                    DefineConstants = "TRACE"
+                    DocumentationFile = ""
+                    DebugSymbols = "false"
+                    FileAlignment = "4096"
+                    IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
+                    Optimize = "true"
+                    OutputPath = "bin\Release\"
+                    RegisterForComInterop = "false"
+                    RemoveIntegerChecks = "false"
+                    TreatWarningsAsErrors = "false"
+                    WarningLevel = "0"
+                />
+            </Settings>
+            <References>
+                <Reference
+                    Name = "System"
+                    AssemblyName = "System"
+                    HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.1.4322\System.dll"
+                />
+                <Reference
+                    Name = "System.Data"
+                    AssemblyName = "System.Data"
+                    HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
+                />
+                <Reference
+                    Name = "System.XML"
+                    AssemblyName = "System.Xml"
+                    HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+                />
+            </References>
+        </Build>
+        <Files>
+            <Include>
+                <File
+                    RelPath = "app.config"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "App.ico"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "AssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "CanonMarkernote.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "CasioMarkernote.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Commons.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "ExifInteropMarkernote.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "ExifMarkernote.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "FujiFilmMarkernote.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "GpsMarkernote.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "IptcMarkernote.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "JpegMarkernote.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "NikonTypeMarkernote.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "OlympusMarkernote.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "com\Run.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\codec\jpeg\JPEGDecodeParam.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\codec\jpeg\JPEGHuffmanTable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\codec\jpeg\JPEGQTable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\imaging\jpg\JpegMetadataReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\imaging\jpg\JpegProcessingException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\imaging\jpg\JpegSegmentReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\lang\CompoundException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\lang\Rational.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\DefaultTagDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\Directory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\Metadata.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\MetadataException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\MetadataReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\Tag.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\TagDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\CanonMakernoteDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\CanonMakernoteDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\CasioMakernoteDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\CasioMakernoteDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\DataFormat.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\ExifDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\ExifDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\ExifInteropDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\ExifInteropDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\ExifProcessingException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\ExifReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\FujifilmMakernoteDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\FujiFilmMakernoteDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\GpsDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\GpsDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\NikonType1MakernoteDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\NikonType1MakernoteDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\NikonType2MakernoteDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\NikonType2MakernoteDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\NikonType3MakernoteDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\NikonType3MakernoteDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\NikonTypeMakernoteDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\OlympusMakernoteDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\exif\OlympusMakernoteDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\iptc\IptcDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\iptc\IptcDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\iptc\IptcProcessingException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\iptc\IptcReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\jpeg\JpegCommentDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\jpeg\JpegCommentDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\jpeg\JpegCommentReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\jpeg\JpegComponent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\jpeg\JpegDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\jpeg\JpegDirectory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\drew\metadata\jpeg\JpegReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\utils\ResourceBundle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "com\utils\Utils.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <Folder RelPath = "resources\txt\" />
+            </Include>
+        </Files>
+    </CSHARP>
+</VisualStudioProject>
+

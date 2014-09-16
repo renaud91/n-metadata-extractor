@@ -1,0 +1,13 @@
+# This file contains label of property for MetaDataExtractor
+MARKER_NOTE_NAME=Olympus Makernote
+TAG_OLYMPUS_CAMERA_ID=Camera Id
+TAG_OLYMPUS_DATA_DUMP=Data Dump
+TAG_OLYMPUS_DIGI_ZOOM_RATIO=DigiZoom Ratio
+TAG_OLYMPUS_FIRMWARE_VERSION=Firmware Version
+TAG_OLYMPUS_JPEG_QUALITY=Jpeg Quality
+TAG_OLYMPUS_MACRO_MODE=Macro
+TAG_OLYMPUS_PICT_INFO=Pict Info
+TAG_OLYMPUS_SPECIAL_MODE=Special Mode
+TAG_OLYMPUS_UNKNOWN_1=Makernote Unknown 1
+TAG_OLYMPUS_UNKNOWN_2=Makernote Unknown 2
+TAG_OLYMPUS_UNKNOWN_3=Makernote Unknown 3
