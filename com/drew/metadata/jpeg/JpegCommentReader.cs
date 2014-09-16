@@ -11,7 +11,7 @@ using com.utils;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -31,7 +31,7 @@ namespace com.drew.metadata.jpeg
 	/// <summary>
 	/// The Jpeg reader class
 	/// </summary>
-	public class JpegCommentReader : MetadataReader 
+	public class JpegCommentReader : IMetadataReader 
 	{
 		/// <summary>
 		/// The COM data segment.
@@ -67,10 +67,10 @@ namespace com.drew.metadata.jpeg
 		}
 
 		/// <summary>
-		/// Extracts metadata
+		/// Extracts aMetadata
 		/// </summary>
-		/// <param name="metadata">where to add metadata</param>
-		/// <returns>the metadata found</returns>
+		/// <param name="aMetadata">where to add aMetadata</param>
+		/// <returns>the aMetadata found</returns>
 		public Metadata Extract(Metadata metadata) 
 		{
 			if (_data == null) 
@@ -81,10 +81,10 @@ namespace com.drew.metadata.jpeg
 			JpegCommentDirectory directory =
 				(JpegCommentDirectory) metadata.GetDirectory(
 				Type.GetType("com.drew.metadata.jpeg.JpegCommentDirectory"));
-
+            string comment = Utils.Decode(_data, true);
 			directory.SetObject(
 				JpegCommentDirectory.TAG_JPEG_COMMENT,
-				Utils.Decode(_data, true));
+				comment);
 
 			return metadata;
 		}

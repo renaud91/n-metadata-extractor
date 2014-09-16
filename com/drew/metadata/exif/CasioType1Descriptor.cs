@@ -8,7 +8,7 @@ using com.drew.metadata;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -28,13 +28,13 @@ namespace com.drew.metadata.exif
 	/// <summary>
 	/// Tag descriptor for a casio camera
 	/// </summary>
-	public class CasioMakernoteDescriptor : TagDescriptor 					
+	public class CasioType1Descriptor : AbstractTagDescriptor 					
 	{
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
-		/// <param name="directory">a directory</param>
-		public CasioMakernoteDescriptor(Directory directory) : base(directory) 
+		/// <param name="aDirectory">a base.directory</param>
+		public CasioType1Descriptor(AbstractDirectory aDirectory) : base(aDirectory) 
 		{		
 		}
 
@@ -45,38 +45,38 @@ namespace com.drew.metadata.exif
 		/// If no substitution is available, the value provided by GetString(int) will be returned.
 		/// This and GetString(int) are the only 'get' methods that won't throw an exception.
 		/// </summary>
-		/// <param name="tagType">the tag to find a description for</param>
-		/// <returns>a description of the image's value for the specified tag, or null if the tag hasn't been defined.</returns>
-		public override string GetDescription(int tagType) 
+		/// <param name="aTagType">the tag to find a description for</param>
+		/// <returns>a description of the image'str value for the specified tag, or null if the tag hasn't been defined.</returns>
+		public override string GetDescription(int aTagType) 
 		{
-			switch(tagType) 
+			switch(aTagType) 
 			{
-				case CasioMakernoteDirectory.TAG_CASIO_RECORDING_MODE:
-					return GetRecordingModeDescription();
-				case CasioMakernoteDirectory.TAG_CASIO_QUALITY:
-					return GetQualityDescription();
-				case CasioMakernoteDirectory.TAG_CASIO_FOCUSING_MODE:
-					return GetFocusingModeDescription();
-				case CasioMakernoteDirectory.TAG_CASIO_FLASH_MODE:
-					return GetFlashModeDescription();
-				case CasioMakernoteDirectory.TAG_CASIO_FLASH_INTENSITY:
-					return GetFlashIntensityDescription();
-				case CasioMakernoteDirectory.TAG_CASIO_OBJECT_DISTANCE:
-					return GetObjectDistanceDescription();
-				case CasioMakernoteDirectory.TAG_CASIO_WHITE_BALANCE:
-					return GetWhiteBalanceDescription();
-				case CasioMakernoteDirectory.TAG_CASIO_DIGITAL_ZOOM:
-					return GetDigitalZoomDescription();
-				case CasioMakernoteDirectory.TAG_CASIO_SHARPNESS:
-					return GetSharpnessDescription();
-				case CasioMakernoteDirectory.TAG_CASIO_CONTRAST:
-					return GetContrastDescription();
-				case CasioMakernoteDirectory.TAG_CASIO_SATURATION:
-					return GetSaturationDescription();
-				case CasioMakernoteDirectory.TAG_CASIO_CCD_SENSITIVITY:
+				case CasioType1Directory.TAG_CASIO_RECORDING_MODE:
+					return this.GetRecordingModeDescription();
+				case CasioType1Directory.TAG_CASIO_QUALITY:
+					return this.GetQualityDescription();
+				case CasioType1Directory.TAG_CASIO_FOCUSING_MODE:
+					return this.GetFocusingModeDescription();
+				case CasioType1Directory.TAG_CASIO_FLASH_MODE:
+					return this.GetFlashModeDescription();
+				case CasioType1Directory.TAG_CASIO_FLASH_INTENSITY:
+					return this.GetFlashIntensityDescription();
+				case CasioType1Directory.TAG_CASIO_OBJECT_DISTANCE:
+					return this.GetObjectDistanceDescription();
+				case CasioType1Directory.TAG_CASIO_WHITE_BALANCE:
+					return this.GetWhiteBalanceDescription();
+				case CasioType1Directory.TAG_CASIO_DIGITAL_ZOOM:
+					return this.GetDigitalZoomDescription();
+				case CasioType1Directory.TAG_CASIO_SHARPNESS:
+					return this.GetSharpnessDescription();
+				case CasioType1Directory.TAG_CASIO_CONTRAST:
+					return this.GetContrastDescription();
+				case CasioType1Directory.TAG_CASIO_SATURATION:
+					return this.GetSaturationDescription();
+				case CasioType1Directory.TAG_CASIO_CCD_SENSITIVITY:
 					return GetCcdSensitivityDescription();
 				default :
-					return _directory.GetString(tagType);
+					return base.directory.GetString(aTagType);
 			}
 		}
 
@@ -86,13 +86,15 @@ namespace com.drew.metadata.exif
 		/// <returns>the Ccd Sensitivity Description.</returns>
 		private string GetCcdSensitivityDescription() 
 		{
-			if (!_directory
-				.ContainsTag(CasioMakernoteDirectory.TAG_CASIO_CCD_SENSITIVITY))
-				return null;
-			int aValue =
-				_directory.GetInt(
-				CasioMakernoteDirectory.TAG_CASIO_CCD_SENSITIVITY);
-			switch (aValue) 
+            if (!base.directory
+                .ContainsTag(CasioType1Directory.TAG_CASIO_CCD_SENSITIVITY))
+            {
+                return null;
+            }
+			int lcVal =
+				base.directory.GetInt(
+				CasioType1Directory.TAG_CASIO_CCD_SENSITIVITY);
+			switch (lcVal) 
 			{
 					// these four for QV3000
 				case 64 :
@@ -109,7 +111,7 @@ namespace com.drew.metadata.exif
 				case 100 :
 					return BUNDLE["HIGH"];
 				default :
-					return BUNDLE["UNKNOWN", aValue.ToString()];
+					return BUNDLE["UNKNOWN", lcVal.ToString()];
 			}
 		}
 
@@ -119,12 +121,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the saturation Description.</returns>
 		private string GetSaturationDescription() 
 		{
-			if (!_directory
-				.ContainsTag(CasioMakernoteDirectory.TAG_CASIO_SATURATION))
-				return null;
-			int aValue =
-				_directory.GetInt(CasioMakernoteDirectory.TAG_CASIO_SATURATION);
-			switch (aValue) 
+            if (!base.directory
+                .ContainsTag(CasioType1Directory.TAG_CASIO_SATURATION))
+            {
+                return null;
+            }
+			int lcVal =
+				base.directory.GetInt(CasioType1Directory.TAG_CASIO_SATURATION);
+			switch (lcVal) 
 			{
 				case 0 :
 					return BUNDLE["NORMAL"];
@@ -133,7 +137,7 @@ namespace com.drew.metadata.exif
 				case 2 :
 					return BUNDLE["HIGH"];
 				default :
-					return BUNDLE["UNKNOWN", aValue.ToString()];
+					return BUNDLE["UNKNOWN", lcVal.ToString()];
 			}
 		}
 
@@ -143,12 +147,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the contrast Description.</returns>
 		private string GetContrastDescription() 
 		{
-			if (!_directory
-				.ContainsTag(CasioMakernoteDirectory.TAG_CASIO_CONTRAST))
-				return null;
-			int aValue =
-				_directory.GetInt(CasioMakernoteDirectory.TAG_CASIO_CONTRAST);
-			switch (aValue) 
+            if (!base.directory
+                .ContainsTag(CasioType1Directory.TAG_CASIO_CONTRAST))
+            {
+                return null;
+            }
+			int lcVal =
+				base.directory.GetInt(CasioType1Directory.TAG_CASIO_CONTRAST);
+			switch (lcVal) 
 			{
 				case 0 :
 					return BUNDLE["NORMAL"];
@@ -157,7 +163,7 @@ namespace com.drew.metadata.exif
 				case 2 :
 					return BUNDLE["HIGH"];
 				default :
-					return BUNDLE["UNKNOWN", aValue.ToString()];
+					return BUNDLE["UNKNOWN", lcVal.ToString()];
 			}
 		}
 
@@ -167,12 +173,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the sharpness Description.</returns>
 		private string GetSharpnessDescription() 
 		{
-			if (!_directory
-				.ContainsTag(CasioMakernoteDirectory.TAG_CASIO_SHARPNESS))
-				return null;
-			int aValue =
-				_directory.GetInt(CasioMakernoteDirectory.TAG_CASIO_SHARPNESS);
-			switch (aValue) 
+            if (!base.directory
+                .ContainsTag(CasioType1Directory.TAG_CASIO_SHARPNESS))
+            {
+                return null;
+            }
+			int lcVal =
+				base.directory.GetInt(CasioType1Directory.TAG_CASIO_SHARPNESS);
+			switch (lcVal) 
 			{
 				case 0 :
 					return BUNDLE["NORMAL"];
@@ -181,7 +189,7 @@ namespace com.drew.metadata.exif
 				case 2 :
 					return BUNDLE["HARD"];;
 				default :
-					return BUNDLE["UNKNOWN", aValue.ToString()];
+					return BUNDLE["UNKNOWN", lcVal.ToString()];
 			}
 		}
 
@@ -191,19 +199,24 @@ namespace com.drew.metadata.exif
 		/// <returns>the Digital Zoom Description.</returns>
 		private string GetDigitalZoomDescription() 
 		{
-			if (!_directory
-				.ContainsTag(CasioMakernoteDirectory.TAG_CASIO_DIGITAL_ZOOM))
-				return null;
-			int aValue =
-				_directory.GetInt(CasioMakernoteDirectory.TAG_CASIO_DIGITAL_ZOOM);
-			switch (aValue) 
+            if (!base.directory
+                .ContainsTag(CasioType1Directory.TAG_CASIO_DIGITAL_ZOOM))
+            {
+                return null;
+            }
+			int lcVal =
+				base.directory.GetInt(CasioType1Directory.TAG_CASIO_DIGITAL_ZOOM);
+			switch (lcVal) 
 			{
-				case 65536 :
-					return BUNDLE["NO_DIGITAL_ZOOM"];
-				case 65537 :
-					return BUNDLE["2_X_DIGITAL_ZOOM"];
-				default :
-					return BUNDLE["UNKNOWN", aValue.ToString()];
+                case 0x10000:
+                    return BUNDLE["NO_DIGITAL_ZOOM"];
+                case 0x10001:
+                case 0x20000:
+                    return BUNDLE["DIGITAL_ZOOM", "2"];
+                case 0x40000:
+                    return BUNDLE["DIGITAL_ZOOM", "4"];
+                default:
+					return BUNDLE["UNKNOWN", lcVal.ToString()];
 			}
 		}
 
@@ -213,12 +226,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the White Balance Description.</returns>
 		private string GetWhiteBalanceDescription() 
 		{
-			if (!_directory
-				.ContainsTag(CasioMakernoteDirectory.TAG_CASIO_WHITE_BALANCE))
-				return null;
-			int aValue =
-				_directory.GetInt(CasioMakernoteDirectory.TAG_CASIO_WHITE_BALANCE);
-			switch (aValue) 
+            if (!base.directory
+                .ContainsTag(CasioType1Directory.TAG_CASIO_WHITE_BALANCE))
+            {
+                return null;
+            }
+			int lcVal =
+				base.directory.GetInt(CasioType1Directory.TAG_CASIO_WHITE_BALANCE);
+			switch (lcVal) 
 			{
 				case 1 :
 					return BUNDLE["AUTO"];
@@ -227,13 +242,13 @@ namespace com.drew.metadata.exif
 				case 3 :
 					return BUNDLE["DAYLIGHT"];
 				case 4 :
-					return BUNDLE["FLOURESCENT"];
+					return BUNDLE["FLUORESCENT"];
 				case 5 :
 					return BUNDLE["SHADE"];
 				case 129 :
 					return BUNDLE["MANUAL"];
 				default :
-					return BUNDLE["UNKNOWN", aValue.ToString()];
+					return BUNDLE["UNKNOWN", lcVal.ToString()];
 			}
 		}
 
@@ -243,13 +258,15 @@ namespace com.drew.metadata.exif
 		/// <returns>the Object Distance Description.</returns>
 		private string GetObjectDistanceDescription() 
 		{
-			if (!_directory
-				.ContainsTag(CasioMakernoteDirectory.TAG_CASIO_OBJECT_DISTANCE))
-				return null;
-			int aValue =
-				_directory.GetInt(
-				CasioMakernoteDirectory.TAG_CASIO_OBJECT_DISTANCE);
-			return BUNDLE["DISTANCE_MM", aValue.ToString()];
+            if (!base.directory
+                .ContainsTag(CasioType1Directory.TAG_CASIO_OBJECT_DISTANCE))
+            {
+                return null;
+            }
+			int lcVal =
+				base.directory.GetInt(
+				CasioType1Directory.TAG_CASIO_OBJECT_DISTANCE);
+			return BUNDLE["DISTANCE_MM", lcVal.ToString()];
 		}
 
 		/// <summary>
@@ -258,13 +275,15 @@ namespace com.drew.metadata.exif
 		/// <returns>the Flash Intensity Description.</returns>
 		private string GetFlashIntensityDescription() 
 		{
-			if (!_directory
-				.ContainsTag(CasioMakernoteDirectory.TAG_CASIO_FLASH_INTENSITY))
-				return null;
-			int aValue =
-				_directory.GetInt(
-				CasioMakernoteDirectory.TAG_CASIO_FLASH_INTENSITY);
-			switch (aValue) 
+            if (!base.directory
+                .ContainsTag(CasioType1Directory.TAG_CASIO_FLASH_INTENSITY))
+            {
+                return null;
+            }
+			int lcVal =
+				base.directory.GetInt(
+				CasioType1Directory.TAG_CASIO_FLASH_INTENSITY);
+			switch (lcVal) 
 			{
 				case 11 :
 					return BUNDLE["WEAK"];
@@ -273,7 +292,7 @@ namespace com.drew.metadata.exif
 				case 15 :
 					return BUNDLE["STRONG"];
 				default :
-					return BUNDLE["UNKNOWN", aValue.ToString()];
+					return BUNDLE["UNKNOWN", lcVal.ToString()];
 			}
 		}
 
@@ -283,12 +302,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Flash Mode Description.</returns>
 		private string GetFlashModeDescription() 
 		{
-			if (!_directory
-				.ContainsTag(CasioMakernoteDirectory.TAG_CASIO_FLASH_MODE))
-				return null;
-			int aValue =
-				_directory.GetInt(CasioMakernoteDirectory.TAG_CASIO_FLASH_MODE);
-			switch (aValue) 
+            if (!base.directory
+                .ContainsTag(CasioType1Directory.TAG_CASIO_FLASH_MODE))
+            {
+                return null;
+            }
+			int lcVal =
+				base.directory.GetInt(CasioType1Directory.TAG_CASIO_FLASH_MODE);
+			switch (lcVal) 
 			{
 				case 1 :
 					return BUNDLE["AUTO"];
@@ -297,9 +318,11 @@ namespace com.drew.metadata.exif
 				case 3 :
 					return BUNDLE["OFF"];
 				case 4 :
-					return BUNDLE["RED_YEY_REDUCTION"];
+                    // this documented as additional value for off here:
+                    // http://www.ozhiker.com/electronics/pjmt/jpeg_info/casio_mn.html
+					return BUNDLE["RED_EYE_REDUCTION"];
 				default :
-					return BUNDLE["UNKNOWN", aValue.ToString()];
+					return BUNDLE["UNKNOWN", lcVal.ToString()];
 			}
 		}
 
@@ -309,12 +332,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Focusing Mode Description.</returns>
 		private string GetFocusingModeDescription() 
 		{
-			if (!_directory
-				.ContainsTag(CasioMakernoteDirectory.TAG_CASIO_FOCUSING_MODE))
-				return null;
-			int aValue =
-				_directory.GetInt(CasioMakernoteDirectory.TAG_CASIO_FOCUSING_MODE);
-			switch (aValue) 
+            if (!base.directory
+                .ContainsTag(CasioType1Directory.TAG_CASIO_FOCUSING_MODE))
+            {
+                return null;
+            }
+			int lcVal =
+				base.directory.GetInt(CasioType1Directory.TAG_CASIO_FOCUSING_MODE);
+			switch (lcVal) 
 			{
 				case 2 :
 					return BUNDLE["MACRO"];
@@ -325,7 +350,7 @@ namespace com.drew.metadata.exif
 				case 5 :
 					return BUNDLE["INFINITY"];
 				default :
-					return BUNDLE["UNKNOWN", aValue.ToString()];
+					return BUNDLE["UNKNOWN", lcVal.ToString()];
 			}
 		}
 
@@ -335,11 +360,13 @@ namespace com.drew.metadata.exif
 		/// <returns>the quality Description.</returns>
 		private string GetQualityDescription() 
 		{
-			if (!_directory.ContainsTag(CasioMakernoteDirectory.TAG_CASIO_QUALITY))
-				return null;
-			int aValue =
-				_directory.GetInt(CasioMakernoteDirectory.TAG_CASIO_QUALITY);
-			switch (aValue) 
+            if (!base.directory.ContainsTag(CasioType1Directory.TAG_CASIO_QUALITY))
+            {
+                return null;
+            }
+			int lcVal =
+				base.directory.GetInt(CasioType1Directory.TAG_CASIO_QUALITY);
+			switch (lcVal) 
 			{
 				case 1 :
 					return BUNDLE["ECONOMY"];
@@ -348,7 +375,7 @@ namespace com.drew.metadata.exif
 				case 3 :
 					return BUNDLE["FINE"];
 				default :
-					return BUNDLE["UNKNOWN", aValue.ToString()];
+					return BUNDLE["UNKNOWN", lcVal.ToString()];
 			}
 		}
 
@@ -358,12 +385,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Focussing Mode Description.</returns>
 		private string GetFocussingModeDescription() 
 		{
-			if (!_directory
-				.ContainsTag(CasioMakernoteDirectory.TAG_CASIO_FOCUSING_MODE))
-				return null;
-			int aValue =
-				_directory.GetInt(CasioMakernoteDirectory.TAG_CASIO_FOCUSING_MODE);
-			switch (aValue) 
+            if (!base.directory
+                .ContainsTag(CasioType1Directory.TAG_CASIO_FOCUSING_MODE))
+            {
+                return null;
+            }
+			int lcVal =
+				base.directory.GetInt(CasioType1Directory.TAG_CASIO_FOCUSING_MODE);
+			switch (lcVal) 
 			{
 				case 2 :
 					return BUNDLE["MACRO"];
@@ -374,7 +403,7 @@ namespace com.drew.metadata.exif
 				case 5 :
 					return BUNDLE["INFINITY"];
 				default :
-					return BUNDLE["UNKNOWN", aValue.ToString()];
+					return BUNDLE["UNKNOWN", lcVal.ToString()];
 			}
 		}
 
@@ -384,12 +413,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Recording Mode Description.</returns>
 		private string GetRecordingModeDescription() 
 		{
-			if (!_directory
-				.ContainsTag(CasioMakernoteDirectory.TAG_CASIO_RECORDING_MODE))
-				return null;
-			int aValue =
-				_directory.GetInt(CasioMakernoteDirectory.TAG_CASIO_RECORDING_MODE);
-			switch (aValue) 
+            if (!base.directory
+                .ContainsTag(CasioType1Directory.TAG_CASIO_RECORDING_MODE))
+            {
+                return null;
+            }
+			int lcVal =
+				base.directory.GetInt(CasioType1Directory.TAG_CASIO_RECORDING_MODE);
+			switch (lcVal) 
 			{
 				case 1 :
 					return BUNDLE["SINGLE_SHUTTER"];
@@ -402,7 +433,7 @@ namespace com.drew.metadata.exif
 				case 5 :
 					return BUNDLE["LANDSCAPE"];
 				default :
-					return BUNDLE["UNKNOWN", aValue.ToString()];
+					return BUNDLE["UNKNOWN", lcVal.ToString()];
 			}
 		}
 	}

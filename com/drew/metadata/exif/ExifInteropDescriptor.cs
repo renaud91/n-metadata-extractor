@@ -10,7 +10,7 @@ using com.drew.lang;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -30,13 +30,13 @@ namespace com.drew.metadata.exif
 	/// <summary>
 	/// Tag descriptor for almost every images
 	/// </summary>
-	public class ExifInteropDescriptor : TagDescriptor 
+	public class ExifInteropDescriptor : AbstractTagDescriptor 
 	{
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
 		/// <param name="directory">a directory</param>
-		public ExifInteropDescriptor(Directory directory) : base(directory)
+		public ExifInteropDescriptor(AbstractDirectory directory) : base(directory)
 		{
 		}
 
@@ -47,8 +47,8 @@ namespace com.drew.metadata.exif
 		/// If no substitution is available, the value provided by GetString(int) will be returned.
 		/// This and GetString(int) are the only 'get' methods that won't throw an exception.
 		/// </summary>
-		/// <param name="tagType">the tag to find a description for</param>
-		/// <returns>a description of the image's value for the specified tag, or null if the tag hasn't been defined.</returns>
+		/// <param name="aTagType">the tag to find a description for</param>
+		/// <returns>a description of the image'str value for the specified tag, or null if the tag hasn't been defined.</returns>
 		public override string GetDescription(int tagType)  
 		{
 			switch(tagType) 
@@ -58,7 +58,7 @@ namespace com.drew.metadata.exif
 				case ExifInteropDirectory.TAG_INTEROP_VERSION:
 					return GetInteropVersionDescription();
 				default:
-					return _directory.GetString(tagType);
+					return directory.GetString(tagType);
 			}
 		}
 
@@ -68,10 +68,10 @@ namespace com.drew.metadata.exif
 		/// <returns>the Interop Version Description.</returns>
 		private string GetInteropVersionDescription()  
 		{
-			if (!_directory.ContainsTag(ExifInteropDirectory.TAG_INTEROP_VERSION))
+			if (!directory.ContainsTag(ExifInteropDirectory.TAG_INTEROP_VERSION))
 				return null;
 			int[] ints =
-				_directory.GetIntArray(ExifInteropDirectory.TAG_INTEROP_VERSION);
+				directory.GetIntArray(ExifInteropDirectory.TAG_INTEROP_VERSION);
 			return ExifDescriptor.ConvertBytesToVersionString(ints);
 		}
 
@@ -81,10 +81,10 @@ namespace com.drew.metadata.exif
 		/// <returns>the Interop index Description.</returns>
 		private string GetInteropIndexDescription() 
 		{
-			if (!_directory.ContainsTag(ExifInteropDirectory.TAG_INTEROP_INDEX))
+			if (!directory.ContainsTag(ExifInteropDirectory.TAG_INTEROP_INDEX))
 				return null;
 			string interopIndex =
-				_directory.GetString(ExifInteropDirectory.TAG_INTEROP_INDEX).Trim();
+				directory.GetString(ExifInteropDirectory.TAG_INTEROP_INDEX).Trim();
 			if ("R98".Equals(interopIndex.ToUpper())) 
 			{
 				return BUNDLE["RECOMMENDED_EXIF_INTEROPERABILITY"];

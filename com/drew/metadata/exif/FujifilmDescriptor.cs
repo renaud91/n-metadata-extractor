@@ -11,7 +11,7 @@ using com.drew.lang;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -29,24 +29,24 @@ using com.drew.lang;
 namespace com.drew.metadata.exif
 {
 	/// <summary>
-	/// Fujifilm's digicam added the MakerNote tag from the Year2000's model 
+	/// Fujifilm'str digicam added the MakerNote tag from the Year2000'str model 
 	/// (e.g.Finepix1400, Finepix4700). It uses IFD format and start from ASCII character 
 	/// 'FUJIFILM', and next 4 bytes(aValue 0x000c) points the offSet to first IFD entry. 
 	/// Example of actual data structure is shown below.
 	/// :0000: 46 55 4A 49 46 49 4C 4D-0C 00 00 00 0F 00 00 00 :0000: FUJIFILM........
 	/// :0010: 07 00 04 00 00 00 30 31-33 30 00 10 02 00 08 00 :0010: ......0130......
 	/// There are two big differences to the other manufacturers.
-	/// - Fujifilm's Exif data uses Motorola align, but MakerNote ignores it and uses Intel align.
-	/// - The other manufacturer's MakerNote counts the "offSet to data" from the first byte of 
-	///   TIFF header (same as the other IFD), but Fujifilm counts it from the first byte of MakerNote itself.
+	/// - Fujifilm'str Exif data uses Motorola align, but MakerNote ignores it and uses Intel align.
+	/// - The other manufacturer'str MakerNote counts the "offSet to data" from the first byte of 
+	///   TIFF lcHeader (same as the other IFD), but Fujifilm counts it from the first byte of MakerNote itself.
 	/// </summary>
-	public class FujifilmMakernoteDescriptor : TagDescriptor 
+	public class FujifilmDescriptor : AbstractTagDescriptor 
 	{
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
 		/// <param name="directory">a directory</param>
-		public FujifilmMakernoteDescriptor(Directory directory) : base(directory)
+		public FujifilmDescriptor(AbstractDirectory directory) : base(directory)
 		{		
 		}
 
@@ -57,42 +57,42 @@ namespace com.drew.metadata.exif
 		/// If no substitution is available, the value provided by GetString(int) will be returned.
 		/// This and GetString(int) are the only 'get' methods that won't throw an exception.
 		/// </summary>
-		/// <param name="tagType">the tag to find a description for</param>
-		/// <returns>a description of the image's value for the specified tag, or null if the tag hasn't been defined.</returns>
+		/// <param name="aTagType">the tag to find a description for</param>
+		/// <returns>a description of the image'str value for the specified tag, or null if the tag hasn't been defined.</returns>
 		public override string GetDescription(int tagType)  
 		{
 			switch(tagType) 
 			{
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_SHARPNESS :
+				case FujifilmDirectory.TAG_FUJIFILM_SHARPNESS :
 					return GetSharpnessDescription();
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_WHITE_BALANCE :
+				case FujifilmDirectory.TAG_FUJIFILM_WHITE_BALANCE :
 					return GetWhiteBalanceDescription();
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_COLOR :
+				case FujifilmDirectory.TAG_FUJIFILM_COLOR :
 					return GetColorDescription();
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_TONE :
+				case FujifilmDirectory.TAG_FUJIFILM_TONE :
 					return GetToneDescription();
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_FLASH_MODE :
+				case FujifilmDirectory.TAG_FUJIFILM_FLASH_MODE :
 					return GetFlashModeDescription();
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_FLASH_STRENGTH :
+				case FujifilmDirectory.TAG_FUJIFILM_FLASH_STRENGTH :
 					return GetFlashStrengthDescription();
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_MACRO :
+				case FujifilmDirectory.TAG_FUJIFILM_MACRO :
 					return GetMacroDescription();
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_MODE :
+				case FujifilmDirectory.TAG_FUJIFILM_FOCUS_MODE :
 					return GetFocusModeDescription();
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_SLOW_SYNCHRO :
+				case FujifilmDirectory.TAG_FUJIFILM_SLOW_SYNCHRO :
 					return GetSlowSyncDescription();
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_PICTURE_MODE :
+				case FujifilmDirectory.TAG_FUJIFILM_PICTURE_MODE :
 					return GetPictureModeDescription();
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_CONTINUOUS_TAKING_OR_AUTO_BRACKETTING :
+				case FujifilmDirectory.TAG_FUJIFILM_CONTINUOUS_TAKING_OR_AUTO_BRACKETTING :
 					return GetContinuousTakingOrAutoBrackettingDescription();
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_BLUR_WARNING :
+				case FujifilmDirectory.TAG_FUJIFILM_BLUR_WARNING :
 					return GetBlurWarningDescription();
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_WARNING :
+				case FujifilmDirectory.TAG_FUJIFILM_FOCUS_WARNING :
 					return GetFocusWarningDescription();
-				case FujiFilmMakernoteDirectory.TAG_FUJIFILM_AE_WARNING :
+				case FujifilmDirectory.TAG_FUJIFILM_AE_WARNING :
 					return GetAutoExposureWarningDescription();
 				default :
-					return _directory.GetString(tagType);
+					return directory.GetString(tagType);
 			}
 		}
 
@@ -102,12 +102,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Auto Exposure Description.</returns>
 		private string GetAutoExposureWarningDescription()
 		{
-			if (!_directory
-				.ContainsTag(FujiFilmMakernoteDirectory.TAG_FUJIFILM_AE_WARNING))
+			if (!directory
+				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_AE_WARNING))
 				return null;
 			int aValue =
-				_directory.GetInt(
-				FujiFilmMakernoteDirectory.TAG_FUJIFILM_AE_WARNING);
+				directory.GetInt(
+				FujifilmDirectory.TAG_FUJIFILM_AE_WARNING);
 			switch (aValue) 
 			{
 				case 0 :
@@ -125,12 +125,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Focus Warning Description.</returns>
 		private string GetFocusWarningDescription()  
 		{
-			if (!_directory
-				.ContainsTag(FujiFilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_WARNING))
+			if (!directory
+				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_FOCUS_WARNING))
 				return null;
 			int aValue =
-				_directory.GetInt(
-				FujiFilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_WARNING);
+				directory.GetInt(
+				FujifilmDirectory.TAG_FUJIFILM_FOCUS_WARNING);
 			switch (aValue) 
 			{
 				case 0 :
@@ -148,12 +148,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Blur Warning Description.</returns>
 		private string GetBlurWarningDescription()  
 		{
-			if (!_directory
-				.ContainsTag(FujiFilmMakernoteDirectory.TAG_FUJIFILM_BLUR_WARNING))
+			if (!directory
+				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_BLUR_WARNING))
 				return null;
 			int aValue =
-				_directory.GetInt(
-				FujiFilmMakernoteDirectory.TAG_FUJIFILM_BLUR_WARNING);
+				directory.GetInt(
+				FujifilmDirectory.TAG_FUJIFILM_BLUR_WARNING);
 			switch (aValue) 
 			{
 				case 0 :
@@ -171,14 +171,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Continuous Taking Or AutoBracketting Description.</returns>
 		private string GetContinuousTakingOrAutoBrackettingDescription()
 		{
-			if (!_directory
+			if (!directory
 				.ContainsTag(
-				FujiFilmMakernoteDirectory
+				FujifilmDirectory
 				.TAG_FUJIFILM_CONTINUOUS_TAKING_OR_AUTO_BRACKETTING))
 				return null;
 			int aValue =
-				_directory.GetInt(
-				FujiFilmMakernoteDirectory
+				directory.GetInt(
+				FujifilmDirectory
 				.TAG_FUJIFILM_CONTINUOUS_TAKING_OR_AUTO_BRACKETTING);
 			switch (aValue) 
 			{
@@ -197,12 +197,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Picture Mode Description.</returns>
 		private string GetPictureModeDescription()  
 		{
-			if (!_directory
-				.ContainsTag(FujiFilmMakernoteDirectory.TAG_FUJIFILM_PICTURE_MODE))
+			if (!directory
+				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_PICTURE_MODE))
 				return null;
 			int aValue =
-				_directory.GetInt(
-				FujiFilmMakernoteDirectory.TAG_FUJIFILM_PICTURE_MODE);
+				directory.GetInt(
+				FujifilmDirectory.TAG_FUJIFILM_PICTURE_MODE);
 			switch (aValue) 
 			{
 				case 0 :
@@ -234,12 +234,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Slow Sync Description.</returns>
 		private string GetSlowSyncDescription()  
 		{
-			if (!_directory
-				.ContainsTag(FujiFilmMakernoteDirectory.TAG_FUJIFILM_SLOW_SYNCHRO))
+			if (!directory
+				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_SLOW_SYNCHRO))
 				return null;
 			int aValue =
-				_directory.GetInt(
-				FujiFilmMakernoteDirectory.TAG_FUJIFILM_SLOW_SYNCHRO);
+				directory.GetInt(
+				FujifilmDirectory.TAG_FUJIFILM_SLOW_SYNCHRO);
 			switch (aValue) 
 			{
 				case 0 :
@@ -257,12 +257,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Focus Mode Description.</returns>
 		private string GetFocusModeDescription()  
 		{
-			if (!_directory
-				.ContainsTag(FujiFilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_MODE))
+			if (!directory
+				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_FOCUS_MODE))
 				return null;
 			int aValue =
-				_directory.GetInt(
-				FujiFilmMakernoteDirectory.TAG_FUJIFILM_FOCUS_MODE);
+				directory.GetInt(
+				FujifilmDirectory.TAG_FUJIFILM_FOCUS_MODE);
 			switch (aValue) 
 			{
 				case 0 :
@@ -280,11 +280,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Macro Description.</returns>
 		private string GetMacroDescription()  
 		{
-			if (!_directory
-				.ContainsTag(FujiFilmMakernoteDirectory.TAG_FUJIFILM_MACRO))
+			if (!directory
+				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_MACRO))
 				return null;
 			int aValue =
-				_directory.GetInt(FujiFilmMakernoteDirectory.TAG_FUJIFILM_MACRO);
+				directory.GetInt(FujifilmDirectory.TAG_FUJIFILM_MACRO);
 			switch (aValue) 
 			{
 				case 0 :
@@ -302,13 +302,13 @@ namespace com.drew.metadata.exif
 		/// <returns>the Flash Strength Description.</returns>
 		private string GetFlashStrengthDescription()  
 		{
-			if (!_directory
+			if (!directory
 				.ContainsTag(
-				FujiFilmMakernoteDirectory.TAG_FUJIFILM_FLASH_STRENGTH))
+				FujifilmDirectory.TAG_FUJIFILM_FLASH_STRENGTH))
 				return null;
 			Rational aValue =
-				_directory.GetRational(
-				FujiFilmMakernoteDirectory.TAG_FUJIFILM_FLASH_STRENGTH);
+				directory.GetRational(
+				FujifilmDirectory.TAG_FUJIFILM_FLASH_STRENGTH);
 			return BUNDLE["FLASH_STRENGTH", aValue.ToSimpleString(false)];
 		}
 
@@ -318,12 +318,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Flash Mode Description.</returns>
 		private string GetFlashModeDescription()  
 		{
-			if (!_directory
-				.ContainsTag(FujiFilmMakernoteDirectory.TAG_FUJIFILM_FLASH_MODE))
+			if (!directory
+				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_FLASH_MODE))
 				return null;
 			int aValue =
-				_directory.GetInt(
-				FujiFilmMakernoteDirectory.TAG_FUJIFILM_FLASH_MODE);
+				directory.GetInt(
+				FujifilmDirectory.TAG_FUJIFILM_FLASH_MODE);
 			switch (aValue) 
 			{
 				case 0 :
@@ -333,7 +333,7 @@ namespace com.drew.metadata.exif
 				case 2 :
 					return BUNDLE["OFF"];
 				case 3 :
-					return BUNDLE["RED_YEY_REDUCTION"];
+					return BUNDLE["RED_EYE_REDUCTION"];
 				default :
 					return BUNDLE["UNKNOWN", aValue.ToString()];
 			}
@@ -345,11 +345,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Tone Description.</returns>
 		private string GetToneDescription()  
 		{
-			if (!_directory
-				.ContainsTag(FujiFilmMakernoteDirectory.TAG_FUJIFILM_TONE))
+			if (!directory
+				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_TONE))
 				return null;
 			int aValue =
-				_directory.GetInt(FujiFilmMakernoteDirectory.TAG_FUJIFILM_TONE);
+				directory.GetInt(FujifilmDirectory.TAG_FUJIFILM_TONE);
 			switch (aValue) 
 			{
 				case 0 :
@@ -369,11 +369,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Color Description.</returns>
 		private string GetColorDescription()  
 		{
-			if (!_directory
-				.ContainsTag(FujiFilmMakernoteDirectory.TAG_FUJIFILM_COLOR))
+			if (!directory
+				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_COLOR))
 				return null;
 			int aValue =
-				_directory.GetInt(FujiFilmMakernoteDirectory.TAG_FUJIFILM_COLOR);
+				directory.GetInt(FujifilmDirectory.TAG_FUJIFILM_COLOR);
 			switch (aValue) 
 			{
 				case 0 :
@@ -393,12 +393,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the White Balance Description.</returns>
 		private string GetWhiteBalanceDescription()  
 		{
-			if (!_directory
-				.ContainsTag(FujiFilmMakernoteDirectory.TAG_FUJIFILM_WHITE_BALANCE))
+			if (!directory
+				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_WHITE_BALANCE))
 				return null;
 			int aValue =
-				_directory.GetInt(
-				FujiFilmMakernoteDirectory.TAG_FUJIFILM_WHITE_BALANCE);
+				directory.GetInt(
+				FujifilmDirectory.TAG_FUJIFILM_WHITE_BALANCE);
 			switch (aValue) 
 			{
 				case 0 :
@@ -428,12 +428,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Sharpness Description.</returns>
 		private string GetSharpnessDescription()  
 		{
-			if (!_directory
-				.ContainsTag(FujiFilmMakernoteDirectory.TAG_FUJIFILM_SHARPNESS))
+			if (!directory
+				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_SHARPNESS))
 				return null;
 			int aValue =
-				_directory.GetInt(
-				FujiFilmMakernoteDirectory.TAG_FUJIFILM_SHARPNESS);
+				directory.GetInt(
+				FujifilmDirectory.TAG_FUJIFILM_SHARPNESS);
 			switch (aValue) 
 			{
 				case 1 :

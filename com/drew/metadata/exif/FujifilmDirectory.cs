@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using com.drew.metadata;
@@ -12,7 +13,7 @@ using com.utils;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -32,7 +33,7 @@ namespace com.drew.metadata.exif
 	/// <summary>
 	/// The Fuji Film Makernote Directory
 	/// </summary>
-	public class FujiFilmMakernoteDirectory : Directory 
+	public class FujifilmDirectory : AbstractDirectory 
 	{
 		public const int TAG_FUJIFILM_MAKERNOTE_VERSION = 0x0000;
 		public const int TAG_FUJIFILM_QUALITY = 0x1000;
@@ -54,42 +55,14 @@ namespace com.drew.metadata.exif
 		public const int TAG_FUJIFILM_AE_WARNING = 0x1302;
 
 		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("FujiFilmMarkernote");
-		protected static readonly IDictionary tagNameMap = FujiFilmMakernoteDirectory.InitTagMap();
-
-		/// <summary>
-		/// Initialize the tag map.
-		/// </summary>
-		/// <returns>the tag map</returns>
-		private static IDictionary InitTagMap() 
-		{
-			IDictionary resu = new Hashtable();
-			resu.Add(TAG_FUJIFILM_AE_WARNING, BUNDLE["TAG_FUJIFILM_AE_WARNING"]);
-			resu.Add(TAG_FUJIFILM_BLUR_WARNING, BUNDLE["TAG_FUJIFILM_BLUR_WARNING"]);
-			resu.Add(TAG_FUJIFILM_COLOR, BUNDLE["TAG_FUJIFILM_COLOR"]);
-			resu.Add(TAG_FUJIFILM_CONTINUOUS_TAKING_OR_AUTO_BRACKETTING, BUNDLE["TAG_FUJIFILM_CONTINUOUS_TAKING_OR_AUTO_BRACKETTING"]);
-			resu.Add(TAG_FUJIFILM_FLASH_MODE, BUNDLE["TAG_FUJIFILM_FLASH_MODE"]);
-			resu.Add(TAG_FUJIFILM_FLASH_STRENGTH, BUNDLE["TAG_FUJIFILM_FLASH_STRENGTH"]);
-			resu.Add(TAG_FUJIFILM_FOCUS_MODE, BUNDLE["TAG_FUJIFILM_FOCUS_MODE"]);
-			resu.Add(TAG_FUJIFILM_FOCUS_WARNING, BUNDLE["TAG_FUJIFILM_FOCUS_WARNING"]);
-			resu.Add(TAG_FUJIFILM_MACRO, BUNDLE["TAG_FUJIFILM_MACRO"]);
-			resu.Add(TAG_FUJIFILM_MAKERNOTE_VERSION, BUNDLE["TAG_FUJIFILM_MAKERNOTE_VERSION"]);
-			resu.Add(TAG_FUJIFILM_PICTURE_MODE, BUNDLE["TAG_FUJIFILM_PICTURE_MODE"]);
-			resu.Add(TAG_FUJIFILM_QUALITY, BUNDLE["TAG_FUJIFILM_QUALITY"]);
-			resu.Add(TAG_FUJIFILM_SHARPNESS, BUNDLE["TAG_FUJIFILM_SHARPNESS"]);
-			resu.Add(TAG_FUJIFILM_SLOW_SYNCHRO, BUNDLE["TAG_FUJIFILM_SLOW_SYNCHRO"]);
-			resu.Add(TAG_FUJIFILM_TONE, BUNDLE["TAG_FUJIFILM_TONE"]);
-			resu.Add(TAG_FUJIFILM_UNKNOWN_1, BUNDLE["TAG_FUJIFILM_UNKNOWN_1"]);
-			resu.Add(TAG_FUJIFILM_UNKNOWN_2, BUNDLE["TAG_FUJIFILM_UNKNOWN_2"]);
-			resu.Add(TAG_FUJIFILM_WHITE_BALANCE, BUNDLE["TAG_FUJIFILM_WHITE_BALANCE"]);
-			return resu;
-		}
+        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.exif.FujifilmDirectory"), BUNDLE);
 
 		/// <summary>
 		/// Constructor of the object.
 		/// </summary>
-		public FujiFilmMakernoteDirectory() : base()
+		public FujifilmDirectory() : base()
 		{
-			this.SetDescriptor(new FujifilmMakernoteDescriptor(this));
+			this.SetDescriptor(new FujifilmDescriptor(this));
 		}
 
 		/// <summary>
@@ -105,7 +78,7 @@ namespace com.drew.metadata.exif
 		/// Provides the map of tag names, hashed by tag type identifier. 
 		/// </summary>
 		/// <returns>the map of tag names</returns>
-		protected override IDictionary GetTagNameMap() 
+        protected override Dictionary<int, string> GetTagNameMap() 
 		{
 			return tagNameMap;
 		}

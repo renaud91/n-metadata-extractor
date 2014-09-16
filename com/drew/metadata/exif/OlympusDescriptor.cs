@@ -11,7 +11,7 @@ using com.drew.lang;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -31,13 +31,13 @@ namespace com.drew.metadata.exif
 	/// <summary>
 	/// Tag descriptor for Olympus
 	/// </summary>
-	public class OlympusMakernoteDescriptor : TagDescriptor 
+	public class OlympusDescriptor : AbstractTagDescriptor 
 	{
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
 		/// <param name="directory">a directory</param>
-		public OlympusMakernoteDescriptor(Directory directory) : base(directory)
+		public OlympusDescriptor(AbstractDirectory directory) : base(directory)
 		{		
 		}
 
@@ -48,22 +48,22 @@ namespace com.drew.metadata.exif
 		/// If no substitution is available, the value provided by GetString(int) will be returned.
 		/// This and GetString(int) are the only 'get' methods that won't throw an exception.
 		/// </summary>
-		/// <param name="tagType">the tag to find a description for</param>
-		/// <returns>a description of the image's value for the specified tag, or null if the tag hasn't been defined.</returns>
+		/// <param name="aTagType">the tag to find a description for</param>
+		/// <returns>a description of the image'str value for the specified tag, or null if the tag hasn't been defined.</returns>
 		public override string GetDescription(int tagType)  
 		{
 			switch(tagType) 
 			{
-				case OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE :
+				case OlympusDirectory.TAG_OLYMPUS_SPECIAL_MODE :
 					return GetSpecialModeDescription();
-				case OlympusMakernoteDirectory.TAG_OLYMPUS_JPEG_QUALITY :
+				case OlympusDirectory.TAG_OLYMPUS_JPEG_QUALITY :
 					return GetJpegQualityDescription();
-				case OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE :
+				case OlympusDirectory.TAG_OLYMPUS_MACRO_MODE :
 					return GetMacroModeDescription();
-				case OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO :
+				case OlympusDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO :
 					return GetDigiZoomRatioDescription();
 				default:
-					return _directory.GetString(tagType);
+					return directory.GetString(tagType);
 			}
 		}
 
@@ -73,18 +73,22 @@ namespace com.drew.metadata.exif
 		/// <returns>the Digi Zoom Ratio Description.</returns>
 		private string GetDigiZoomRatioDescription()  
 		{
-			if (!_directory
-				.ContainsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO))
-				return null;
+            if (!directory
+                .ContainsTag(OlympusDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO))
+            {
+                return null;
+            }
 			int aValue =
-				_directory.GetInt(
-				OlympusMakernoteDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO);
+				directory.GetInt(
+				OlympusDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO);
 			switch (aValue) 
 			{
 				case 0 :
 					return BUNDLE["NORMAL"];
+                case 1:
+                    return BUNDLE["DIGITAL_ZOOM", "1"];
 				case 2 :
-					return BUNDLE["DIGITAL_2X_ZOOM"];
+                    return BUNDLE["DIGITAL_ZOOM", "2"];
 				default :
 					return BUNDLE["UNKNOWN", aValue.ToString()];
 			}
@@ -96,11 +100,13 @@ namespace com.drew.metadata.exif
 		/// <returns>the Macro Mode Description.</returns>
 		private string GetMacroModeDescription()  
 		{
-			if (!_directory
-				.ContainsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE))
-				return null;
+            if (!directory
+                .ContainsTag(OlympusDirectory.TAG_OLYMPUS_MACRO_MODE))
+            {
+                return null;
+            }
 			int aValue =
-				_directory.GetInt(OlympusMakernoteDirectory.TAG_OLYMPUS_MACRO_MODE);
+				directory.GetInt(OlympusDirectory.TAG_OLYMPUS_MACRO_MODE);
 			switch (aValue) 
 			{
 				case 0 :
@@ -118,12 +124,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Jpeg Quality Description.</returns>
 		private string GetJpegQualityDescription()  
 		{
-			if (!_directory
-				.ContainsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_JPEG_QUALITY))
-				return null;
+            if (!directory
+                .ContainsTag(OlympusDirectory.TAG_OLYMPUS_JPEG_QUALITY))
+            {
+                return null;
+            }
 			int aValue =
-				_directory.GetInt(
-				OlympusMakernoteDirectory.TAG_OLYMPUS_JPEG_QUALITY);
+				directory.GetInt(
+				OlympusDirectory.TAG_OLYMPUS_JPEG_QUALITY);
 			switch (aValue) 
 			{
 				case 1 :
@@ -143,12 +151,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Special Mode Description.</returns>
 		private string GetSpecialModeDescription()  
 		{
-			if (!_directory
-				.ContainsTag(OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE))
-				return null;
+            if (!directory
+                .ContainsTag(OlympusDirectory.TAG_OLYMPUS_SPECIAL_MODE))
+            {
+                return null;
+            }
 			int[] values =
-				_directory.GetIntArray(
-				OlympusMakernoteDirectory.TAG_OLYMPUS_SPECIAL_MODE);
+				directory.GetIntArray(
+				OlympusDirectory.TAG_OLYMPUS_SPECIAL_MODE);
 			StringBuilder desc = new StringBuilder();
 			switch (values[0]) 
 			{

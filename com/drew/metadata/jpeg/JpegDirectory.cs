@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using com.drew.metadata;
 using com.utils;
@@ -11,7 +12,7 @@ using com.utils;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -31,7 +32,7 @@ namespace com.drew.metadata.jpeg
 	/// <summary>
 	/// The Jpeg Directory class
 	/// </summary>
-	public class JpegDirectory : Directory 
+	public class JpegDirectory : AbstractDirectory 
 	{
 		/// <summary>
 		/// This is in bits/sample, usually 8 (12 and 16 not supported by most software).
@@ -39,12 +40,12 @@ namespace com.drew.metadata.jpeg
 		public const int TAG_JPEG_DATA_PRECISION = 0;
 
 		/// <summary>
-		/// The image's height.  Necessary for decoding the image, so it should always be there.
+		/// The image'str height.  Necessary for decoding the image, so it should always be there.
 		/// </summary>
 		public const int TAG_JPEG_IMAGE_HEIGHT = 1;
 
 		/// <summary>
-		/// The image's width.  Necessary for decoding the image, so it should always be there.
+		/// The image'str width.  Necessary for decoding the image, so it should always be there.
 		/// </summary>
 		public const int TAG_JPEG_IMAGE_WIDTH = 3;
 
@@ -80,25 +81,7 @@ namespace com.drew.metadata.jpeg
 		public const int TAG_JPEG_COMPONENT_DATA_4 = 9;
 
 		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("JpegMarkernote");
-		protected static readonly IDictionary tagNameMap =  JpegDirectory.InitTagMap();
-
-		/// <summary>
-		/// Initialize the tag map.
-		/// </summary>
-		/// <returns>the tag map</returns>
-		private static IDictionary InitTagMap() 
-		{
-			IDictionary resu = new Hashtable();
-			resu.Add(TAG_JPEG_DATA_PRECISION, BUNDLE["TAG_JPEG_DATA_PRECISION"]);
-			resu.Add(TAG_JPEG_IMAGE_WIDTH, BUNDLE["TAG_JPEG_IMAGE_WIDTH"]);
-			resu.Add(TAG_JPEG_IMAGE_HEIGHT, BUNDLE["TAG_JPEG_IMAGE_HEIGHT"]);
-			resu.Add(TAG_JPEG_NUMBER_OF_COMPONENTS, BUNDLE["TAG_JPEG_NUMBER_OF_COMPONENTS"]);
-			resu.Add(TAG_JPEG_COMPONENT_DATA_1, BUNDLE["TAG_JPEG_COMPONENT_DATA_1"]);
-			resu.Add(TAG_JPEG_COMPONENT_DATA_2, BUNDLE["TAG_JPEG_COMPONENT_DATA_2"]);
-			resu.Add(TAG_JPEG_COMPONENT_DATA_3, BUNDLE["TAG_JPEG_COMPONENT_DATA_3"]);
-			resu.Add(TAG_JPEG_COMPONENT_DATA_4, BUNDLE["TAG_JPEG_COMPONENT_DATA_4"]);
-			return resu;
-		}
+        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.jpeg.JpegDirectory"), BUNDLE);
 
 		/// <summary>
 		/// Constructor of the object.
@@ -121,16 +104,10 @@ namespace com.drew.metadata.jpeg
 		/// Provides the map of tag names, hashed by tag type identifier. 
 		/// </summary>
 		/// <returns>the map of tag names</returns>
-		protected override IDictionary GetTagNameMap() 
+        protected override Dictionary<int, string> GetTagNameMap() 
 		{
 			return tagNameMap;
 		}
-
-		/**
-		 *
-		 * @param componentNumber 
-		 * @return
-		 */
 
 		/// <summary>
 		/// Gets the component

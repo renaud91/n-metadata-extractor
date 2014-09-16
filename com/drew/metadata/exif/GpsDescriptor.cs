@@ -11,7 +11,7 @@ using com.drew.lang;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -31,13 +31,13 @@ namespace com.drew.metadata.exif
 	/// <summary>
 	/// Tag descriptor for GPS
 	/// </summary>
-	public class GpsDescriptor : TagDescriptor 
+	public class GpsDescriptor : AbstractTagDescriptor 
 	{
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
 		/// <param name="directory">a directory</param>
-		public GpsDescriptor(Directory directory) : base(directory)
+		public GpsDescriptor(AbstractDirectory directory) : base(directory)
 		{
 		}
 
@@ -48,8 +48,8 @@ namespace com.drew.metadata.exif
 		/// If no substitution is available, the value provided by GetString(int) will be returned.
 		/// This and GetString(int) are the only 'get' methods that won't throw an exception.
 		/// </summary>
-		/// <param name="tagType">the tag to find a description for</param>
-		/// <returns>a description of the image's value for the specified tag, or null if the tag hasn't been defined.</returns>
+		/// <param name="aTagType">the tag to find a description for</param>
+		/// <returns>a description of the image'str value for the specified tag, or null if the tag hasn't been defined.</returns>
 		public override string GetDescription(int tagType)  
 		{
 			switch(tagType) 
@@ -82,7 +82,7 @@ namespace com.drew.metadata.exif
 				case GpsDirectory.TAG_GPS_LATITUDE :
 					return GetGpsLatitudeDescription();
 				default :
-					return _directory.GetString(tagType);
+					return directory.GetString(tagType);
 			}
 		}
 
@@ -92,8 +92,10 @@ namespace com.drew.metadata.exif
 		/// <returns>the Gps Latitude Description.</returns>
 		private string GetGpsLatitudeDescription()  
 		{
-			if (!_directory.ContainsTag(GpsDirectory.TAG_GPS_LATITUDE))
-				return null;
+            if (!directory.ContainsTag(GpsDirectory.TAG_GPS_LATITUDE))
+            {
+                return null;
+            }
 			return GetHoursMinutesSecondsDescription(GpsDirectory.TAG_GPS_LATITUDE);
 		}
 
@@ -103,8 +105,10 @@ namespace com.drew.metadata.exif
 		/// <returns>the Gps Longitude Description.</returns>
 		private string GetGpsLongitudeDescription()  
 		{
-			if (!_directory.ContainsTag(GpsDirectory.TAG_GPS_LONGITUDE))
-				return null;
+            if (!directory.ContainsTag(GpsDirectory.TAG_GPS_LONGITUDE))
+            {
+                return null;
+            }
 			return GetHoursMinutesSecondsDescription(
 				GpsDirectory.TAG_GPS_LONGITUDE);
 		}
@@ -112,10 +116,11 @@ namespace com.drew.metadata.exif
 		/// <summary>
 		/// Returns the Hours Minutes Seconds Description. 
 		/// </summary>
+        /// <param name="aTagType">the tag type</param>
 		/// <returns>the Hours Minutes Seconds Description.</returns>
 		private string GetHoursMinutesSecondsDescription(int tagType)
 		{
-			Rational[] components = _directory.GetRationalArray(tagType);
+			Rational[] components = directory.GetRationalArray(tagType);
 			// TODO create an HoursMinutesSecods class ??
 			int deg = components[0].IntValue();
 			float min = components[1].FloatValue();
@@ -133,10 +138,12 @@ namespace com.drew.metadata.exif
 		private string GetGpsTimeStampDescription()  
 		{
 			// time in hour, min, sec
-			if (!_directory.ContainsTag(GpsDirectory.TAG_GPS_TIME_STAMP))
-				return null;
+            if (!directory.ContainsTag(GpsDirectory.TAG_GPS_TIME_STAMP))
+            {
+                return null;
+            }
 			int[] timeComponents =
-				_directory.GetIntArray(GpsDirectory.TAG_GPS_TIME_STAMP);
+				directory.GetIntArray(GpsDirectory.TAG_GPS_TIME_STAMP);
 			string[] tab = new string[] {timeComponents[0].ToString(), timeComponents[1].ToString(), timeComponents[2].ToString()};
 			return BUNDLE["GPS_TIME_STAMP", tab];
 		}
@@ -147,26 +154,19 @@ namespace com.drew.metadata.exif
 		/// <returns>the Gps Destination Reference Description.</returns>
 		private string GetGpsDestinationReferenceDescription() 
 		{
-			if (!_directory.ContainsTag(GpsDirectory.TAG_GPS_DEST_DISTANCE_REF))
-				return null;
+            if (!directory.ContainsTag(GpsDirectory.TAG_GPS_DEST_DISTANCE_REF))
+            {
+                return null;
+            }
 			string destRef =
-				_directory.GetString(GpsDirectory.TAG_GPS_DEST_DISTANCE_REF).Trim().ToUpper();
-			if ("K".Equals(destRef)) 
-			{
-				return BUNDLE["KILOMETERS"];
-			} 
-			else if ("M".Equals(destRef)) 
-			{
-				return BUNDLE["MILES"];
-			} 
-			else if ("N".Equals(destRef)) 
-			{
-				return BUNDLE["KNOTS"];
-			} 
-			else 
-			{
-				return BUNDLE["UNKNOWN", destRef];
-			}
+				directory.GetString(GpsDirectory.TAG_GPS_DEST_DISTANCE_REF).Trim().ToUpper();
+            switch (destRef)
+            {
+                case "K": return BUNDLE["KILOMETERS"];
+                case "M": return BUNDLE["MILES"];
+                case "N": return BUNDLE["KNOTS"];
+                default: return BUNDLE["UNKNOWN", destRef];
+            }
 		}
 
 		/// <summary>
@@ -175,9 +175,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Gps Direction Description.</returns>
 		private string GetGpsDirectionDescription(int tagType) 
 		{
-			if (!_directory.ContainsTag(tagType))
-				return null;
-			string gpsDirection = _directory.GetString(tagType).Trim();
+            if (!directory.ContainsTag(tagType))
+            {
+                return null;
+            }
+			string gpsDirection = directory.GetString(tagType).Trim();
 			return BUNDLE["DEGREES", gpsDirection];
 		}
 
@@ -187,21 +189,17 @@ namespace com.drew.metadata.exif
 		/// <returns>the Gps Direction Reference Description.</returns>
 		private string GetGpsDirectionReferenceDescription(int tagType) 
 		{
-			if (!_directory.ContainsTag(tagType))
-				return null;
-			string gpsDistRef = _directory.GetString(tagType).Trim().ToUpper();
-			if ("T".Equals(gpsDistRef)) 
-			{
-				return BUNDLE["TRUE_DIRECTION"];
-			} 
-			else if ("M".Equals(gpsDistRef)) 
-			{
-				return BUNDLE["MAGNETIC_DIRECTION"];
-			} 
-			else 
-			{
-				return BUNDLE["UNKNOWN", gpsDistRef];
-			}
+            if (!directory.ContainsTag(tagType))
+            {
+                return null;
+            }
+			string gpsDistRef = directory.GetString(tagType).Trim().ToUpper();
+            switch (gpsDistRef)
+            {
+                case "T": return BUNDLE["TRUE_DIRECTION"];
+                case "M": return BUNDLE["MAGNETIC_DIRECTION"];
+                default: return BUNDLE["UNKNOWN", gpsDistRef];
+            }
 		}
 
 		/// <summary>
@@ -210,47 +208,41 @@ namespace com.drew.metadata.exif
 		/// <returns>the Gps Speed Ref Description.</returns>
 		private string GetGpsSpeedRefDescription() 
 		{
-			if (!_directory.ContainsTag(GpsDirectory.TAG_GPS_SPEED_REF))
-				return null;
+            if (!directory.ContainsTag(GpsDirectory.TAG_GPS_SPEED_REF))
+            {
+                return null;
+            }
 			string gpsSpeedRef =
-				_directory.GetString(GpsDirectory.TAG_GPS_SPEED_REF).Trim().ToUpper();
-			if ("K".Equals(gpsSpeedRef)) 
-			{
-				return BUNDLE["KPH"];
-			} 
-			else if ("M".Equals(gpsSpeedRef)) 
-			{
-				return BUNDLE["MPH"];
-			} 
-			else if ("N".Equals(gpsSpeedRef)) 
-			{
-				return BUNDLE["KNOTS"];
-			} 
-			else 
-			{
-				return BUNDLE["UNKNOWN", gpsSpeedRef];
-			}
+				directory.GetString(GpsDirectory.TAG_GPS_SPEED_REF).Trim().ToUpper();
+            switch (gpsSpeedRef)
+            {
+                case "K": return BUNDLE["KPH"];
+                case "M": return BUNDLE["MPH"];
+                case "N": return BUNDLE["KNOTS"];
+                default: return BUNDLE["UNKNOWN", gpsSpeedRef];
+            }
 		}
 
 		/// <summary>
 		/// Returns the Gps Measure Mode Description. 
 		/// </summary>
 		/// <returns>the Gps Measure Mode Description.</returns>
-		private string GetGpsMeasureModeDescription() 
-		{
-			if (!_directory.ContainsTag(GpsDirectory.TAG_GPS_MEASURE_MODE))
-				return null;
-			string gpsSpeedMeasureMode =
-				_directory.GetString(GpsDirectory.TAG_GPS_MEASURE_MODE).Trim().ToUpper();
-			if ("2".Equals(gpsSpeedMeasureMode) || "3".Equals(gpsSpeedMeasureMode)) 
-			{
-				return BUNDLE["DIMENSIONAL_MEASUREMENT", gpsSpeedMeasureMode];
-			} 
-			else 
-			{
-				return BUNDLE["UNKNOWN", gpsSpeedMeasureMode];
-			}
-		}
+        private string GetGpsMeasureModeDescription()
+        {
+            if (!directory.ContainsTag(GpsDirectory.TAG_GPS_MEASURE_MODE))
+            {
+                return null;
+            }
+            string gpsSpeedMeasureMode =
+                directory.GetString(GpsDirectory.TAG_GPS_MEASURE_MODE).Trim();
+
+            switch (gpsSpeedMeasureMode)
+            {
+                case "2":
+                case "3": return BUNDLE["DIMENSIONAL_MEASUREMENT", gpsSpeedMeasureMode];
+                default: return BUNDLE["UNKNOWN", gpsSpeedMeasureMode];
+            }
+        }
 
 		/// <summary>
 		/// Returns the Gps Status Description. 
@@ -258,22 +250,18 @@ namespace com.drew.metadata.exif
 		/// <returns>the Gps Status Description.</returns>
 		private string GetGpsStatusDescription() 
 		{
-			if (!_directory.ContainsTag(GpsDirectory.TAG_GPS_STATUS))
-				return null;
+            if (!directory.ContainsTag(GpsDirectory.TAG_GPS_STATUS))
+            {
+                return null;
+            }
 			string gpsStatus =
-				_directory.GetString(GpsDirectory.TAG_GPS_STATUS).Trim().ToUpper();
-			if ("A".Equals(gpsStatus)) 
-			{
-				return BUNDLE["MEASUREMENT_IN_PROGESS"];
-			} 
-			else if ("V".Equals(gpsStatus)) 
-			{
-				return BUNDLE["MEASUREMENT_INTEROPERABILITY"];
-			} 
-			else 
-			{
-				return BUNDLE["UNKNOWN", gpsStatus];
-			}
+				directory.GetString(GpsDirectory.TAG_GPS_STATUS).Trim().ToUpper();
+            switch (gpsStatus)
+            {
+                case "A": return BUNDLE["MEASUREMENT_IN_PROGESS"];
+                case "V": return BUNDLE["MEASUREMENT_INTEROPERABILITY"];
+                default: return BUNDLE["UNKNOWN", gpsStatus];
+            }
 		}
 
 		/// <summary>
@@ -282,17 +270,16 @@ namespace com.drew.metadata.exif
 		/// <returns>the Gps Altitude Ref Description.</returns>
 		private string GetGpsAltitudeRefDescription()  
 		{
-			if (!_directory.ContainsTag(GpsDirectory.TAG_GPS_ALTITUDE_REF))
-				return null;
-			int alititudeRef = _directory.GetInt(GpsDirectory.TAG_GPS_ALTITUDE_REF);
+            if (!directory.ContainsTag(GpsDirectory.TAG_GPS_ALTITUDE_REF))
+            {
+                return null;
+            }
+			int alititudeRef = directory.GetInt(GpsDirectory.TAG_GPS_ALTITUDE_REF);
 			if (alititudeRef == 0) 
 			{
 				return BUNDLE["SEA_LEVEL"];
 			} 
-			else 
-			{
-				return BUNDLE["UNKNOWN", alititudeRef.ToString()];
-			}
+			return BUNDLE["UNKNOWN", alititudeRef.ToString()];
 		}
 
 		/// <summary>
@@ -301,10 +288,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Gps Altitude Description.</returns>
 		private string GetGpsAltitudeDescription()  
 		{
-			if (!_directory.ContainsTag(GpsDirectory.TAG_GPS_ALTITUDE))
-				return null;
+            if (!directory.ContainsTag(GpsDirectory.TAG_GPS_ALTITUDE))
+            {
+                return null;
+            }
 			string alititude =
-				_directory.GetRational(
+				directory.GetRational(
 				GpsDirectory.TAG_GPS_ALTITUDE).ToSimpleString(
 				true);
 			return BUNDLE["METRES", alititude];

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 
 /// <summary>
@@ -10,7 +11,7 @@ using System.Reflection;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -40,41 +41,41 @@ namespace com.drew.metadata
 	[Serializable]
 	public sealed class Metadata 
 	{
-		private IDictionary directoryMap;
+        private Dictionary<Type, AbstractDirectory> directoryMap;
 
 		/// <summary>
 		/// List of Directory objects set against this object.  
 		/// Keeping a list handy makes creation of an Iterator and counting tags simple. 
 		/// </summary>
-		private IList directoryList;
+		private List<AbstractDirectory> directoryList;
 
 		/// <summary>
 		/// Creates a new instance of Metadata. 
 		/// </summary>
 		public Metadata() : base()
 		{
-			directoryMap = new Hashtable();
-			directoryList = new ArrayList();
+            this.directoryMap = new Dictionary<Type, AbstractDirectory>();
+            this.directoryList = new List<AbstractDirectory>();
 		}
 
 		/// <summary>
 		/// Creates an Iterator over the tag types set against this image, preserving the 
 		/// order in which they were set.  Should the same tag have been set more than once, 
-		/// it's first position is maintained, even though the final value is used. 
+		/// it'str first position is maintained, even though the final value is used. 
 		/// </summary>
 		/// <returns>an Iterator of tag types set for this image</returns>
-		public IEnumerator GetDirectoryIterator() 
+		public IEnumerator<AbstractDirectory> GetDirectoryIterator() 
 		{
-			return directoryList.GetEnumerator();
+            return this.directoryList.GetEnumerator();
 		}
 
 		/// <summary>
-		/// Returns a count of unique directories in this metadata collection. 
+		/// Returns a count of unique directories in this aMetadata collection. 
 		/// </summary>
-		/// <returns>the number of unique directory types set for this metadata collection</returns>
+		/// <returns>the number of unique directory types set for this aMetadata collection</returns>
 		public int GetDirectoryCount() 
 		{
-			return directoryList.Count;
+            return this.directoryList.Count;
 		}
 
 		/// <summary>
@@ -83,23 +84,23 @@ namespace com.drew.metadata
 		/// <param name="aType">the type you are looking for</param>
 		/// <returns>the directory found</returns>
 		/// <exception cref="ArgumentException">if aType is not a Directory like class</exception>
-		public Directory GetDirectory(Type aType) 
+		public AbstractDirectory GetDirectory(Type aType) 
 		{
-			if (!Type.GetType("com.drew.metadata.Directory").IsAssignableFrom(aType)) 
+			if (!Type.GetType("com.drew.metadata.AbstractDirectory").IsAssignableFrom(aType)) 
 			{
-				throw new ArgumentException("Class type passed to GetDirectory must be an implementation of com.drew.metadata.Directory");
+                throw new ArgumentException("Class type passed to GetDirectory must be an implementation of com.drew.metadata.AbstractDirectory");
 			}
 
 			// check if we've already issued this type of directory
-			if (directoryMap.Contains(aType)) 
+            if (this.ContainsDirectory(aType)) 
 			{
-				return (Directory) directoryMap[aType];
+				return directoryMap[aType];
 			}
-			object directory;
+            AbstractDirectory lcDirectory = null;
 			try 
 			{
-				ConstructorInfo[] ci = aType.GetConstructors();
-				directory = ci[0].Invoke(null);
+				ConstructorInfo[] lcConstructor = aType.GetConstructors();
+				lcDirectory = (AbstractDirectory) lcConstructor[0].Invoke(null);
 			} 
 			catch (Exception e) 
 			{
@@ -107,22 +108,22 @@ namespace com.drew.metadata
 					"Cannot instantiate provided Directory type: "
 					+ aType.ToString(), e);
 			}
-			// store the directory in case it's requested later
-			directoryMap.Add(aType, directory);
-			directoryList.Add(directory);
+			// store the directory in case it'str requested later
+			this.directoryMap.Add(aType, lcDirectory);
+			this.directoryList.Add(lcDirectory);
 		
-			return (Directory) directory;
+			return lcDirectory;
 		}
 
 		/// <summary>
-		/// Indicates whether a given directory type has been created in this metadata repository.
+		/// Indicates whether a given directory type has been created in this aMetadata repository.
 		/// Directories are created by calling getDirectory(Class).
 		/// </summary>
 		/// <param name="aType">the Directory type</param>
-		/// <returns>true if the metadata directory has been created</returns>
+		/// <returns>true if the aMetadata directory has been created</returns>
 		public bool ContainsDirectory(Type aType) 
 		{
-			return directoryMap.Contains(aType);
+			return this.directoryMap.ContainsKey(aType);
 		}
 	}
 }

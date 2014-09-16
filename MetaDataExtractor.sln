@@ -1,21 +1,19 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual C# Express 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaDataExtractor", "MetaDataExtractor.csproj", "{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Release = Release
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}.Debug.ActiveCfg = Debug|.NET
-		{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}.Debug.Build.0 = Debug|.NET
-		{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}.Release.ActiveCfg = Release|.NET
-		{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}.Release.Build.0 = Release|.NET
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

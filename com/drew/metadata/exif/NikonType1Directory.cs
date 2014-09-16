@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using com.drew.metadata;
@@ -11,7 +12,7 @@ using com.drew.lang;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -28,7 +29,7 @@ using com.drew.lang;
 /// </summary>
 namespace com.drew.metadata.exif
 {
-	public class NikonType1MakernoteDirectory : NikonTypeMakernoteDirectory 
+	public class NikonType1Directory : AbstractNikonTypeDirectory 
 	{
 		// TYPE1 is for E-Series cameras prior to (not including) E990
 		public const int TAG_NIKON_TYPE1_UNKNOWN_1 = 0x0002;
@@ -43,42 +44,21 @@ namespace com.drew.metadata.exif
 		public const int TAG_NIKON_TYPE1_CONVERTER = 0x000B;
 		public const int TAG_NIKON_TYPE1_UNKNOWN_3 = 0x0F00;
 
-		protected static readonly IDictionary tagNameMap = NikonType1MakernoteDirectory.InitTagMap();
-
-		/// <summary>
-		/// Initialize the tag map.
-		/// </summary>
-		/// <returns>the tag map</returns>
-		private static IDictionary InitTagMap() 
-		{
-			IDictionary resu = new Hashtable();
-			resu.Add(TAG_NIKON_TYPE1_CCD_SENSITIVITY, BUNDLE["TAG_NIKON_TYPE1_CCD_SENSITIVITY"]);
-			resu.Add(TAG_NIKON_TYPE1_COLOR_MODE, BUNDLE["TAG_NIKON_TYPE1_COLOR_MODE"]);
-			resu.Add(TAG_NIKON_TYPE1_DIGITAL_ZOOM, BUNDLE["TAG_NIKON_TYPE1_DIGITAL_ZOOM"]);
-			resu.Add(TAG_NIKON_TYPE1_CONVERTER, BUNDLE["TAG_NIKON_TYPE1_CONVERTER"]);
-			resu.Add(TAG_NIKON_TYPE1_FOCUS, BUNDLE["TAG_NIKON_TYPE1_FOCUS"]);
-			resu.Add(TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT, BUNDLE["TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT"]);
-			resu.Add(TAG_NIKON_TYPE1_QUALITY, BUNDLE["TAG_NIKON_TYPE1_QUALITY"]);
-			resu.Add(TAG_NIKON_TYPE1_UNKNOWN_1,	BUNDLE["TAG_NIKON_TYPE1_UNKNOWN_1"]);
-			resu.Add(TAG_NIKON_TYPE1_UNKNOWN_2,	BUNDLE["TAG_NIKON_TYPE1_UNKNOWN_2"]);
-			resu.Add(TAG_NIKON_TYPE1_UNKNOWN_3, BUNDLE["TAG_NIKON_TYPE1_UNKNOWN_3"]);
-			resu.Add(TAG_NIKON_TYPE1_WHITE_BALANCE, BUNDLE["TAG_NIKON_TYPE1_WHITE_BALANCE"]);
-			return resu;
-		}
+        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.exif.NikonType1Directory"), BUNDLE);
 
 		/// <summary>
 		/// Constructor of the object.
 		/// </summary>
-		public NikonType1MakernoteDirectory() : base()
+		public NikonType1Directory() : base()
 		{
-			this.SetDescriptor(new NikonType1MakernoteDescriptor(this));
+			this.SetDescriptor(new NikonType1Descriptor(this));
 		}
 
 		/// <summary>
 		/// Provides the map of tag names, hashed by tag type identifier. 
 		/// </summary>
 		/// <returns>the map of tag names</returns>
-		protected override IDictionary GetTagNameMap() 
+        protected override Dictionary<int, string> GetTagNameMap() 
 		{
 			return tagNameMap;
 		}

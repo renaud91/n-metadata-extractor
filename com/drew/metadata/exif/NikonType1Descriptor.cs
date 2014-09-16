@@ -11,7 +11,7 @@ using com.drew.lang;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -29,20 +29,20 @@ using com.drew.lang;
 namespace com.drew.metadata.exif
 {
 	/// <summary>
-	/// There are 3 formats of Nikon's MakerNote. MakerNote of E700/E800/E900/E900S/E910/E950 starts 
+	/// There are 3 formats of Nikon'str MakerNote. MakerNote of E700/E800/E900/E900S/E910/E950 starts 
 	/// from ASCII string "Nikon". Data format is the same as IFD, but it starts from offSet 0x08. 
 	/// This is the same as Olympus except start string. Example of actual data structure is shown below.
 	/// :0000: 4E 69 6B 6F 6E 00 01 00-05 00 02 00 02 00 06 00 Nikon...........
 	/// :0010: 00 00 EC 02 00 00 03 00-03 00 01 00 00 00 06 00 ................
 	/// </summary>
-	public class NikonType1MakernoteDescriptor : TagDescriptor 
+	public class NikonType1Descriptor : AbstractTagDescriptor 
 	{
 
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
 		/// <param name="directory">a directory</param>
-		public NikonType1MakernoteDescriptor(Directory directory) : base(directory)
+		public NikonType1Descriptor(AbstractDirectory directory) : base(directory)
 		{		
 		}
 
@@ -53,30 +53,30 @@ namespace com.drew.metadata.exif
 		/// If no substitution is available, the value provided by GetString(int) will be returned.
 		/// This and GetString(int) are the only 'get' methods that won't throw an exception.
 		/// </summary>
-		/// <param name="tagType">the tag to find a description for</param>
-		/// <returns>a description of the image's value for the specified tag, or null if the tag hasn't been defined.</returns>
+		/// <param name="aTagType">the tag to find a description for</param>
+		/// <returns>a description of the image'str value for the specified tag, or null if the tag hasn't been defined.</returns>
 		public override string GetDescription(int tagType)  
 		{
 			switch(tagType) 
 			{
-				case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_QUALITY :
+				case NikonType1Directory.TAG_NIKON_TYPE1_QUALITY :
 					return GetQualityDescription();
-				case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_COLOR_MODE :
+				case NikonType1Directory.TAG_NIKON_TYPE1_COLOR_MODE :
 					return GetColorModeDescription();
-				case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT :
+				case NikonType1Directory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT :
 					return GetImageAdjustmentDescription();
-				case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CCD_SENSITIVITY :
+				case NikonType1Directory.TAG_NIKON_TYPE1_CCD_SENSITIVITY :
 					return GetCcdSensitivityDescription();
-				case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_WHITE_BALANCE :
+				case NikonType1Directory.TAG_NIKON_TYPE1_WHITE_BALANCE :
 					return GetWhiteBalanceDescription();
-				case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_FOCUS :
+				case NikonType1Directory.TAG_NIKON_TYPE1_FOCUS :
 					return GetFocusDescription();
-				case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_DIGITAL_ZOOM :
+				case NikonType1Directory.TAG_NIKON_TYPE1_DIGITAL_ZOOM :
 					return GetDigitalZoomDescription();
-				case NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER :
+				case NikonType1Directory.TAG_NIKON_TYPE1_CONVERTER :
 					return GetConverterDescription();
 				default :
-					return _directory.GetString(tagType);
+					return directory.GetString(tagType);
 			}
 		}
 
@@ -86,13 +86,15 @@ namespace com.drew.metadata.exif
 		/// <returns>the Converter Description.</returns>
 		private string GetConverterDescription()  
 		{
-			if (!_directory
-				.ContainsTag(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER))
-				return null;
+            if (!directory
+                .ContainsTag(
+                NikonType1Directory.TAG_NIKON_TYPE1_CONVERTER))
+            {
+                return null;
+            }
 			int aValue =
-				_directory.GetInt(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CONVERTER);
+				directory.GetInt(
+				NikonType1Directory.TAG_NIKON_TYPE1_CONVERTER);
 			switch (aValue) 
 			{
 				case 0 :
@@ -110,13 +112,15 @@ namespace com.drew.metadata.exif
 		/// <returns>the Digital Zoom Description.</returns>
 		private string GetDigitalZoomDescription()  
 		{
-			if (!_directory
-				.ContainsTag(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_DIGITAL_ZOOM))
-				return null;
+            if (!directory
+                .ContainsTag(
+                NikonType1Directory.TAG_NIKON_TYPE1_DIGITAL_ZOOM))
+            {
+                return null;
+            }
 			Rational aValue =
-				_directory.GetRational(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_DIGITAL_ZOOM);
+				directory.GetRational(
+				NikonType1Directory.TAG_NIKON_TYPE1_DIGITAL_ZOOM);
 			if (aValue.GetNumerator() == 0) 
 			{
 				return BUNDLE["NO_DIGITAL_ZOOM"];
@@ -130,12 +134,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Focus Description.</returns>
 		private string GetFocusDescription()  
 		{
-			if (!_directory
-				.ContainsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_FOCUS))
-				return null;
+            if (!directory
+                .ContainsTag(NikonType1Directory.TAG_NIKON_TYPE1_FOCUS))
+            {
+                return null;
+            }
 			Rational aValue =
-				_directory.GetRational(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_FOCUS);
+				directory.GetRational(
+				NikonType1Directory.TAG_NIKON_TYPE1_FOCUS);
 			if (aValue.GetNumerator() == 1 && aValue.GetDenominator() == 0) 
 			{
 				return BUNDLE["INFINITE"];
@@ -149,13 +155,16 @@ namespace com.drew.metadata.exif
 		/// <returns>the White Balance Description.</returns>
 		private string GetWhiteBalanceDescription()  
 		{
-			if (!_directory
-				.ContainsTag(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_WHITE_BALANCE))
-				return null;
+            if (!directory
+                .ContainsTag(
+                NikonType1Directory.TAG_NIKON_TYPE1_WHITE_BALANCE))
+            {
+
+                return null;
+            }
 			int aValue =
-				_directory.GetInt(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_WHITE_BALANCE);
+				directory.GetInt(
+				NikonType1Directory.TAG_NIKON_TYPE1_WHITE_BALANCE);
 			switch (aValue) 
 			{
 				case 0 :
@@ -167,7 +176,7 @@ namespace com.drew.metadata.exif
 				case 3 :
 					return BUNDLE["INCANDESCENSE"];
 				case 4 :
-					return BUNDLE["FLOURESCENT"];
+					return BUNDLE["FLUORESCENT"];
 				case 5 :
 					return BUNDLE["CLOUDY"];
 				case 6 :
@@ -183,13 +192,15 @@ namespace com.drew.metadata.exif
 		/// <returns>the Ccd Sensitivity Description.</returns>
 		private string GetCcdSensitivityDescription()  
 		{
-			if (!_directory
-				.ContainsTag(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CCD_SENSITIVITY))
-				return null;
+            if (!directory
+                .ContainsTag(
+                NikonType1Directory.TAG_NIKON_TYPE1_CCD_SENSITIVITY))
+            {
+                return null;
+            }
 			int aValue =
-				_directory.GetInt(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_CCD_SENSITIVITY);
+				directory.GetInt(
+				NikonType1Directory.TAG_NIKON_TYPE1_CCD_SENSITIVITY);
 			switch (aValue) 
 			{
 				case 0 :
@@ -211,13 +222,15 @@ namespace com.drew.metadata.exif
 		/// <returns>the Image Adjustment Description.</returns>
 		private string GetImageAdjustmentDescription()  
 		{
-			if (!_directory
-				.ContainsTag(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT))
-				return null;
+            if (!directory
+                .ContainsTag(
+                NikonType1Directory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT))
+            {
+                return null;
+            }
 			int aValue =
-				_directory.GetInt(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT);
+				directory.GetInt(
+				NikonType1Directory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT);
 			switch (aValue) 
 			{
 				case 0 :
@@ -241,13 +254,15 @@ namespace com.drew.metadata.exif
 		/// <returns>the Color Mode Description.</returns>
 		private string GetColorModeDescription()  
 		{
-			if (!_directory
-				.ContainsTag(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_COLOR_MODE))
-				return null;
+            if (!directory
+                .ContainsTag(
+                NikonType1Directory.TAG_NIKON_TYPE1_COLOR_MODE))
+            {
+                return null;
+            }
 			int aValue =
-				_directory.GetInt(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_COLOR_MODE);
+				directory.GetInt(
+				NikonType1Directory.TAG_NIKON_TYPE1_COLOR_MODE);
 			switch (aValue) 
 			{
 				case 1 :
@@ -265,12 +280,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Quality Description.</returns>
 		private string GetQualityDescription()  
 		{
-			if (!_directory
-				.ContainsTag(NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_QUALITY))
-				return null;
+            if (!directory
+                .ContainsTag(NikonType1Directory.TAG_NIKON_TYPE1_QUALITY))
+            {
+                return null;
+            }
 			int aValue =
-				_directory.GetInt(
-				NikonType1MakernoteDirectory.TAG_NIKON_TYPE1_QUALITY);
+				directory.GetInt(
+				NikonType1Directory.TAG_NIKON_TYPE1_QUALITY);
 			switch (aValue) 
 			{
 				case 1 :

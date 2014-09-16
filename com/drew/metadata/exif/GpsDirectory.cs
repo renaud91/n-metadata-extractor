@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using com.drew.metadata;
@@ -12,7 +13,7 @@ using com.utils;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -32,7 +33,7 @@ namespace com.drew.metadata.exif
 	/// <summary>
 	/// The GPS Directory class
 	/// </summary>
-	public class GpsDirectory : Directory 
+	public class GpsDirectory : AbstractDirectory 
 	{
 		/// <summary>
 		/// GPS tag version GPSVersionID 0 0 BYTE 4
@@ -144,44 +145,7 @@ namespace com.drew.metadata.exif
 		public const int TAG_GPS_DEST_DISTANCE = 0x001A;
 
 		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("GpsMarkernote");
-		protected static readonly IDictionary tagNameMap = GpsDirectory.InitTagMap();
-
-		/// <summary>
-		/// Initialize the tag map.
-		/// </summary>
-		/// <returns>the tag map</returns>
-		private static IDictionary InitTagMap() 
-		{
-			IDictionary resu = new Hashtable();
-			resu.Add(TAG_GPS_VERSION_ID, BUNDLE["TAG_GPS_VERSION_ID"]);
-			resu.Add(TAG_GPS_LATITUDE_REF, BUNDLE["TAG_GPS_LATITUDE_REF"]);
-			resu.Add(TAG_GPS_LATITUDE, BUNDLE["TAG_GPS_LATITUDE"]);
-			resu.Add(TAG_GPS_LONGITUDE_REF, BUNDLE["TAG_GPS_LONGITUDE_REF"]);
-			resu.Add(TAG_GPS_LONGITUDE, BUNDLE["TAG_GPS_LONGITUDE"]);
-			resu.Add(TAG_GPS_ALTITUDE_REF, BUNDLE["TAG_GPS_ALTITUDE_REF"]);
-			resu.Add(TAG_GPS_ALTITUDE, BUNDLE["TAG_GPS_ALTITUDE"]);
-			resu.Add(TAG_GPS_TIME_STAMP, BUNDLE["TAG_GPS_TIME_STAMP"]);
-			resu.Add(TAG_GPS_SATELLITES, BUNDLE["TAG_GPS_SATELLITES"]);
-			resu.Add(TAG_GPS_STATUS, BUNDLE["TAG_GPS_STATUS"]);
-			resu.Add(TAG_GPS_MEASURE_MODE, BUNDLE["TAG_GPS_MEASURE_MODE"]);
-			resu.Add(TAG_GPS_DOP, BUNDLE["TAG_GPS_DOP"]);
-			resu.Add(TAG_GPS_SPEED_REF, BUNDLE["TAG_GPS_SPEED_REF"]);
-			resu.Add(TAG_GPS_SPEED, BUNDLE["TAG_GPS_SPEED"]);
-			resu.Add(TAG_GPS_TRACK_REF, BUNDLE["TAG_GPS_TRACK_REF"]);
-			resu.Add(TAG_GPS_TRACK, BUNDLE["TAG_GPS_TRACK"]);
-			resu.Add(TAG_GPS_IMG_DIRECTION_REF, BUNDLE["TAG_GPS_IMG_DIRECTION_REF"]);
-			resu.Add(TAG_GPS_IMG_DIRECTION, BUNDLE["TAG_GPS_IMG_DIRECTION"]);
-			resu.Add(TAG_GPS_MAP_DATUM, BUNDLE["TAG_GPS_MAP_DATUM"]);
-			resu.Add(TAG_GPS_DEST_LATITUDE_REF, BUNDLE["TAG_GPS_DEST_LATITUDE_REF"]);
-			resu.Add(TAG_GPS_DEST_LATITUDE, BUNDLE["TAG_GPS_DEST_LATITUDE"]);
-			resu.Add(TAG_GPS_DEST_LONGITUDE_REF, BUNDLE["TAG_GPS_DEST_LONGITUDE_REF"]);
-			resu.Add(TAG_GPS_DEST_LONGITUDE, BUNDLE["TAG_GPS_DEST_LONGITUDE"]);
-			resu.Add(TAG_GPS_DEST_BEARING_REF, BUNDLE["TAG_GPS_DEST_BEARING_REF"]);
-			resu.Add(TAG_GPS_DEST_BEARING, BUNDLE["TAG_GPS_DEST_BEARING"]);
-			resu.Add(TAG_GPS_DEST_DISTANCE_REF, BUNDLE["TAG_GPS_DEST_DISTANCE_REF"]);
-			resu.Add(TAG_GPS_DEST_DISTANCE, BUNDLE["TAG_GPS_DEST_DISTANCE"]);
-			return resu;
-		}
+        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.exif.GpsDirectory"), BUNDLE);
 
 		/// <summary>
 		/// Constructor of the object.
@@ -204,7 +168,7 @@ namespace com.drew.metadata.exif
 		/// Provides the map of tag names, hashed by tag type identifier. 
 		/// </summary>
 		/// <returns>the map of tag names</returns>
-		protected override IDictionary GetTagNameMap() 
+        protected override Dictionary<int, string> GetTagNameMap() 
 		{
 			return tagNameMap;
 		}

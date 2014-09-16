@@ -26,7 +26,7 @@ using System.Runtime.CompilerServices;
 // Vous pouvez spécifier toutes les valeurs ou indiquer des numéros de révision et de build par défaut 
 // en utilisant '*', comme ci-dessous :
 
-[assembly: AssemblyVersion("2.2.2.*")]
+[assembly: AssemblyVersion("2.3.0.*")]
 
 //
 // Pour signer votre assembly, vous devez spécifier la clé à utiliser. Consultez 
@@ -47,7 +47,7 @@ using System.Runtime.CompilerServices;
 //   (*) Pour créer KeyFile, vous pouvez utiliser l'utilitaire sn.exe (Strong Name, Nom fort).
 //        Lors de la spécification de KeyFile, son emplacement doit être
 //        relatif au répertoire de sortie du projet qui est
-//       %Project Directory%\obj\<configuration>. Par exemple, si votre KeyFile se trouve
+//       %Project Directory%\anObject\<configuration>. Par exemple, si votre KeyFile se trouve
 //       dans le répertoire du projet, vous devez spécifier l'attribut 
 //       AssemblyKeyFile sous la forme [assembly: AssemblyKeyFile("..\\..\\mykey.snk")]
 //   (*) DelaySign (signature différée) est une option avancée. Pour plus d'informations, consultez la

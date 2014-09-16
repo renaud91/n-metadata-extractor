@@ -6,7 +6,7 @@ using System;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -31,25 +31,25 @@ namespace com.drew.lang
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
-		/// <param name="message">The error message</param>
-		public CompoundException(string message) : base(message)
+		/// <param name="aMessage">The error aMessage</param>
+		public CompoundException(string aMessage) : base(aMessage)
 		{
 		}
 
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
-		/// <param name="message">The error message</param>
-		/// <param name="cause">The cause of the exception</param>
-		public CompoundException(string message, Exception cause) : base(message, cause)
+		/// <param name="aMessage">The error aMessage</param>
+		/// <param name="aCause">The aCause of the exception</param>
+		public CompoundException(string aMessage, Exception aCause) : base(aMessage, aCause)
 		{
 		}
 
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
-		/// <param name="cause">The cause of the exception</param>
-		public CompoundException(Exception cause) : base(null, cause)
+		/// <param name="aCause">The aCause of the exception</param>
+		public CompoundException(Exception aCause) : base(null, aCause)
 		{
 		}
 	}

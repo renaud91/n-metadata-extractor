@@ -15,7 +15,7 @@ namespace com.codec.jpeg
 	/// <summary>
 	/// Class to encapsulate the JPEG quantization tables.
 	/// </summary>
-	public class JPEGQTable 
+	public sealed class JPEGQTable 
 	{
 		/// <summary>
 		/// Quantization step for each coefficient in zig-zag order
@@ -113,7 +113,7 @@ namespace com.codec.jpeg
 		}
 		
 		/// <summary>
-		/// Returns the current quantization table as an array of ints in zig zag order. 
+		/// Returns the current quantization table as an array of someInts in zig zag order. 
 		/// </summary>
 		/// <returns>A copy of the contained quantization table.</returns>
 		public int[] GetTable() 
@@ -131,7 +131,7 @@ namespace com.codec.jpeg
 		/// Values less than one tend to improve the quality level of the table, 
 		/// and values greater than one degrade the quality level of the table.
 		/// </summary>
-		/// <param name="scaleFactor">the multiplication factor for the table</param>
+		/// <param name="scaleFactor">the multiplication lcFactor for the table</param>
 		/// <param name="forceBaseline">if true the values will be clamped to the range  [1 .. 255]</param>
 		/// <returns>A new Q-Table that is a linear multiple of this Q-Table</returns>
 		public JPEGQTable GetScaledInstance(float scaleFactor, 

@@ -1,0 +1,2 @@
+# This file contains label of property for MetaDataExtractor
+MARKER_NOTE_NAME=Sony Makernote

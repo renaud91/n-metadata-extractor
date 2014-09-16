@@ -11,7 +11,7 @@ using com.drew.imaging.jpg;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -31,7 +31,7 @@ namespace com.drew.metadata.jpeg
 	/// <summary>
 	/// The JPEG reader class
 	/// </summary>
-	public class JpegReader : MetadataReader 
+	public class JpegReader : IMetadataReader 
 	{
 		/// <summary>
 		/// The SOF0 data segment. 
@@ -67,10 +67,10 @@ namespace com.drew.metadata.jpeg
 		}
 
 		/// <summary>
-		/// Extracts metadata
+		/// Extracts aMetadata
 		/// </summary>
-		/// <param name="metadata">where to add metadata</param>
-		/// <returns>the metadata found</returns>
+		/// <param name="aMetadata">where to add aMetadata</param>
+		/// <returns>the aMetadata found</returns>
 		public Metadata Extract(Metadata metadata) 
 		{
 			if (_data == null) 
@@ -135,9 +135,9 @@ namespace com.drew.metadata.jpeg
 		}
 
 		/// <summary>
-		/// Returns an int calculated from two bytes of data at the specified offset (MSB, LSB). 
+		/// Returns an int calculated from two bytes of data at the specified lcOffset (MSB, LSB). 
 		/// </summary>
-		/// <param name="offset">position within the data buffer to read first byte</param>
+		/// <param name="lcOffset">position within the data buffer to read first byte</param>
 		/// <returns>the 32 bit int value, between 0x0000 and 0xFFFF</returns>
 		private int Get32Bits(int offset) 
 		{
@@ -150,9 +150,9 @@ namespace com.drew.metadata.jpeg
 		}
 
 		/// <summary>
-		/// Returns an int calculated from one byte of data at the specified offset.
+		/// Returns an int calculated from one byte of data at the specified lcOffset.
 		/// </summary>
-		/// <param name="offset">position within the data buffer to read byte</param>
+		/// <param name="lcOffset">position within the data buffer to read byte</param>
 		/// <returns>the 16 bit int value, between 0x00 and 0xFF</returns>
 		private int Get16Bits(int offset) 
 		{

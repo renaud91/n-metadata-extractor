@@ -1,7 +1,7 @@
 using System;
-using System.IO;
-using System.Text;
-using System.Collections;
+using com.drew.metadata;
+using com.drew.lang;
+using com.utils;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -9,7 +9,7 @@ using System.Collections;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -24,24 +24,22 @@ using System.Collections;
 /// <a href="mailto:renaud91@free.fr">renaud91@free.fr</a>
 /// If you find a bug in the C# code, feel free to mail me.
 /// </summary>
-namespace com.drew.metadata
+namespace com.drew.metadata.exif
 {
-	/// <summary>
-	/// This interface represents a Metadata reader object
-	/// </summary>
-	public interface MetadataReader
+    /// <summary>
+    /// Mother class for all CasioMarkerNote directory.
+    /// </summary>
+	public abstract class AbstractCasioTypeDirectory : AbstractDirectory 
 	{
-		/// <summary>
-		/// Extracts metadata
-		/// </summary>
-		/// <returns>the metadata found</returns>
-		Metadata Extract();
+		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("CasioMarkernote");
 
 		/// <summary>
-		/// Extracts metadata
+		/// Provides the name of the directory, for display purposes.  E.g. Exif 
 		/// </summary>
-		/// <param name="metadata">where to add metadata</param>
-		/// <returns>the metadata found</returns>
-		Metadata Extract(Metadata metadata);
+		/// <returns>the name of the directory</returns>
+		public override string GetName() 
+		{
+            return AbstractCasioTypeDirectory.BUNDLE["MARKER_NOTE_NAME"];
+		}
 	}
 }

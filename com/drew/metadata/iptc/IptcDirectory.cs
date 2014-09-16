@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using com.drew.lang;
 using com.drew.metadata;
 using com.utils;
@@ -10,7 +11,7 @@ using com.utils;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -30,7 +31,7 @@ namespace com.drew.metadata.iptc
 	/// <summary>
 	/// The Iptc Directory class
 	/// </summary>
-	public class IptcDirectory : Directory 
+	public class IptcDirectory : AbstractDirectory 
 	{
 		public const int TAG_RECORD_VERSION = 0x0200;
 		public const int TAG_CAPTION = 0x0278;
@@ -58,41 +59,7 @@ namespace com.drew.metadata.iptc
 		public const int TAG_ORIGINATING_PROGRAM = 0x0200 | 65;
 
 		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("IptcMarkernote");
-		protected static readonly IDictionary tagNameMap = IptcDirectory.InitTagMap();
-
-		/// <summary>
-		/// Initialize the tag map.
-		/// </summary>
-		/// <returns>the tag map</returns>
-		private static IDictionary InitTagMap() 
-		{
-			IDictionary resu = new Hashtable();
-			resu.Add(TAG_RECORD_VERSION, BUNDLE["TAG_RECORD_VERSION"]);
-			resu.Add(TAG_CAPTION, BUNDLE["TAG_CAPTION"]);
-			resu.Add(TAG_WRITER, BUNDLE["TAG_WRITER"]);
-			resu.Add(TAG_HEADLINE, BUNDLE["TAG_HEADLINE"]);
-			resu.Add(TAG_SPECIAL_INSTRUCTIONS, BUNDLE["TAG_SPECIAL_INSTRUCTIONS"]);
-			resu.Add(TAG_BY_LINE, BUNDLE["TAG_BY_LINE"]);
-			resu.Add(TAG_BY_LINE_TITLE, BUNDLE["TAG_BY_LINE_TITLE"]);
-			resu.Add(TAG_CREDIT, BUNDLE["TAG_CREDIT"]);
-			resu.Add(TAG_SOURCE, BUNDLE["TAG_SOURCE"]);
-			resu.Add(TAG_OBJECT_NAME, BUNDLE["TAG_OBJECT_NAME"]);
-			resu.Add(TAG_DATE_CREATED, BUNDLE["TAG_DATE_CREATED"]);
-			resu.Add(TAG_CITY, BUNDLE["TAG_CITY"]);
-			resu.Add(TAG_PROVINCE_OR_STATE, BUNDLE["TAG_PROVINCE_OR_STATE"]);
-			resu.Add(TAG_COUNTRY_OR_PRIMARY_LOCATION, BUNDLE["TAG_COUNTRY_OR_PRIMARY_LOCATION"]);
-			resu.Add(TAG_ORIGINAL_TRANSMISSION_REFERENCE, BUNDLE["TAG_ORIGINAL_TRANSMISSION_REFERENCE"]);
-			resu.Add(TAG_CATEGORY, BUNDLE["TAG_CATEGORY"]);
-			resu.Add(TAG_SUPPLEMENTAL_CATEGORIES, BUNDLE["TAG_SUPPLEMENTAL_CATEGORIES"]);
-			resu.Add(TAG_URGENCY, BUNDLE["TAG_URGENCY"]);
-			resu.Add(TAG_KEYWORDS, BUNDLE["TAG_KEYWORDS"]);
-			resu.Add(TAG_COPYRIGHT_NOTICE, BUNDLE["TAG_COPYRIGHT_NOTICE"]);
-			resu.Add(TAG_RELEASE_DATE, BUNDLE["TAG_RELEASE_DATE"]);
-			resu.Add(TAG_RELEASE_TIME, BUNDLE["TAG_RELEASE_TIME"]);
-			resu.Add(TAG_TIME_CREATED, BUNDLE["TAG_TIME_CREATED"]);
-			resu.Add(TAG_ORIGINATING_PROGRAM, BUNDLE["TAG_ORIGINATING_PROGRAM"]);
-			return resu;
-		}
+        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.iptc.IptcDirectory"), BUNDLE);
 
 		/// <summary>
 		/// Constructor of the object.
@@ -115,7 +82,7 @@ namespace com.drew.metadata.iptc
 		/// Provides the map of tag names, hashed by tag type identifier. 
 		/// </summary>
 		/// <returns>the map of tag names</returns>
-		protected override IDictionary GetTagNameMap() 
+        protected override Dictionary<int, string> GetTagNameMap() 
 		{
 			return tagNameMap;
 		}

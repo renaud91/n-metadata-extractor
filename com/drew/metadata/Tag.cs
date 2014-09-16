@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -7,7 +8,7 @@ using System.IO;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -31,17 +32,17 @@ namespace com.drew.metadata
 	public class Tag 
 	{
 		private int tagType;
-		private Directory directory;
+		private AbstractDirectory directory;
 
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
 		/// <param name="aTagType">the type of this tag</param>
 		/// <param name="aDirectory">the directory of this tag</param>
-		public Tag(int aTagType, Directory aDirectory) : base()
+		public Tag(int aTagType, AbstractDirectory aDirectory) : base()
 		{
-			tagType = aTagType;
-			directory = aDirectory;
+			this.tagType = aTagType;
+            this.directory = aDirectory;
 		}
 
 		/// <summary>
@@ -50,7 +51,7 @@ namespace com.drew.metadata
 		/// <returns>the tag type as an int</returns>
 		public int GetTagType() 
 		{
-			return tagType;
+            return this.tagType;
 		}
 
 		/// <summary>
@@ -59,28 +60,30 @@ namespace com.drew.metadata
 		/// <returns>the tag type as a string in hexadecimal notation</returns>
 		public string GetTagTypeHex() 
 		{
-			string hex = tagType.ToString("X");
-			while (hex.Length < 4)
-				hex = "0" + hex;
-			return "0x" + hex;
+            string lcHex = this.tagType.ToString("X");
+            while (lcHex.Length < 4)
+            {
+                lcHex = "0" + lcHex;
+            }
+			return "0x" + lcHex;
 		}
 
 		/// <summary>
-		/// Get a description of the tag's value, considering enumerated values and units. 
+		/// Get a description of the tag'str value, considering enumerated values and units. 
 		/// </summary>
-		/// <returns>a description of the tag's value</returns>
+		/// <returns>a description of the tag'str value</returns>
 		public string GetDescription() 
 		{
-			return directory.GetDescription(tagType);
+            return this.directory.GetDescription(tagType);
 		}
 
 		/// <summary>
 		/// Get the name of the tag, such as Aperture, or InteropVersion.
 		/// </summary>
-		/// <returns>the tag's name</returns>
+		/// <returns>the tag'str name</returns>
 		public string GetTagName() 
 		{
-			return directory.GetTagName(tagType);
+            return this.directory.GetTagName(tagType);
 		}
 
 		/// <summary>
@@ -89,32 +92,31 @@ namespace com.drew.metadata
 		/// <returns>name of the directory in which this tag exists</returns>
 		public string GetDirectoryName() 
 		{
-			return directory.GetName();
+            return this.directory.GetName();
 		}
 
 		/// <summary>
-		/// A basic representation of the tag's type and value in format: FNumber - F2.8. 
+		/// A basic representation of the tag'str type and value in format: FNumber - F2.8. 
 		/// </summary>
-		/// <returns>the tag's type and value</returns>
+		/// <returns>the tag'str type and value</returns>
 		public override string ToString() 
 		{
-			string description;
+			string lcDescription = null;
 			try 
 			{
-				description = GetDescription();
+                lcDescription = this.GetDescription();
 			} 
 			catch (MetadataException ) 
 			{
-				description =
-					directory.GetString(GetTagType())
+				lcDescription =
+                    this.directory.GetString(GetTagType())
 					+ " (unable to formulate description)";
 			}
-			return "["
-				+ directory.GetName()
-				+ "] "
-				+ GetTagName()
-				+ " - "
-				+ description;
+            StringBuilder buff = new StringBuilder(64);
+            buff.Append('[').Append(this.directory.GetName());
+            buff.Append(']').Append(this.GetTagName());
+		    buff.Append(" - ").Append(lcDescription);
+            return buff.ToString();
 		}
 	}
 }

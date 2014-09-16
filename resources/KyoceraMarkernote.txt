@@ -1,0 +1,4 @@
+# This file contains label of property for MetaDataExtractor
+MARKER_NOTE_NAME=Kyocera Makernote
+TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO=Print Image Matching (PIM) Info
+TAG_KYOCERA_PROPRIETARY_THUMBNAIL=Proprietary Thumbnail Format Data

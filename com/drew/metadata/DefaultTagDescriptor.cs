@@ -7,7 +7,7 @@ using com.drew.metadata;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -27,27 +27,29 @@ namespace com.drew.imaging.jpg
 	/// <summary>
 	/// A default tag descriptor class
 	/// </summary>
-	public class DefaultTagDescriptor : TagDescriptor 
+	public class DefaultTagDescriptor : AbstractTagDescriptor 
 	{
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
-		/// <param name="directory">its directory</param>
-		public DefaultTagDescriptor(Directory directory) : base(directory)
+        /// <param name="aDirectory">its directory</param>
+		public DefaultTagDescriptor(AbstractDirectory aDirectory) : base(aDirectory)
 		{
 		}
 
 		/// <summary>
 		/// Gets the tag name
 		/// </summary>
-		/// <param name="tagType">the specified tag type</param>
+		/// <param name="aTagType">the specified tag type</param>
 		/// <returns>the tag name</returns>
-		public string GetTagName(int tagType) 
+		public string GetTagName(int aTagType) 
 		{			
-			string hex = tagType.ToString("X");
-			while (hex.Length < 4)
-				hex = "0" + hex;
-			return "Unknown tag 0x" + hex;
+			string lcHex = aTagType.ToString("X");
+            while (lcHex.Length < 4)
+            {
+                lcHex = "0" + lcHex;
+            }
+			return "Unknown tag 0x" + lcHex;
 		}
 
 		/// <summary>
@@ -57,11 +59,11 @@ namespace com.drew.imaging.jpg
 		/// If no substitution is available, the value provided by GetString(int) will be returned.
 		/// This and GetString(int) are the only 'get' methods that won't throw an exception.
 		/// </summary>
-		/// <param name="tagType">the tag to find a description for</param>
-		/// <returns>a description of the image's value for the specified tag, or null if the tag hasn't been defined.</returns>
-		public override string GetDescription(int tagType) 
+		/// <param name="aTagType">the tag to find a description for</param>
+		/// <returns>a description of the image'str value for the specified tag, or null if the tag hasn't been defined.</returns>
+		public override string GetDescription(int aTagType) 
 		{
-			return _directory.GetString(tagType);
+			return base.directory.GetString(aTagType);
 		}
 	}
 }

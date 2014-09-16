@@ -15,15 +15,15 @@ namespace com.codec.jpeg
 	/// <summary>
 	/// JPEGDecodeParam encapsulates tables and options necessary to
 	/// control decoding JPEG datastreams. Parameters are either set explicitly
-	/// by the application for encoding, or read from the JPEG header for
+	/// by the application for encoding, or read from the JPEG lcHeader for
 	/// decoding.  In the case of decoding abbreviated data streams the
-	/// application may need to set some/all of the values it's self.
+	/// application may need to set some/all of the values it'str self.
 	/// 
 	/// When working with BufferedImages, the codec will attempt to
 	/// generate an appropriate ColorModel for the JPEG COLOR_ID. This is
 	/// not always possible (example mappings are listed below) .  In cases
 	/// where unsupported conversions are required, or unknown encoded
-	/// COLOR_ID's are in use, the user must request the data as a Raster
+	/// COLOR_ID'str are in use, the user must request the data as a Raster
 	/// and perform the transformations themselves.  When decoding into a
 	/// raster no ColorSpace
 	/// adjustments are made.
@@ -72,7 +72,7 @@ namespace com.codec.jpeg
 	/// COLOR_ID_CMYK, or COLOR_ID_YCCK
 	/// 
 	/// Note that the classes in the com.sun.image.codec.jpeg package are not
-	/// part of the core Java APIs.  They are a part of Sun's JDK and JRE
+	/// part of the core Java APIs.  They are a part of Sun'str JDK and JRE
 	/// distributions.  Although other licensees may choose to distribute these
 	/// classes, developers cannot depend on their availability in non-Sun
 	/// implementations.  We expect that equivalent functionality will eventually
@@ -268,26 +268,26 @@ namespace com.codec.jpeg
 		public abstract int  GetHeight();
 
 		/// <summary>
-		/// Return the Horizontal subsampling factor for requested
-		/// Component. The Subsample factor is the number of input pixels
+		/// Return the Horizontal subsampling lcFactor for requested
+		/// Component. The Subsample lcFactor is the number of input pixels
 		/// that contribute to each output pixel.  This is distinct from
 		/// the way the JPEG to each output pixel.  This is distinct from
 		/// the way the JPEG standard defines this quantity, because 
 		/// fractional subsampling factors are not allowed, and it was felt
 		/// </summary>
-		/// <param name="component">The component of the encoded image to return the subsampling factor for.</param>
-		/// <returns>The subsample factor.</returns>
+		/// <param name="component">The component of the encoded image to return the subsampling lcFactor for.</param>
+		/// <returns>The subsample lcFactor.</returns>
 		public abstract int GetHorizontalSubsampling(int component);
 
 		/// <summary>
-		/// Return the Vertical subsampling factor for requested Component. 
-		/// The Subsample factor is the number of input pixels that contribute to each output pixel. 
+		/// Return the Vertical subsampling lcFactor for requested Component. 
+		/// The Subsample lcFactor is the number of input pixels that contribute to each output pixel. 
 		/// This is distinct from the way the JPEG to each output pixel. 
 		/// This is distinct from the way the JPEG standard defines this quantity, because 
 		/// fractional subsampling factors are not allowed, and it was felt 
 		/// </summary>
-		/// <param name="component">The component of the encoded image to return the subsampling factor for.</param>
-		/// <returns>The subsample factor.</returns>
+		/// <param name="component">The component of the encoded image to return the subsampling lcFactor for.</param>
+		/// <returns>The subsample lcFactor.</returns>
 		public abstract int GetVerticalSubsampling(int component);
 
 		/// <summary>
@@ -392,7 +392,7 @@ namespace com.codec.jpeg
 		/// if you are decoding into Rasters.  Note that when decoding into a Raster no 
 		/// color conversion is performed. 
 		/// </summary>
-		/// <returns>The value of the JPEG encoded data's color id.</returns>
+		/// <returns>The value of the JPEG encoded data'str color id.</returns>
 		public abstract int GetEncodedColorID();
 
 		/// <summary>

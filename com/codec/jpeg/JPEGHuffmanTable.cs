@@ -15,7 +15,7 @@ namespace com.codec.jpeg
 	/// <summary>
 	/// A class to encapsulate a JPEG Huffman table. 
 	/// </summary>
-	public class JPEGHuffmanTable 
+	public sealed class JPEGHuffmanTable 
 	{
 		/// <summary>
 		/// The maximum number of symbol lengths (max symbol length in bits = 16)  

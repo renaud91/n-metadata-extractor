@@ -8,7 +8,7 @@ using com.drew.metadata;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -28,13 +28,13 @@ namespace com.drew.metadata.iptc
 	/// <summary>
 	/// Tag descriptor for IPTC
 	/// </summary>
-	public class IptcDescriptor : TagDescriptor 
+	public class IptcDescriptor : AbstractTagDescriptor 
 	{
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
 		/// <param name="directory">a directory</param>
-		public IptcDescriptor(Directory directory) : base(directory)
+		public IptcDescriptor(AbstractDirectory directory) : base(directory)
 		{
 		}
 
@@ -45,11 +45,46 @@ namespace com.drew.metadata.iptc
 		/// If no substitution is available, the value provided by GetString(int) will be returned.
 		/// This and GetString(int) are the only 'get' methods that won't throw an exception.
 		/// </summary>
-		/// <param name="tagType">the tag to find a description for</param>
-		/// <returns>a description of the image's value for the specified tag, or null if the tag hasn't been defined.</returns>
+		/// <param name="aTagType">the tag to find a description for</param>
+		/// <returns>a description of the image'str value for the specified tag, or null if the tag hasn't been defined.</returns>
 		public override string GetDescription(int tagType) 
 		{
-			return _directory.GetString(tagType);
+            switch (tagType)
+            {
+                case IptcDirectory.TAG_URGENCY :
+                    return GetUrgencyDescription();
+                default:
+                    return directory.GetString(tagType);
+            }
+			
 		}
+
+        /// <summary>
+        /// Returns urgency Description. 
+        /// </summary>
+        /// <returns>the urgency Description.</returns>
+        private string GetUrgencyDescription()
+        {
+            if (!directory
+                .ContainsTag(IptcDirectory.TAG_URGENCY))
+            {
+                return null;
+            }
+            int aValue =
+                directory.GetInt(
+                IptcDirectory.TAG_URGENCY);
+            switch (aValue)
+            {
+                case 49:
+                    return BUNDLE["HIGH"];
+                case 54:
+                    return BUNDLE["NORMAL"];
+                case 56:
+                    return BUNDLE["LOW"];
+                default:
+                    return BUNDLE["UNKNOWN", aValue.ToString()];
+            }
+        }
+
 	}
 }

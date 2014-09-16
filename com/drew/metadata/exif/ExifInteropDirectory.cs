@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using com.drew.metadata;
 using com.drew.lang;
@@ -11,7 +12,7 @@ using com.utils;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -31,7 +32,7 @@ namespace com.drew.metadata.exif
 	/// <summary>
 	/// This class represents EXIF INTEROP marker note.
 	/// </summary>
-	public class ExifInteropDirectory : Directory 
+	public class ExifInteropDirectory : AbstractDirectory 
 	{
 		public const int TAG_INTEROP_INDEX = 0x0001;
 		public const int TAG_INTEROP_VERSION = 0x0002;
@@ -40,15 +41,15 @@ namespace com.drew.metadata.exif
 		public const int TAG_RELATED_IMAGE_LENGTH = 0x1002;
 
 		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("ExifInteropMarkernote");
-		protected static readonly IDictionary tagNameMap = ExifInteropDirectory.InitTagMap();
+        protected static readonly Dictionary<int, string> tagNameMap = ExifInteropDirectory.InitTagMap();
 
 		/// <summary>
 		/// Initialize the tag map.
 		/// </summary>
 		/// <returns>the tag map</returns>
-		private static IDictionary InitTagMap() 
+        private static Dictionary<int, string> InitTagMap() 
 		{
-			IDictionary resu = new Hashtable();		
+            Dictionary<int, string> resu = new Dictionary<int, string>();
 			resu.Add(TAG_INTEROP_INDEX,	BUNDLE["TAG_INTEROP_INDEX"]);
 			resu.Add(TAG_INTEROP_VERSION, BUNDLE["TAG_INTEROP_VERSION"]);
 			resu.Add(TAG_RELATED_IMAGE_FILE_FORMAT, BUNDLE["TAG_RELATED_IMAGE_FILE_FORMAT"]);
@@ -78,7 +79,7 @@ namespace com.drew.metadata.exif
 		/// Provides the map of tag names, hashed by tag type identifier. 
 		/// </summary>
 		/// <returns>the map of tag names</returns>
-		protected override IDictionary GetTagNameMap() 
+        protected override Dictionary<int, string> GetTagNameMap() 
 		{
 			return tagNameMap;
 		}

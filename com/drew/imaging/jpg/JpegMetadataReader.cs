@@ -12,7 +12,7 @@ using com.drew.metadata.exif;
 /// This is public domain software - that is, you can do whatever you want
 /// with it, and include it software that is licensed under the GNU or the
 /// BSD license, or whatever other licence you choose, including proprietary
-/// closed source licenses.  I do ask that you leave this header in tact.
+/// closed source licenses.  I do ask that you leave this lcHeader in tact.
 ///
 /// If you make modifications to this code that you think would benefit the
 /// wider community, please send me a copy and I'll post it on my site.
@@ -34,131 +34,131 @@ namespace com.drew.imaging.jpg
 	/// </summary>
 	public class JpegMetadataReader
 	{
+        /// <summary>
+        /// Constructor of the object
+        /// </summary>
+        /// <exception cref="Exception">Allways</exception>
+        private JpegMetadataReader() : base()
+        {
+            throw new Exception("Do not use");
+        }
+
 		/// <summary>
 		/// Reads MetaData from a stream
 		/// </summary>
 		/// <param name="aStream">where to read information</param>
-		/// <returns>the metadata object</returns>
+		/// <returns>the aMetadata object</returns>
 		public static Metadata ReadMetadata(Stream aStream) 
 		{
-			JpegSegmentReader segmentReader = new JpegSegmentReader(aStream);
-			return ExtractJpegSegmentReaderMetadata(segmentReader);
+			JpegSegmentReader lcSegmentReader = new JpegSegmentReader(aStream);
+            return JpegMetadataReader.ExtractJpegSegmentReaderMetadata(lcSegmentReader);
 		}
 
 		/// <summary>
-		/// Reads MetaData from a file
+		/// Reads MetaData from a aFile
 		/// </summary>
 		/// <param name="aFile">where to read information</param>
-		/// <returns>the metadata object</returns>
+		/// <returns>the aMetadata object</returns>
 		public static Metadata ReadMetadata(FileInfo aFile) 
 		{
-			JpegSegmentReader segmentReader = new JpegSegmentReader(aFile);
-			return ExtractJpegSegmentReaderMetadata(segmentReader);
+			JpegSegmentReader lcSegmentReader = new JpegSegmentReader(aFile);
+            return JpegMetadataReader.ExtractJpegSegmentReaderMetadata(lcSegmentReader);
 		}
 
 		/// <summary>
-		/// Extracts metadata from a SegmentReader
+		/// Extracts aMetadata from a SegmentReader
 		/// </summary>
-		/// <param name="segmentReader">where to extract metadata</param>
-		/// <returns>the metadata found</returns>
-		private static Metadata ExtractJpegSegmentReaderMetadata(JpegSegmentReader segmentReader) 
+		/// <param name="aSegmentReader">where to extract aMetadata</param>
+		/// <returns>the aMetadata found</returns>
+		private static Metadata ExtractJpegSegmentReaderMetadata(JpegSegmentReader aSegmentReader) 
 		{
-			Metadata metadata = new Metadata();
+			Metadata lcMetadata = new Metadata();
 			try 
 			{
-				byte[] exifSegment =
-					segmentReader.ReadSegment(JpegSegmentReader.SEGMENT_APP1);
-				new ExifReader(exifSegment).Extract(metadata);
+				byte[] lcExifSegment =
+					aSegmentReader.ReadSegment(JpegSegmentReader.SEGMENT_APP1);
+				new ExifReader(lcExifSegment).Extract(lcMetadata);
 			} 
 			catch (JpegProcessingException ) 
 			{
 				// in the interests of catching as much data as possible, continue
-				// TODO lodge error message within exif directory?
+				// TODO log error aMessage within exif directory?
 			}
 
 			try 
 			{
-				byte[] iptcSegment =
-					segmentReader.ReadSegment(JpegSegmentReader.SEGMENT_APPD);
-				new IptcReader(iptcSegment).Extract(metadata);
+				byte[] lcIptcSegment =
+					aSegmentReader.ReadSegment(JpegSegmentReader.SEGMENT_APPD);
+				new IptcReader(lcIptcSegment).Extract(lcMetadata);
 			} 
-			catch (JpegProcessingException ) 
+			catch (Exception ) 
 			{
-				// TODO log error message within iptc directory?
+				// TODO log error aMessage within iptc directory?
 			}
 
 			try 
 			{
-				byte[] jpegSegment =
-					segmentReader.ReadSegment(JpegSegmentReader.SEGMENT_SOF0);
-				new JpegReader(jpegSegment).Extract(metadata);
+				byte[] lcJpegSegment =
+					aSegmentReader.ReadSegment(JpegSegmentReader.SEGMENT_SOF0);
+				new JpegReader(lcJpegSegment).Extract(lcMetadata);
 			} 
 			catch (JpegProcessingException ) 
 			{
-				// TODO log error message within jpeg directory?
+				// TODO log error aMessage within jpeg directory?
 			}
 
 			try 
 			{
-				byte[] jpegCommentSegment =
-					segmentReader.ReadSegment(JpegSegmentReader.SEGMENT_COM);
-				new JpegCommentReader(jpegCommentSegment).Extract(metadata);
+				byte[] lcJpegCommentSegment =
+					aSegmentReader.ReadSegment(JpegSegmentReader.SEGMENT_COM);
+				new JpegCommentReader(lcJpegCommentSegment).Extract(lcMetadata);
 			} 
 			catch (JpegProcessingException ) 
 			{
-				// TODO log error message within jpegcomment directory?
+				// TODO log error aMessage within jpegcomment directory?
 			}
 
-			return metadata;
+			return lcMetadata;
 		}
 
 		/// <summary>
-		/// Reads metadata from a JPEGDecodeParam object
+		/// Reads aMetadata from a JPEGDecodeParam object
 		/// </summary>
-		/// <param name="decodeParam">where to find metadata</param>
-		/// <returns>the metadata found</returns>
-		public static Metadata ReadMetadata(JPEGDecodeParam decodeParam) 
+		/// <param name="aDecodeParam">where to find aMetadata</param>
+		/// <returns>the aMetadata found</returns>
+		public static Metadata ReadMetadata(JPEGDecodeParam aDecodeParam) 
 		{
-			Metadata metadata = new Metadata();
+			Metadata lcMetadata = new Metadata();
 
 			// We should only really be seeing Exif in _data[0]... the 2D array exists
-			// because markers can theoretically appear multiple times in the file.			
+			// because markers can theoretically appear multiple times in the aFile.			
 			// TODO test this method
-			byte[][] exifSegment =
-				decodeParam.GetMarkerData(JPEGDecodeParam.APP1_MARKER);
-			if (exifSegment != null && exifSegment[0].Length > 0) 
+			byte[][] lcExifSegment =
+				aDecodeParam.GetMarkerData(JPEGDecodeParam.APP1_MARKER);
+			if (lcExifSegment != null && lcExifSegment[0].Length > 0) 
 			{
-				new ExifReader(exifSegment[0]).Extract(metadata);
+				new ExifReader(lcExifSegment[0]).Extract(lcMetadata);
 			}
 
 			// similarly, use only the first IPTC segment
-			byte[][] iptcSegment =
-				decodeParam.GetMarkerData(JPEGDecodeParam.APPD_MARKER);
-			if (iptcSegment != null && iptcSegment[0].Length > 0) 
+			byte[][] lcIptcSegment =
+				aDecodeParam.GetMarkerData(JPEGDecodeParam.APPD_MARKER);
+			if (lcIptcSegment != null && lcIptcSegment[0].Length > 0) 
 			{
-				new IptcReader(iptcSegment[0]).Extract(metadata);
+				new IptcReader(lcIptcSegment[0]).Extract(lcMetadata);
 			}
 
-			// NOTE: Unable to utilise JpegReader for the SOF0 frame here, as the decodeParam doesn't contain the byte[]
+			// NOTE: Unable to utilise JpegReader for the SOF0 frame here, as the aDecodeParam doesn't contain the byte[]
 
 			// similarly, use only the first Jpeg Comment segment
-			byte[][] jpegCommentSegment =
-				decodeParam.GetMarkerData(JPEGDecodeParam.COMMENT_MARKER);
-			if (jpegCommentSegment != null && jpegCommentSegment[0].Length > 0) 
+			byte[][] lcJpegCommentSegment =
+				aDecodeParam.GetMarkerData(JPEGDecodeParam.COMMENT_MARKER);
+			if (lcJpegCommentSegment != null && lcJpegCommentSegment[0].Length > 0) 
 			{
-				new JpegCommentReader(jpegCommentSegment[0]).Extract(metadata);
+				new JpegCommentReader(lcJpegCommentSegment[0]).Extract(lcMetadata);
 			}
 
-			return metadata;
-		}
-
-		/// <summary>
-		/// Constructor of the object
-		/// </summary>
-		/// <exception cref="Exception">Allways</exception>
-		private JpegMetadataReader() : base() 
-		{
-			throw new Exception("Do not use");
+			return lcMetadata;
 		}
 	}
 }
