@@ -45,8 +45,8 @@ namespace com.drew.metadata.exif
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
-		/// <param name="directory">a directory</param>
-		public FujifilmDescriptor(AbstractDirectory directory) : base(directory)
+		/// <param name="aDirectory">a base.directory</param>
+		public FujifilmDescriptor(AbstractDirectory aDirectory) : base(aDirectory)
 		{		
 		}
 
@@ -92,7 +92,7 @@ namespace com.drew.metadata.exif
 				case FujifilmDirectory.TAG_FUJIFILM_AE_WARNING :
 					return GetAutoExposureWarningDescription();
 				default :
-					return directory.GetString(tagType);
+					return base.directory.GetString(tagType);
 			}
 		}
 
@@ -102,11 +102,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Auto Exposure Description.</returns>
 		private string GetAutoExposureWarningDescription()
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_AE_WARNING))
 				return null;
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				FujifilmDirectory.TAG_FUJIFILM_AE_WARNING);
 			switch (aValue) 
 			{
@@ -125,11 +125,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Focus Warning Description.</returns>
 		private string GetFocusWarningDescription()  
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_FOCUS_WARNING))
 				return null;
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				FujifilmDirectory.TAG_FUJIFILM_FOCUS_WARNING);
 			switch (aValue) 
 			{
@@ -148,11 +148,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Blur Warning Description.</returns>
 		private string GetBlurWarningDescription()  
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_BLUR_WARNING))
 				return null;
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				FujifilmDirectory.TAG_FUJIFILM_BLUR_WARNING);
 			switch (aValue) 
 			{
@@ -171,13 +171,13 @@ namespace com.drew.metadata.exif
 		/// <returns>the Continuous Taking Or AutoBracketting Description.</returns>
 		private string GetContinuousTakingOrAutoBrackettingDescription()
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(
 				FujifilmDirectory
 				.TAG_FUJIFILM_CONTINUOUS_TAKING_OR_AUTO_BRACKETTING))
 				return null;
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				FujifilmDirectory
 				.TAG_FUJIFILM_CONTINUOUS_TAKING_OR_AUTO_BRACKETTING);
 			switch (aValue) 
@@ -197,11 +197,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Picture Mode Description.</returns>
 		private string GetPictureModeDescription()  
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_PICTURE_MODE))
 				return null;
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				FujifilmDirectory.TAG_FUJIFILM_PICTURE_MODE);
 			switch (aValue) 
 			{
@@ -234,11 +234,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Slow Sync Description.</returns>
 		private string GetSlowSyncDescription()  
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_SLOW_SYNCHRO))
 				return null;
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				FujifilmDirectory.TAG_FUJIFILM_SLOW_SYNCHRO);
 			switch (aValue) 
 			{
@@ -257,11 +257,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Focus Mode Description.</returns>
 		private string GetFocusModeDescription()  
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_FOCUS_MODE))
 				return null;
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				FujifilmDirectory.TAG_FUJIFILM_FOCUS_MODE);
 			switch (aValue) 
 			{
@@ -280,11 +280,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Macro Description.</returns>
 		private string GetMacroDescription()  
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_MACRO))
 				return null;
 			int aValue =
-				directory.GetInt(FujifilmDirectory.TAG_FUJIFILM_MACRO);
+				base.directory.GetInt(FujifilmDirectory.TAG_FUJIFILM_MACRO);
 			switch (aValue) 
 			{
 				case 0 :
@@ -302,12 +302,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Flash Strength Description.</returns>
 		private string GetFlashStrengthDescription()  
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(
 				FujifilmDirectory.TAG_FUJIFILM_FLASH_STRENGTH))
 				return null;
 			Rational aValue =
-				directory.GetRational(
+				base.directory.GetRational(
 				FujifilmDirectory.TAG_FUJIFILM_FLASH_STRENGTH);
 			return BUNDLE["FLASH_STRENGTH", aValue.ToSimpleString(false)];
 		}
@@ -318,11 +318,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Flash Mode Description.</returns>
 		private string GetFlashModeDescription()  
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_FLASH_MODE))
 				return null;
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				FujifilmDirectory.TAG_FUJIFILM_FLASH_MODE);
 			switch (aValue) 
 			{
@@ -345,11 +345,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Tone Description.</returns>
 		private string GetToneDescription()  
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_TONE))
 				return null;
 			int aValue =
-				directory.GetInt(FujifilmDirectory.TAG_FUJIFILM_TONE);
+				base.directory.GetInt(FujifilmDirectory.TAG_FUJIFILM_TONE);
 			switch (aValue) 
 			{
 				case 0 :
@@ -369,11 +369,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Color Description.</returns>
 		private string GetColorDescription()  
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_COLOR))
 				return null;
 			int aValue =
-				directory.GetInt(FujifilmDirectory.TAG_FUJIFILM_COLOR);
+				base.directory.GetInt(FujifilmDirectory.TAG_FUJIFILM_COLOR);
 			switch (aValue) 
 			{
 				case 0 :
@@ -393,11 +393,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the White Balance Description.</returns>
 		private string GetWhiteBalanceDescription()  
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_WHITE_BALANCE))
 				return null;
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				FujifilmDirectory.TAG_FUJIFILM_WHITE_BALANCE);
 			switch (aValue) 
 			{
@@ -428,11 +428,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Sharpness Description.</returns>
 		private string GetSharpnessDescription()  
 		{
-			if (!directory
+			if (!base.directory
 				.ContainsTag(FujifilmDirectory.TAG_FUJIFILM_SHARPNESS))
 				return null;
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				FujifilmDirectory.TAG_FUJIFILM_SHARPNESS);
 			switch (aValue) 
 			{

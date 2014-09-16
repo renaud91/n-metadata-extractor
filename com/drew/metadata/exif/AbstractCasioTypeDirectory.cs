@@ -1,7 +1,7 @@
 using System;
 using com.drew.metadata;
 using com.drew.lang;
-using com.utils;
+using com.utils.bundle;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -31,15 +31,13 @@ namespace com.drew.metadata.exif
     /// </summary>
 	public abstract class AbstractCasioTypeDirectory : AbstractDirectory 
 	{
-		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("CasioMarkernote");
-
-		/// <summary>
-		/// Provides the name of the directory, for display purposes.  E.g. Exif 
-		/// </summary>
-		/// <returns>the name of the directory</returns>
-		public override string GetName() 
-		{
-            return AbstractCasioTypeDirectory.BUNDLE["MARKER_NOTE_NAME"];
-		}
+        /// <summary>
+        /// Creates a new Directory. 
+        /// </summary>
+        /// <param name="aBundleName">bundle name for this directory</param>
+        protected AbstractCasioTypeDirectory(string aBundleName)
+            : base(aBundleName)
+        {
+        }
 	}
 }

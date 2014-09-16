@@ -4,10 +4,11 @@ using System.Text;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using com.drew.lang;
 using com.drew.metadata.iptc;
-using com.utils;
+using com.utils.bundle;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -37,35 +38,113 @@ namespace com.drew.metadata
 	/// methods for setting and getting tag values.
 	/// </summary>
 	[Serializable]
-	public abstract class AbstractDirectory 
-	{
+	public abstract class AbstractDirectory : IEnumerable<Tag>
+ 	{
+        /// <summary>
+        /// Returns an Iterator of Tag instances that have been set in this Directory. 
+        /// </summary>
+        /// <returns>an Iterator of Tag instances</returns>
+        IEnumerator<Tag> IEnumerable<Tag>.GetEnumerator()
+        {
+            return GetTagIterator();
+        }
+
+        /// <summary>
+        /// Returns an Iterator of Tag instances that have been set in this Directory. 
+        /// </summary>
+        /// <returns>an Iterator of Tag instances</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetTagIterator();
+        }
+
+        /// <summary>
+        /// List of date format that will be used if <i>standard</i> format does not work.
+        /// </summary>
+        private readonly static string[] DATE_FORMATS = new string[] { "dd/MM/yyyy HH:mm:ss", "yyyy:MM:dd HH:mm:ss", "yyyy-MM-dd_HH-mm-ss", "yyyy/MM/dd HH:mm:ss", "dd/MM/yyyy", "yyyy/MM/dd", "yyyy-MM-dd" };
+
 		/// <summary>
 		/// Map of values hashed by type identifiers. 
 		/// </summary>
-		protected Dictionary<int, object> tagMap;
+		private IDictionary<int, object> tagMap;
 
 		/// <summary>
-		/// The descriptor used to interperet tag values.
+		/// The descriptor used to interpret tag values.
 		/// </summary>
-		protected AbstractTagDescriptor descriptor;
+		private AbstractTagDescriptor descriptor;
 
 		/// <summary>
-		/// A convenient list holding tag values in the order in which they were stored. This is used for creation of an iterator, and for counting the number of defined tags. 
+		/// A convenient list holding tag values in the order in which they were stored. <br/>
+        /// This is used for creation of an iterator, and for counting the number of defined tags. 
 		/// </summary>
-		protected List<Tag> definedTagList;
+		private IList<Tag> definedTagList;
 
-		private List<string> errorList;
+        /// <summary>
+        /// The bundle name used by this directory.
+        /// </summary>
+        private string bundleName;
+        protected string BundleName
+        { 
+            get 
+            { 
+                return this.bundleName; 
+            }
+            set
+            {
+                this.bundleName = value;
+            }
+        }
+
+        /// <summary>
+        /// Indicates if there is error in this directory
+        /// </summary>
+		private bool hasError;
+        public bool HasError
+        {
+            get
+            {
+                return this.hasError;
+            }
+            set
+            {
+                this.hasError = value;
+            }
+        }
+
+        /// <summary>
+        /// Provides the map of tag names, hashed by tag type identifier. <br/>
+        /// Will contain all tag value and tag name for all descriptor.
+        /// </summary>
+        private static IDictionary<Type,IDictionary<int, string>> tagNameMap;
+
 
 
 		/// <summary>
 		/// Creates a new Directory. 
 		/// </summary>
-		public AbstractDirectory() : base()
+		private AbstractDirectory() : base()
 		{
             this.tagMap = new Dictionary<int, object>();
             this.definedTagList = new List<Tag>();
-            this.errorList = new List<string>(0);
+            this.HasError = false;
+            if (AbstractDirectory.tagNameMap == null)
+            {
+                AbstractDirectory.tagNameMap = new Dictionary<Type, IDictionary<int, string>>(25);
+            }
 		}
+
+        /// <summary>
+        /// Creates a new Directory. 
+        /// </summary>
+        /// <param name="aBundleName">bundle name for this directory</param>
+        protected AbstractDirectory(string aBundleName)
+            : this()
+        {
+            this.BundleName = aBundleName;
+            // Load the bundle
+            IResourceBundle bundle = ResourceBundleFactory.CreateDefaultBundle(aBundleName);
+            AbstractDirectory.tagNameMap[this.GetType()] = AbstractDirectory.FillTagMap(this.GetType(), bundle);
+        }
 
 		/// <summary>
 		/// Indicates whether the specified tag type has been set. 
@@ -104,45 +183,9 @@ namespace com.drew.metadata
 		{
 			if (aDescriptor == null) 
 			{
-				throw new NullReferenceException("cannot set a null descriptor");
+				throw new NullReferenceException("Cannot set a null descriptor");
 			}
             this.descriptor = aDescriptor;
-		}
-
-		/// <summary>
-		/// Adds an error
-		/// </summary>
-		/// <param name="aMessage">the error aMessage</param>
-		public void AddError(string aMessage) 
-		{
-            this.errorList.Add(aMessage);
-		}
-
-		/// <summary>
-		/// Checks if there is error
-		/// </summary>
-		/// <returns>true if there is error, false otherwise</returns>
-		public bool HasErrors() 
-		{
-            return this.errorList.Count > 0;
-		}
-
-		/// <summary>
-		/// Gets an enumerator upon errors
-		/// </summary>
-		/// <returns>en enumerator for errors</returns>
-		public IEnumerator<string> GetErrors() 
-		{
-            return this.errorList.GetEnumerator();
-		}
-
-		/// <summary>
-		/// Gives the number of errors
-		/// </summary>
-		/// <returns>the number of errors</returns>
-		public int GetErrorCount() 
-		{
-            return this.errorList.Count;
 		}
 
 		/// <summary>
@@ -165,7 +208,7 @@ namespace com.drew.metadata
 		{
 			if (aValue == null) 
 			{
-				throw new NullReferenceException("cannot set a null object");
+				throw new NullReferenceException("Cannot set a null object");
 			}
 
             if (!this.tagMap.ContainsKey(aTagType)) 
@@ -205,7 +248,6 @@ namespace com.drew.metadata
                 }
                 catch (FormatException)
                 {
-                    // convert the char array to an int
                     string lcStr = (string)lcObj;
                     int lcVal = 0;
                     for (int i = lcStr.Length - 1; i >= 0; i--)
@@ -236,10 +278,10 @@ namespace com.drew.metadata
                 }
                 catch (FormatException e)
                 {
-                    throw new MetadataException("Unable to parse as int object of type:'" + lcObj.GetType().Name + "' that look like:'" + lcObj.ToString() + "'", e);
+                    throw new MetadataException("Unable to parse as int object of type:'" + lcObj.GetType() + "' that look like:'" + lcObj.ToString() + "'", e);
                 }
             }
-            throw new MetadataException("Obj is :" + lcObj.GetType().Name + " and look like:" + lcObj.ToString());
+            throw new MetadataException("Obj is :" + lcObj.GetType() + " and look like:" + lcObj.ToString());
         }
 
 		/// <summary>
@@ -296,7 +338,7 @@ namespace com.drew.metadata
 				}
 				return lcStrings;
 			}
-            throw new MetadataException("Obj is :" + lcObj.GetType().Name + " and look like:" + lcObj.ToString());
+            throw new MetadataException("Obj is :" + lcObj.GetType() + " and look like:" + lcObj.ToString());
         }
 
 		/// <summary>
@@ -349,7 +391,7 @@ namespace com.drew.metadata
 				}
 				return lcInts;
 			}
-            throw new MetadataException("Obj is :" + lcObj.GetType().Name + " and look like:" + lcObj.ToString());
+            throw new MetadataException("Obj is :" + lcObj.GetType() + " and look like:" + lcObj.ToString());
         }
 
 		/// <summary>
@@ -402,7 +444,7 @@ namespace com.drew.metadata
 				}
 				return lcBytes;
 			}
-            throw new MetadataException("Obj is :" + lcObj.GetType().Name + " and look like:" + lcObj.ToString());
+            throw new MetadataException("Obj is :" + lcObj.GetType() + " and look like:" + lcObj.ToString());
         }
 
 		/// <summary>
@@ -432,10 +474,10 @@ namespace com.drew.metadata
                 }
                 catch (FormatException e)
                 {
-                    throw new MetadataException("Unable to parse as double object of type:'" + lcObj.GetType().Name + "' that look like:'" + lcObj.ToString() + "'", e);
+                    throw new MetadataException("Unable to parse as double object of type:'" + lcObj.GetType() + "' that look like:'" + lcObj.ToString() + "'", e);
                 }
             }
-            throw new MetadataException("Obj is :" + lcObj.GetType().Name + " and look like:" + lcObj.ToString());
+            throw new MetadataException("Obj is :" + lcObj.GetType() + " and look like:" + lcObj.ToString());
         }
 
 		/// <summary>
@@ -465,10 +507,10 @@ namespace com.drew.metadata
                 }
                 catch (FormatException e)
                 {
-                    throw new MetadataException("Unable to parse as float object of type:'" + lcObj.GetType().Name + "' that look like:'" + lcObj.ToString() + "'", e);
+                    throw new MetadataException("Unable to parse as float object of type:'" + lcObj.GetType() + "' that look like:'" + lcObj.ToString() + "'", e);
                 }
             }
-            throw new MetadataException("Obj is :" + lcObj.GetType().Name + " and look like:" + lcObj.ToString());
+            throw new MetadataException("Obj is :" + lcObj.GetType() + " and look like:" + lcObj.ToString());
         }
 
 		/// <summary>
@@ -498,10 +540,10 @@ namespace com.drew.metadata
                 }
                 catch (FormatException e)
                 {
-                    throw new MetadataException("Unable to parse as long object of type:'" + lcObj.GetType().Name + "' that look like:'" + lcObj.ToString() + "'", e);
+                    throw new MetadataException("Unable to parse as long object of type:'" + lcObj.GetType() + "' that look like:'" + lcObj.ToString() + "'", e);
                 }
             }
-            throw new MetadataException("Obj is :" + lcObj.GetType().Name + " and look like:" + lcObj.ToString());
+            throw new MetadataException("Obj is :" + lcObj.GetType() + " and look like:" + lcObj.ToString());
 		}
 
 		/// <summary>
@@ -531,10 +573,10 @@ namespace com.drew.metadata
 				} 
 				catch (FormatException e) 
 				{
-                    throw new MetadataException("Unable to parse as boolean object of type:'" + lcObj.GetType().Name + "' that look like:'" + lcObj.ToString() + "'", e);
+                    throw new MetadataException("Unable to parse as boolean object of type:'" + lcObj.GetType() + "' that look like:'" + lcObj.ToString() + "'", e);
                 }
 			}
-            throw new MetadataException("Obj is :" + lcObj.GetType().Name + " and look like:" + lcObj.ToString());
+            throw new MetadataException("Obj is :" + lcObj.GetType() + " and look like:" + lcObj.ToString());
 		}
 
 		/// <summary>
@@ -563,20 +605,55 @@ namespace com.drew.metadata
 				{
 					return DateTime.Parse(lcDateString);
 				} 
-				catch (FormatException ex) 
+				catch (FormatException) 
 				{
-					Console.Error.WriteLine(ex.StackTrace);
+                    // Was not able to parse date using standard format
+                    // We try the following format 
+                    DateTime resu = AbstractDirectory.ParseDate(lcDateString);
+                    if (resu == DateTime.Today)
+                    {
+                        Trace.TraceWarning("Was not able to parse date '"+lcDateString+"'");
+                    }
+                    return resu;
 				}
 			}
-            throw new MetadataException("Obj is :" + lcObj.GetType().Name + " and look like:" + lcObj.ToString());
+            throw new MetadataException("Obj is :" + lcObj.GetType() + " and look like:" + lcObj.ToString());
 		}
 
-		/// <summary>
-		/// Returns the specified tag value as a rational, if possible. 
-		/// </summary>
-		/// <param name="aTagType">the specified tag type</param>
-		/// <returns>the specified tag value as a rational, if possible.</returns>
-		public Rational GetRational(int aTagType) 
+        /// <summary>
+        /// Will try to transform the string in date. <br/>
+        /// Will use all date format found in DATE_FORMATS
+        /// </summary>
+        /// <param name="aDate">the date to parse</param>
+        /// <returns>the date found or today if none found (today because null is not a date in C#)</returns>
+        private static DateTime ParseDate(string aDate)
+        {
+            if (aDate == null || aDate.Trim().Length == 0)
+            {
+                return DateTime.Today;
+            }
+            for (int i = 0; i < DATE_FORMATS.Length; i++)
+            {
+                try
+                {
+                    return DateTime.ParseExact(aDate, DATE_FORMATS[i], null);
+                }
+                catch (FormatException)
+                {
+                    Debug.Write("Date '" + aDate + "' does not match patern '" + DATE_FORMATS[i] + "', will try an other one");
+                }
+            }
+            // If we get here it means that no format worked.
+            return DateTime.Today;
+        }
+
+
+        /// <summary>
+        /// Returns the specified tag value as a rational, if possible. 
+        /// </summary>
+        /// <param name="aTagType">the specified tag type</param>
+        /// <returns>the specified tag value as a rational, if possible.</returns>
+        public Rational GetRational(int aTagType) 
 		{
 			object lcObj = GetObject(aTagType);
 			if (lcObj == null) 
@@ -701,17 +778,18 @@ namespace com.drew.metadata
 		/// <returns>the tag name as a string</returns>
 		public string GetTagName(int aTagType) 
 		{		
-			Dictionary<int, string> lcNameMap = this.GetTagNameMap();
-			if (!lcNameMap.ContainsKey(aTagType)) 
+            if (!AbstractDirectory.tagNameMap[this.GetType()].ContainsKey(aTagType)) 
 			{
+                StringBuilder buff = new StringBuilder(32);
+                buff.Append("Unknown tag (0x");
 				string lcHex =  aTagType.ToString("X");
-				while (lcHex.Length < 4) 
-				{
-					lcHex = "0" + lcHex;
-				}
-				return "Unknown tag (0x" + lcHex + ")";
+                for (int i = 0; i < 4 - lcHex.Length; i++)
+                {
+                    buff.Append('0');
+                }
+                return buff.Append(lcHex).Append(')').ToString();
 			}
-			return lcNameMap[aTagType];
+            return AbstractDirectory.tagNameMap[this.GetType()][aTagType];
 		}
 
 		/// <summary>
@@ -734,23 +812,20 @@ namespace com.drew.metadata
         /// Provides the name of the directory, for display purposes.  E.g. Exif 
         /// </summary>
         /// <returns>the name of the directory</returns>
-        public abstract string GetName();
-
-        /// <summary>
-        /// Provides the map of tag names, hashed by tag type identifier. 
-        /// </summary>
-        /// <returns>the map of tag names</returns>
-        protected abstract Dictionary<int, string> GetTagNameMap();
+        public string GetName()
+        {
+            return ResourceBundleFactory.CreateDefaultBundle(this.BundleName)["MARKER_NOTE_NAME"];
+        }
 
         /// <summary>
         /// Fill the map with all (TAG_xxx value, BUNDLE[TAG_xxx name]).
         /// </summary>
         /// <param name="aType">where to look for fields like TAG_xxx</param>
         /// <param name="aTagMap">where to put tag found</param>
-        protected static Dictionary<int, string> FillTagMap(Type aType,  ResourceBundle aBundle)
+        protected static IDictionary<int, string> FillTagMap(Type aType, IResourceBundle aBundle)
         {
             FieldInfo[] lcAllContTag = aType.GetFields();
-            Dictionary<int, string> lcResu = new Dictionary<int, string>(lcAllContTag.Length);
+            IDictionary<int, string> lcResu = new Dictionary<int, string>(lcAllContTag.Length);
             for (int i = 0; i < lcAllContTag.Length; i++)
             {
                 string lcMemberName = lcAllContTag[i].Name;
@@ -763,7 +838,7 @@ namespace com.drew.metadata
                     }
                     catch (MissingResourceException mre)
                     {
-                        Console.Error.WriteLine(mre.Message);
+                        Trace.TraceError("Could not find the key '" + aType + "' for type '" + lcMemberName + "' (" + mre.Message + ")");
                     }
                 }
             }

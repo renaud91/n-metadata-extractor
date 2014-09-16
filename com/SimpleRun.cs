@@ -46,23 +46,16 @@ namespace com
             StringBuilder lcBuff = new StringBuilder(1024);
             lcBuff.Append("---> ").Append(aFileName).Append(" <---").AppendLine();
             // We want all directory, so we iterate on each
-            IEnumerator<AbstractDirectory> lcDirectoryEnum = lcMetadata.GetDirectoryIterator();
-            while (lcDirectoryEnum.MoveNext())
+            foreach(AbstractDirectory lcDirectory in lcMetadata)
             {
-                // We get the current directory
-                AbstractDirectory lcDirectory = lcDirectoryEnum.Current;
-                // We look for potentiel error
-                IEnumerator<string> lcErrorsEnum = lcDirectory.GetErrors();
-                while (lcErrorsEnum.MoveNext())
+                // We look for potential error
+                if (lcDirectory.HasError)
                 {
-                    Console.Error.WriteLine("Error Found: " + lcErrorsEnum.Current);
+                    Console.Error.WriteLine("Some errors were found, activate trace using /d:TRACE option with the compiler");
                 }
                 lcBuff.Append("---+ ").Append(lcDirectory.GetName()).AppendLine();
                 // Then we want all tags, so we iterate on the current directory
-                IEnumerator<Tag> lcTagsIterator = lcDirectory.GetTagIterator();
-                while (lcTagsIterator.MoveNext())
-                {
-                    Tag lcTag = lcTagsIterator.Current;
+                foreach(Tag lcTag in lcDirectory) {
                     string lcTagDescription = null;
                     try
                     {
@@ -75,14 +68,10 @@ namespace com
                     string lcTagName = lcTag.GetTagName();
                     lcBuff.Append(lcTagName).Append('=').Append(lcTagDescription).AppendLine();
 
-                    lcTag = null;
                     lcTagDescription = null;
                     lcTagName = null;
                 }
-                lcDirectory = null;
-                lcTagsIterator = null;
             }
-            lcDirectoryEnum = null;
             lcMetadata = null;
 
             return lcBuff.ToString();
@@ -112,25 +101,21 @@ namespace com
             StringBuilder lcBuff = new StringBuilder(1024);
             lcBuff.Append("---> ").Append(aFileName).Append(" <---").AppendLine();
             // We want anly IPCT directory
-            IptcDirectory lcIptDirectory = (IptcDirectory)lcMetadata.GetDirectory(Type.GetType("com.drew.metadata.iptc.IptcDirectory"));
+            IptcDirectory lcIptDirectory = (IptcDirectory)lcMetadata.GetDirectory("com.drew.metadata.iptc.IptcDirectory");
             if (lcIptDirectory == null)
             {
                 lcBuff.Append("No Iptc for this image.!").AppendLine();
                 return lcBuff.ToString();
             }
 
-            // We look for potentiel error
-            IEnumerator<string> lcErrorsEnum = lcIptDirectory.GetErrors();
-            while (lcErrorsEnum.MoveNext())
+            // We look for potential error
+            if (lcIptDirectory.HasError)
             {
-                Console.Error.WriteLine("Error Found: " + lcErrorsEnum.Current);
+                Console.Error.WriteLine("Some errors were found, activate trace using /d:TRACE option with the compiler");
             }
 
             // Then we want all tags, so we iterate on the Iptc directory
-            IEnumerator<Tag> lcTagsIterator = lcIptDirectory.GetTagIterator();
-            while (lcTagsIterator.MoveNext())
-            {
-                Tag lcTag = lcTagsIterator.Current;
+            foreach(Tag lcTag in lcIptDirectory) {
                 string lcTagDescription = null;
                 try
                 {
@@ -143,7 +128,6 @@ namespace com
                 string lcTagName = lcTag.GetTagName();
                 lcBuff.Append(lcTagName).Append('=').Append(lcTagDescription).AppendLine();
 
-                lcTag = null;
                 lcTagDescription = null;
                 lcTagName = null;
             }
@@ -175,18 +159,17 @@ namespace com
             StringBuilder lcBuff = new StringBuilder(1024);
             lcBuff.Append("---> ").Append(aFileName).Append(" <---").AppendLine();
             // We want anly IPCT directory
-            IptcDirectory lcIptDirectory = (IptcDirectory)lcMetadata.GetDirectory(Type.GetType("com.drew.metadata.iptc.IptcDirectory"));
+            IptcDirectory lcIptDirectory = (IptcDirectory)lcMetadata.GetDirectory("com.drew.metadata.iptc.IptcDirectory");
             if (lcIptDirectory == null)
             {
                 lcBuff.Append("No Iptc for this image.!").AppendLine();
                 return lcBuff.ToString();
             }
 
-            // We look for potentiel error
-            IEnumerator<string> lcErrorsEnum = lcIptDirectory.GetErrors();
-            while (lcErrorsEnum.MoveNext())
+            // We look for potential error
+            if (lcIptDirectory.HasError)
             {
-                Console.Error.WriteLine("Error Found: " + lcErrorsEnum.Current);
+                Console.Error.WriteLine("Some errors were found, activate trace using /d:TRACE option with the compiler");
             }
 
             // Then we want only the TAG_HEADLINE tag

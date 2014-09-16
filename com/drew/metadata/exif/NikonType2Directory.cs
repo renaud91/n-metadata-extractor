@@ -435,24 +435,13 @@ namespace com.drew.metadata.exif
         /// </summary>
         public const int TAG_NIKON_TYPE2_UNKNOWN_16 = 0x0E10;
 
-        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.exif.NikonType2Directory"), BUNDLE);
-
 		/// <summary>
 		/// Constructor of the object.
 		/// </summary>
-		public NikonType2Directory() : base()
+        public NikonType2Directory()
+            : base("NikonTypeMarkernote")
 		{
 			this.SetDescriptor(new NikonType2Descriptor(this));
 		}
-
-		/// <summary>
-		/// Provides the map of tag names, hashed by tag type identifier. 
-		/// </summary>
-		/// <returns>the map of tag names</returns>
-        protected override Dictionary<int, string> GetTagNameMap() 
-		{
-			return tagNameMap;
-		}
-
 	}
 }

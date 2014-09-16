@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using com.drew.metadata;
 using com.drew.lang;
-using com.utils;
+using com.utils.bundle;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -131,59 +131,15 @@ namespace com.drew.metadata.exif
         /// </summary>
         public const int TAG_PENTAX_DAYLIGHT_SAVINGS = 0x1001;
 
-		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("PentaxMarkernote");
-        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.exif.PentaxDirectory"), BUNDLE);
-
-		/// <summary>
-		/// Initialize the tag map.
-		/// </summary>
-		/// <returns>the tag map</returns>
-        private static Dictionary<int, string> InitTagMap() 
-		{
-            Dictionary<int, string> resu = new Dictionary<int, string>();
-            resu.Add(TAG_PENTAX_CAPTURE_MODE, BUNDLE["TAG_PENTAX_CAPTURE_MODE"]);
-            resu.Add(TAG_PENTAX_QUALITY_LEVEL, BUNDLE["TAG_PENTAX_QUALITY_LEVEL"]);
-            resu.Add(TAG_PENTAX_FOCUS_MODE, BUNDLE["TAG_PENTAX_FOCUS_MODE"]);
-            resu.Add(TAG_PENTAX_FLASH_MODE, BUNDLE["TAG_PENTAX_FLASH_MODE"]);
-            resu.Add(TAG_PENTAX_WHITE_BALANCE, BUNDLE["TAG_PENTAX_WHITE_BALANCE"]);
-            resu.Add(TAG_PENTAX_DIGITAL_ZOOM, BUNDLE["TAG_PENTAX_DIGITAL_ZOOM"]);
-            resu.Add(TAG_PENTAX_SHARPNESS, BUNDLE["TAG_PENTAX_SHARPNESS"]);
-            resu.Add(TAG_PENTAX_CONTRAST, BUNDLE["TAG_PENTAX_CONTRAST"]);
-            resu.Add(TAG_PENTAX_SATURATION, BUNDLE["TAG_PENTAX_SATURATION"]);
-            resu.Add(TAG_PENTAX_ISO_SPEED, BUNDLE["TAG_PENTAX_ISO_SPEED"]);
-            resu.Add(TAG_PENTAX_COLOR, BUNDLE["TAG_PENTAX_COLOR"]);
-            resu.Add(TAG_PENTAX_PRINT_IMAGE_MATCHING_INFO, BUNDLE["TAG_PENTAX_PRINT_IMAGE_MATCHING_INFO"]);
-            resu.Add(TAG_PENTAX_TIME_ZONE, BUNDLE["TAG_PENTAX_TIME_ZONE"]);
-            resu.Add(TAG_PENTAX_DAYLIGHT_SAVINGS, BUNDLE["TAG_PENTAX_DAYLIGHT_SAVINGS"]);
-
-            return resu;
-		}
 
 		/// <summary>
 		/// Constructor of the object.
 		/// </summary>
         public PentaxDirectory()
-            : base()
+            : base("PentaxMarkernote")
 		{
 			this.SetDescriptor(new PentaxDescriptor(this));
 		}
 
-		/// <summary>
-		/// Provides the name of the directory, for display purposes.  E.g. Exif 
-		/// </summary>
-		/// <returns>the name of the directory</returns>
-		public override string GetName() 
-		{
-			return BUNDLE["MARKER_NOTE_NAME"];
-		}
-
-		/// <summary>
-		/// Provides the map of tag names, hashed by tag type identifier. 
-		/// </summary>
-		/// <returns>the map of tag names</returns>
-        protected override Dictionary<int, string> GetTagNameMap() 
-		{
-			return tagNameMap;
-		}
 	}
 }

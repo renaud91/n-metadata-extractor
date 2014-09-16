@@ -88,7 +88,11 @@ namespace com.utils
             List<string> lcResult = new List<string>();
             if (File.Exists(aRootDirectory))
             {
-                lcResult.Add(aRootDirectory);
+                FileInfo f = new FileInfo(aRootDirectory);
+                if (aSearchPattern.Contains(f.Extension))
+                {
+                    lcResult.Add(aRootDirectory);
+                }
             }
             else if (Directory.Exists(aRootDirectory))
             {

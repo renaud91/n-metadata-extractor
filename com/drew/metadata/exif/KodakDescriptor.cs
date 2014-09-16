@@ -55,7 +55,7 @@ namespace com.drew.metadata.exif
         /// <returns>a description of the image'str value for the specified tag, or null if the tag hasn't been defined.</returns>
         public override string GetDescription(int aTagType)
         {
-            return directory.GetString(aTagType);
+            return base.directory.GetString(aTagType);
         }
 	}
 }

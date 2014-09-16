@@ -41,8 +41,8 @@ namespace com.drew.metadata.exif
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
-		/// <param name="directory">a directory</param>
-		public NikonType1Descriptor(AbstractDirectory directory) : base(directory)
+		/// <param name="aDirectory">a base.directory</param>
+		public NikonType1Descriptor(AbstractDirectory aDirectory) : base(aDirectory)
 		{		
 		}
 
@@ -76,7 +76,7 @@ namespace com.drew.metadata.exif
 				case NikonType1Directory.TAG_NIKON_TYPE1_CONVERTER :
 					return GetConverterDescription();
 				default :
-					return directory.GetString(tagType);
+					return base.directory.GetString(tagType);
 			}
 		}
 
@@ -86,14 +86,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Converter Description.</returns>
 		private string GetConverterDescription()  
 		{
-            if (!directory
+            if (!base.directory
                 .ContainsTag(
                 NikonType1Directory.TAG_NIKON_TYPE1_CONVERTER))
             {
                 return null;
             }
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				NikonType1Directory.TAG_NIKON_TYPE1_CONVERTER);
 			switch (aValue) 
 			{
@@ -112,14 +112,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Digital Zoom Description.</returns>
 		private string GetDigitalZoomDescription()  
 		{
-            if (!directory
+            if (!base.directory
                 .ContainsTag(
                 NikonType1Directory.TAG_NIKON_TYPE1_DIGITAL_ZOOM))
             {
                 return null;
             }
 			Rational aValue =
-				directory.GetRational(
+				base.directory.GetRational(
 				NikonType1Directory.TAG_NIKON_TYPE1_DIGITAL_ZOOM);
 			if (aValue.GetNumerator() == 0) 
 			{
@@ -134,13 +134,13 @@ namespace com.drew.metadata.exif
 		/// <returns>the Focus Description.</returns>
 		private string GetFocusDescription()  
 		{
-            if (!directory
+            if (!base.directory
                 .ContainsTag(NikonType1Directory.TAG_NIKON_TYPE1_FOCUS))
             {
                 return null;
             }
 			Rational aValue =
-				directory.GetRational(
+				base.directory.GetRational(
 				NikonType1Directory.TAG_NIKON_TYPE1_FOCUS);
 			if (aValue.GetNumerator() == 1 && aValue.GetDenominator() == 0) 
 			{
@@ -155,7 +155,7 @@ namespace com.drew.metadata.exif
 		/// <returns>the White Balance Description.</returns>
 		private string GetWhiteBalanceDescription()  
 		{
-            if (!directory
+            if (!base.directory
                 .ContainsTag(
                 NikonType1Directory.TAG_NIKON_TYPE1_WHITE_BALANCE))
             {
@@ -163,7 +163,7 @@ namespace com.drew.metadata.exif
                 return null;
             }
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				NikonType1Directory.TAG_NIKON_TYPE1_WHITE_BALANCE);
 			switch (aValue) 
 			{
@@ -192,14 +192,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Ccd Sensitivity Description.</returns>
 		private string GetCcdSensitivityDescription()  
 		{
-            if (!directory
+            if (!base.directory
                 .ContainsTag(
                 NikonType1Directory.TAG_NIKON_TYPE1_CCD_SENSITIVITY))
             {
                 return null;
             }
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				NikonType1Directory.TAG_NIKON_TYPE1_CCD_SENSITIVITY);
 			switch (aValue) 
 			{
@@ -222,14 +222,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Image Adjustment Description.</returns>
 		private string GetImageAdjustmentDescription()  
 		{
-            if (!directory
+            if (!base.directory
                 .ContainsTag(
                 NikonType1Directory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT))
             {
                 return null;
             }
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				NikonType1Directory.TAG_NIKON_TYPE1_IMAGE_ADJUSTMENT);
 			switch (aValue) 
 			{
@@ -254,14 +254,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Color Mode Description.</returns>
 		private string GetColorModeDescription()  
 		{
-            if (!directory
+            if (!base.directory
                 .ContainsTag(
                 NikonType1Directory.TAG_NIKON_TYPE1_COLOR_MODE))
             {
                 return null;
             }
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				NikonType1Directory.TAG_NIKON_TYPE1_COLOR_MODE);
 			switch (aValue) 
 			{
@@ -280,13 +280,13 @@ namespace com.drew.metadata.exif
 		/// <returns>the Quality Description.</returns>
 		private string GetQualityDescription()  
 		{
-            if (!directory
+            if (!base.directory
                 .ContainsTag(NikonType1Directory.TAG_NIKON_TYPE1_QUALITY))
             {
                 return null;
             }
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				NikonType1Directory.TAG_NIKON_TYPE1_QUALITY);
 			switch (aValue) 
 			{

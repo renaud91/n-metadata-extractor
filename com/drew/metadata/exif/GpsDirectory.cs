@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using com.drew.metadata;
 using com.drew.lang;
-using com.utils;
+using com.utils.bundle;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -144,33 +144,13 @@ namespace com.drew.metadata.exif
 		/// </summary>
 		public const int TAG_GPS_DEST_DISTANCE = 0x001A;
 
-		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("GpsMarkernote");
-        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.exif.GpsDirectory"), BUNDLE);
-
 		/// <summary>
 		/// Constructor of the object.
 		/// </summary>
-		public GpsDirectory() : base()
+        public GpsDirectory()
+            : base("GpsMarkernote")
 		{
 			this.SetDescriptor(new GpsDescriptor(this));
-		}
-
-		/// <summary>
-		/// Provides the name of the directory, for display purposes.  E.g. Exif 
-		/// </summary>
-		/// <returns>the name of the directory</returns>
-		public override string GetName() 
-		{
-			return BUNDLE["MARKER_NOTE_NAME"];
-		}
-
-		/// <summary>
-		/// Provides the map of tag names, hashed by tag type identifier. 
-		/// </summary>
-		/// <returns>the map of tag names</returns>
-        protected override Dictionary<int, string> GetTagNameMap() 
-		{
-			return tagNameMap;
 		}
 	} 
 }

@@ -164,7 +164,7 @@ namespace com.drew.imaging.jpg
         /// <summary>
         /// Constructor of the object
         /// </summary>
-        /// <param name="aStream">where to read</param>
+        /// <param name="aStream">where to read.</param>
         public JpegSegmentReader(Stream aStream)
         {
             this.stream = aStream;
@@ -290,6 +290,7 @@ namespace com.drew.imaging.jpg
                 if (lcInStream != null)
                 {
                     lcInStream.Close();
+                    lcInStream.Dispose();
                 }
             }
         }
@@ -346,6 +347,33 @@ namespace com.drew.imaging.jpg
             byte[] lcHeader = new byte[2];
             aFileStream.Read(lcHeader, 0, 2);
             return ((lcHeader[0] & 0xFF) == 0xFF && (lcHeader[1] & 0xFF) == 0xD8);
+        }
+
+        /// <summary>
+        /// Close the stream.
+        /// </summary>
+        public void Close()
+        {
+            if (this.stream != null)
+            {
+                this.stream.Close();
+            }
+        }
+
+        /// <summary>
+        /// Dispose the stream and all object linked with it
+        /// </summary>
+        public void Dispose()
+        {
+            if (this.stream != null)
+            {
+                this.stream.Close();
+                this.stream.Dispose();
+            }
+            if (this.file != null)
+            {
+                this.file = null;
+            }
         }
     }
 }

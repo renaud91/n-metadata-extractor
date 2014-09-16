@@ -35,8 +35,8 @@ namespace com.drew.metadata.exif
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
-		/// <param name="directory">a directory</param>
-		public ExifInteropDescriptor(AbstractDirectory directory) : base(directory)
+		/// <param name="base.directory">a base.directory</param>
+		public ExifInteropDescriptor(AbstractDirectory aDirectory) : base(aDirectory)
 		{
 		}
 
@@ -58,7 +58,7 @@ namespace com.drew.metadata.exif
 				case ExifInteropDirectory.TAG_INTEROP_VERSION:
 					return GetInteropVersionDescription();
 				default:
-					return directory.GetString(tagType);
+					return base.directory.GetString(tagType);
 			}
 		}
 
@@ -68,10 +68,10 @@ namespace com.drew.metadata.exif
 		/// <returns>the Interop Version Description.</returns>
 		private string GetInteropVersionDescription()  
 		{
-			if (!directory.ContainsTag(ExifInteropDirectory.TAG_INTEROP_VERSION))
+			if (!base.directory.ContainsTag(ExifInteropDirectory.TAG_INTEROP_VERSION))
 				return null;
 			int[] ints =
-				directory.GetIntArray(ExifInteropDirectory.TAG_INTEROP_VERSION);
+				base.directory.GetIntArray(ExifInteropDirectory.TAG_INTEROP_VERSION);
 			return ExifDescriptor.ConvertBytesToVersionString(ints);
 		}
 
@@ -81,10 +81,10 @@ namespace com.drew.metadata.exif
 		/// <returns>the Interop index Description.</returns>
 		private string GetInteropIndexDescription() 
 		{
-			if (!directory.ContainsTag(ExifInteropDirectory.TAG_INTEROP_INDEX))
+			if (!base.directory.ContainsTag(ExifInteropDirectory.TAG_INTEROP_INDEX))
 				return null;
 			string interopIndex =
-				directory.GetString(ExifInteropDirectory.TAG_INTEROP_INDEX).Trim();
+				base.directory.GetString(ExifInteropDirectory.TAG_INTEROP_INDEX).Trim();
 			if ("R98".Equals(interopIndex.ToUpper())) 
 			{
 				return BUNDLE["RECOMMENDED_EXIF_INTEROPERABILITY"];

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Collections;
-using com.utils;
+using com.utils.bundle;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -33,9 +33,9 @@ namespace com.drew.metadata
 	public abstract class AbstractTagDescriptor 
 	{
         /// <summary>
-        /// Contains all words.
+        /// Contains all commons words.
         /// </summary>
-		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("Commons");
+        protected static readonly IResourceBundle BUNDLE = ResourceBundleFactory.CreateDefaultBundle("Commons");
 
 		protected AbstractDirectory directory;
 

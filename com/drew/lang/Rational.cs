@@ -67,16 +67,18 @@ namespace com.drew.lang
         }
 
         /// <summary>
-        /// Returns the value of the specified number as a double. This may involve rounding. 
+        /// Returns the value of the specified number as a double. This may involve rounding. <br/>
+        /// Caution: if denominator is 0, then result in Double.PositiveInfinity or Double.NegativeInfinity.
         /// </summary>
         /// <returns>the numeric value represented by this object after conversion to type double.</returns>
-        public double DoubleValue()
+        public double DoubleValue()        
         {
             return (double)this.numerator / (double)this.denominator;
         }
 
         /// <summary>
         /// Returns the value of the specified number as a float. This may involve rounding.
+        /// Caution: if denominator is 0, then result in Double.PositiveInfinity or Double.NegativeInfinity.
         /// </summary>
         /// <returns>the numeric value represented by this object after conversion to type float.</returns>
         public float FloatValue()
@@ -85,20 +87,21 @@ namespace com.drew.lang
         }
 
         /// <summary>
-        /// Returns the value of the specified number as a byte. 
-        /// This may involve rounding or truncation.  
-        /// This implementation simply casts the result of doubleValue() to byte. 
+        /// Returns the value of the specified number as a byte.  This may involve rounding or truncation.  
+        /// This implementation simply casts the result of doubleValue() to byte. If denominator is 0 then
+        /// value returned is Byte.MinValue.
         /// </summary>
         /// <returns>the numeric value represented by this object after conversion to type byte.</returns>
         public byte ByteValue()
-        {
+        {            
             return (byte)this.DoubleValue();
         }
 
         /// <summary>
         /// Returns the value of the specified number as an int. 
         /// This may involve rounding or truncation.
-        /// This implementation simply casts the result of doubleValue() to int. 
+        /// This implementation simply casts the result of doubleValue() to int. If denominator is 0 then
+        /// value returned is Integer.MinValue.
         /// </summary>
         /// <returns>the numeric value represented by this object after conversion to type int.</returns>
         public int IntValue()
@@ -109,7 +112,8 @@ namespace com.drew.lang
         /// <summary>
         /// Returns the value of the specified number as a long.
         /// This may involve rounding or truncation.
-        /// This implementation simply casts the result of doubleValue() to long.
+        /// This implementation simply casts the result of doubleValue() to long. If denominator is 0 then
+        /// value returned is Long.MinValue.
         /// </summary>
         /// <returns>the numeric value represented by this object after conversion to type long.</returns>
         public long LongValue()
@@ -120,7 +124,8 @@ namespace com.drew.lang
         /// <summary>
         /// Returns the value of the specified number as a short. 
         /// This may involve rounding or truncation.
-        /// This implementation simply casts the result of doubleValue() to short. 
+        /// This implementation simply casts the result of doubleValue() to short. If denominator is 0 then
+        /// value returned is Short.MinValue.
         /// </summary>
         /// <returns>the numeric value represented by this object after conversion to type short.</returns>
         public short ShortValue()

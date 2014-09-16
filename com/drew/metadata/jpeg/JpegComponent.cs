@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.IO;
 using com.drew.metadata;
+using System.Text;
 
 
 /// <summary>
@@ -33,33 +34,62 @@ namespace com.drew.metadata.jpeg
 	[Serializable]
 	public class JpegComponent 
 	{
-		private int _componentId;
-		private int _samplingFactorByte;
-		private int _quantizationTableNumber;
+		private int componentId;
+        public int ComponentId
+        {
+            get
+            {
+                return this.componentId;
+            }
+        }
+
+		private int quantizationTableNumber;
+        public int QuantizationTableNumber
+        {
+            get
+            {
+                return this.quantizationTableNumber;
+            }
+        }
+
+        private int samplingFactorByte;
+        /// <summary>
+        /// Gets the Horizontal Sampling Factor
+        /// </summary>
+        /// <returns>the Horizontal Sampling Factor</returns>
+        public int HorizontalSamplingFactor
+        {
+            get
+            {
+                return this.samplingFactorByte & 0x0F;
+            }
+        }
+        /// <summary>
+        /// Gets the Vertical Sampling Factor
+        /// </summary>
+        /// <returns>the Vertical Sampling Factor</returns>
+        public int VerticalSamplingFactor
+        {
+            get
+            {
+                return (this.samplingFactorByte >> 4) & 0x0F;
+            }
+        }
 
 		/// <summary>
 		/// The constructor of the object
 		/// </summary>
-		/// <param name="componentId">the component id</param>
-		/// <param name="samplingFactorByte">the sampling lcFactor byte</param>
-		/// <param name="quantizationTableNumber">the quantization table number</param>
+		/// <param name="aComponentId">the component id</param>
+		/// <param name="aSamplingFactorByte">the sampling lcFactor byte</param>
+		/// <param name="aQuantizationTableNumber">the quantization table number</param>
 		public JpegComponent(
-			int componentId,
-			int samplingFactorByte,
-			int quantizationTableNumber) : base()
+			int aComponentId,
+			int aSamplingFactorByte,
+			int aQuantizationTableNumber) : base()
 		{
-			_componentId = componentId;
-			_samplingFactorByte = samplingFactorByte;
-			_quantizationTableNumber = quantizationTableNumber;
-		}
-
-		/// <summary>
-		/// Gets the component id
-		/// </summary>
-		/// <returns>the component id</returns>
-		public int GetComponentId() 
-		{
-			return _componentId;
+			this.componentId = aComponentId;
+			this.samplingFactorByte = aSamplingFactorByte;
+			this.quantizationTableNumber = aQuantizationTableNumber;
 		}
 
 		/// <summary>
@@ -68,7 +98,7 @@ namespace com.drew.metadata.jpeg
 		/// <returns>The component name</returns>
 		public string GetComponentName() 
 		{
-			switch (_componentId) 
+			switch (this.componentId) 
 			{
 				case 1 :
 					return "Y";
@@ -80,36 +110,22 @@ namespace com.drew.metadata.jpeg
 					return "I";
 				case 5 :
 					return "Q";
-			}
-
-			throw new MetadataException("Unsupported component id: " + _componentId);
+                default :
+                    throw new MetadataException("Unsupported component id: " + this.componentId);
+			}			
 		}
 
-		/// <summary>
-		/// Gets the Quantization Table Number
-		/// </summary>
-		/// <returns>the Quantization Table Number</returns>
-		public int GetQuantizationTableNumber() 
-		{
-			return _quantizationTableNumber;
-		}
-
-		/// <summary>
-		/// Gets the Horizontal Sampling Factor
-		/// </summary>
-		/// <returns>the Horizontal Sampling Factor</returns>
-		public int GetHorizontalSamplingFactor() 
-		{
-			return _samplingFactorByte & 0x0F;
-		}
-
-		/// <summary>
-		/// Gets the Vertical Sampling Factor
-		/// </summary>
-		/// <returns>the Vertical Sampling Factor</returns>
-		public int GetVerticalSamplingFactor() 
-		{
-			return (_samplingFactorByte >> 4) & 0x0F;
-		}
+        /// <summary>
+        /// Gives a representation of the JpegComponent.
+        /// </summary>
+        /// <returns>The JpegComponent in a readable way</returns>
+        public override string ToString()
+        {
+            StringBuilder buff = new StringBuilder();
+            buff.Append(this.componentId).Append(',');
+		    buff.Append(this.samplingFactorByte).Append(',');
+		    buff.Append(this.quantizationTableNumber).Append(',');
+            return buff.ToString();
+        }
 	}
 }

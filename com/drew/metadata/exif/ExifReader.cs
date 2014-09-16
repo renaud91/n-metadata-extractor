@@ -7,6 +7,7 @@ using com.drew.metadata;
 using com.drew.imaging.jpg;
 using com.drew.lang;
 using com.utils;
+using System.Diagnostics;
 
 /// <summary>
 /// This class based upon code from Jhead, a C program for extracting and 
@@ -65,24 +66,34 @@ namespace com.drew.metadata.exif
     /// the camera/scanner/capture device (if available).  
     /// Information is encapsulated in an Metadata object.
     /// </summary>
-    public class ExifReader : IMetadataReader
+    public class ExifReader : AbstractMetadataReader
     {
-        /// <summary>
-        /// The JPEG segment as an array of bytes.
-        /// </summary>
-        private byte[] _data;
 
         /// <summary>
         /// Represents the native byte ordering used in the JPEG segment.
         /// If true, then we're using Motorolla ordering (Big endian), else 
         /// we're using Intel ordering (Little endian).
         /// </summary>
-        private bool _isMotorollaByteOrder;
+        private bool isMotorollaByteOrder;
 
         /// <summary>
         /// Bean instance to store information about the image and camera/scanner/capture device.
         /// </summary>
-        private Metadata _metadata;
+        private Metadata metadata;
+        private ExifDirectory _exifDirectory;
+        private ExifDirectory ExifDirectory
+        {
+            get
+            {
+                if (this._exifDirectory == null)
+                {
+                    this._exifDirectory = (ExifDirectory)this.metadata.GetDirectory("com.drew.metadata.exif.ExifDirectory");
+
+                }
+                return this._exifDirectory;
+            }
+        }
+
 
         /// <summary>
         /// The number of bytes used per format descriptor.
@@ -119,87 +130,152 @@ namespace com.drew.metadata.exif
 
         private const string MARK_AS_PROCESSED = "processed";
 
-        /// <summary>
-        /// Constructor of the object
-        /// </summary>
-        /// <param name="aFile">the aFile to read</param>
-        public ExifReader(FileInfo file)
-            : this(
-            new JpegSegmentReader(file).ReadSegment(
-            JpegSegmentReader.SEGMENT_APP1))
-        {
-        }
 
-        /**
-         * Creates an ExifReader for the given JPEG lcHeader segment.
-         */
+        /// <summary>
+		/// Creates a new ExifReader for the specified Jpeg jpegFile.
+		/// </summary>
+        /// <param name="aFile">where to read</param>
+        public ExifReader(FileInfo aFile)
+            : base(aFile, JpegSegmentReader.SEGMENT_APP1)
+		{
+		}
 
         /// <summary>
         /// Constructor of the object
         /// </summary>
-        /// <param name="data">the data</param>
-        public ExifReader(byte[] data)
+        /// <param name="data">the data to read</param>
+        public ExifReader(byte[] aData)
+            : base(aData)
         {
-            _data = data;
         }
 
         /// <summary>
-        /// Performs the Exif data extraction, returning a new instance of Metadata. 
+        /// Extract tiff information (used by raw files)
         /// </summary>
-        /// <returns>a new instance of Metadata</returns>
-        public Metadata Extract()
+        /// <param name="aMetadata">where to extract information</param>
+        /// <returns>the information extracted</returns>
+        public Metadata ExtractTiff(Metadata aMetadata)
         {
-            return Extract(new Metadata());
+            return this.ExtractIFD(aMetadata, 0);
         }
+
+        /// <summary>
+        /// Reads metatdata from raw file.
+        /// </summary>
+        /// <param name="aMetadata">a meta data</param>
+        /// <param name="aTiffHeaderOffset">an offset</param>
+        /// <returns>the metadata found</returns>
+        private Metadata ExtractIFD(Metadata aMetadata, int aTiffHeaderOffset)
+        {
+            this.metadata = aMetadata;
+            if (base.data == null)
+            {
+                return this.metadata;
+            }
+
+            ExifDirectory directory = this.ExifDirectory;
+
+            // this should be either "MM" or "II"
+            string byteOrderIdentifier = Utils.Decode(base.data, aTiffHeaderOffset, 2, false);
+            if (!this.SetByteOrder(byteOrderIdentifier))
+            {
+                directory.HasError = true;
+                Trace.TraceError("Unclear distinction between Motorola/Intel byte ordering: "
+                        + byteOrderIdentifier);
+                return this.metadata;
+            }
+
+            // Check the next two values for correctness.
+            if (this.Get16Bits(2 + aTiffHeaderOffset) != 0x2a)
+            {
+              //  directory.AddError("Invalid Exif start - should have 0x2A at offset 8 in Exif header");
+              //  return this.metadata;
+            }
+
+            int firstDirectoryOffset = this.Get32Bits(4 + aTiffHeaderOffset) + aTiffHeaderOffset;
+
+            // David Ekholm sent an digital camera image that has this problem
+            if (firstDirectoryOffset >= base.data.Length - 1)
+            {
+                directory.HasError = true;
+                Trace.TraceError("First exif directory offset is beyond end of Exif data segment");
+                // First directory normally starts 14 bytes in -- try it here and catch another error in the worst case
+                firstDirectoryOffset = 14;
+            }
+
+            IDictionary<int, string> processedDirectoryOffsets = new Dictionary<int, string>();
+
+            // 0th IFD (we merge with Exif IFD)
+            try
+            {
+                this.ProcessDirectory(directory, processedDirectoryOffsets,
+                    firstDirectoryOffset, aTiffHeaderOffset);
+            }
+            catch (Exception e)
+            {
+                throw new MetadataException(e);
+            }
+
+            // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
+            this.StoreThumbnailBytes(directory, aTiffHeaderOffset);
+
+            return this.metadata;
+        }
+
 
         /// <summary>
         /// Performs the Exif data extraction, adding found values to the specified instance of Metadata.
         /// </summary>
         /// <param name="aMetadata">where to add meta data</param>
         /// <returns>the aMetadata</returns>
-        public Metadata Extract(Metadata metadata)
+        public override Metadata Extract(Metadata metadata)
         {
-            _metadata = metadata;
-            if (_data == null)
+            this.metadata = metadata;
+            if (base.data == null)
             {
-                return _metadata;
+                return this.metadata;
             }
 
             // once we know there'str some data, create the directory and start working on it
-            ExifDirectory directory = (ExifDirectory)_metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.ExifDirectory"));
+            AbstractDirectory directory = this.metadata.GetDirectory("com.drew.metadata.exif.ExifDirectory");
 
-            if (_data.Length <= 14)
+            if (base.data.Length <= 14)
             {
-                directory.AddError("Exif data segment must contain at least 14 bytes");
-                return _metadata;
+                directory.HasError = true;
+                Trace.TraceError("Exif data segment must contain at least 14 bytes");
+                return this.metadata;
             }
-            if (!"Exif\0\0".Equals(Utils.Decode(_data, 0, 6, false)))
+            if (!"Exif\0\0".Equals(Utils.Decode(base.data, 0, 6, false)))
             {
-                directory.AddError("Exif data segment doesn't begin with 'Exif'");
-                return _metadata;
+                directory.HasError = true;
+                Trace.TraceError("Exif data segment doesn't begin with 'Exif'");
+                return this.metadata;
             }
 
             // this should be either "MM" or "II"
-            string byteOrderIdentifier = Utils.Decode(_data, 6, 2, false);
+            string byteOrderIdentifier = Utils.Decode(base.data, 6, 2, false);
             if (!SetByteOrder(byteOrderIdentifier))
             {
-                directory.AddError("Unclear distinction between Motorola/Intel byte ordering");
-                return _metadata;
+                directory.HasError = true;
+                Trace.TraceError("Unclear distinction between Motorola/Intel byte ordering");
+                return this.metadata;
             }
 
             // Check the next two values for correctness.
             if (Get16Bits(8) != 0x2a)
             {
-                directory.AddError("Invalid Exif start - should have 0x2A at offSet 8 in Exif header");
-                return _metadata;
+                directory.HasError = true;
+                Trace.TraceError("Invalid Exif start - should have 0x2A at offSet 8 in Exif header");
+                return this.metadata;
             }
 
             int firstDirectoryOffSet = Get32Bits(10) + TIFF_HEADER_START_OFFSET;
 
             // David Ekholm sent an digital camera image that has this problem
-            if (firstDirectoryOffSet >= _data.Length - 1)
+            if (firstDirectoryOffSet >= base.data.Length - 1)
             {
-                directory.AddError("First exif directory offSet is beyond end of Exif data segment");
+                directory.HasError = true;
+                Trace.TraceError("First exif directory offSet is beyond end of Exif data segment");
                 // First directory normally starts 14 bytes in -- try it here and catch another error in the worst case
                 firstDirectoryOffSet = 14;
             }
@@ -218,7 +294,7 @@ namespace com.drew.metadata.exif
             StoreThumbnailBytes(directory, TIFF_HEADER_START_OFFSET);
 
 
-            return _metadata;
+            return this.metadata;
         }
 
         /// <summary>
@@ -226,7 +302,7 @@ namespace com.drew.metadata.exif
         /// </summary>
         /// <param name="exifDirectory">where to stock the thumbnail</param>
         /// <param name="tiffHeaderOffset">the tiff lcHeader lcOffset value</param>
-        private void StoreThumbnailBytes(ExifDirectory exifDirectory, int tiffHeaderOffset)
+        private void StoreThumbnailBytes(AbstractDirectory exifDirectory, int tiffHeaderOffset)
         {
             if (!exifDirectory.ContainsTag(ExifDirectory.TAG_COMPRESSION))
             {
@@ -243,39 +319,39 @@ namespace com.drew.metadata.exif
                 int offset = exifDirectory.GetInt(ExifDirectory.TAG_THUMBNAIL_OFFSET);
                 int length = exifDirectory.GetInt(ExifDirectory.TAG_THUMBNAIL_LENGTH);
                 byte[] result = new byte[length];
-                for (int i = 0; i < result.Length; i++)
-                {
-                    result[i] = _data[tiffHeaderOffset + offset + i];
-                }
+                Buffer.BlockCopy(base.data, tiffHeaderOffset + offset, result, 0, length);
+                //for (int i = 0; i < result.Length; i++)
+                //{
+                //    result[i] = base.data[tiffHeaderOffset + offset + i];
+                //}
                 exifDirectory.SetObject(ExifDirectory.TAG_THUMBNAIL_DATA, result);
             }
             catch (Exception e)
             {
-                Console.Error.WriteLine("Unable to extract thumbnail: " + e.Message);
+                exifDirectory.HasError = true;
+                Trace.TraceError("Unable to extract thumbnail: " + e.Message);
             }
         }
 
 
         /// <summary>
-        /// Sets Motorolla byte order
+        /// Sets Motorolla byte order and idicates that it was found.
         /// </summary>
-        /// <param name="byteOrderIdentifier">the Motorolla byte order identifier (MM=true, II=false) </param>
+        /// <param name="byteOrderIdentifier">true if the Motorolla byte order is identified</param>
         /// <returns></returns>
         private bool SetByteOrder(string byteOrderIdentifier)
         {
             if ("MM".Equals(byteOrderIdentifier))
             {
-                _isMotorollaByteOrder = true;
+                this.isMotorollaByteOrder = true;
+                return true;
             }
             else if ("II".Equals(byteOrderIdentifier))
             {
-                _isMotorollaByteOrder = false;
+                this.isMotorollaByteOrder = false;
+                return true;
             }
-            else
-            {
-                return false;
-            }
-            return true;
+            return false;
         }
 
         /// <summary>
@@ -288,12 +364,8 @@ namespace com.drew.metadata.exif
         {
             int dirTagCount = Get16Bits(dirStartOffset);
             int dirLength = (2 + (12 * dirTagCount) + 4);
-            if (dirLength + dirStartOffset + tiffHeaderOffset >= _data.Length)
-            {
-                // Note: Files that had thumbnails trimmed with jhead 1.3 or earlier might trigger this
-                return false;
-            }
-            return true;
+            // Note: Files that had thumbnails trimmed with jhead 1.3 or earlier might trigger this
+            return !(dirLength + dirStartOffset + tiffHeaderOffset >= base.data.Length);
         }
 
         /// <summary>
@@ -324,7 +396,7 @@ namespace com.drew.metadata.exif
                 // dirEntryOffset must be passed, as some makernote implementations (e.g. FujiFilm) incorrectly use an
                 // lcOffset relative to the start of the makernote itself, not the TIFF segment.
                 int offsetVal = Get32Bits(dirEntryOffset + 8);
-                if (offsetVal + byteCount > _data.Length)
+                if (offsetVal + byteCount > base.data.Length)
                 {
                     // Bogus pointer lcOffset and / or bytecount value
                     return -1; // signal error
@@ -345,7 +417,7 @@ namespace com.drew.metadata.exif
         /// </summary>
         /// <param name="directory">the directory</param>
         /// <param name="dirStartOffSet">where to start</param>
-        private void ProcessDirectory(AbstractDirectory directory, Dictionary<int, string> processedDirectoryOffsets, int dirStartOffset, int tiffHeaderOffset)
+        private void ProcessDirectory(AbstractDirectory directory, IDictionary<int, string> processedDirectoryOffsets, int dirStartOffset, int tiffHeaderOffset)
         {
             // check for directories we've already visited to avoid stack overflows when recursive/cyclic directory structures exist
             if (processedDirectoryOffsets.ContainsKey(dirStartOffset))
@@ -355,15 +427,17 @@ namespace com.drew.metadata.exif
             // remember that we've visited this directory so that we don't visit it again later
             processedDirectoryOffsets.Add(dirStartOffset, MARK_AS_PROCESSED);
 
-            if (dirStartOffset >= _data.Length || dirStartOffset < 0)
+            if (dirStartOffset >= base.data.Length || dirStartOffset < 0)
             {
-                directory.AddError("Ignored directory marked to start outside data segement");
+                directory.HasError = true;
+                Trace.TraceError("Ignored directory marked to start outside data segement");
                 return;
             }
 
             if (!IsDirectoryLengthValid(dirStartOffset, tiffHeaderOffset))
             {
-                directory.AddError("Illegally sized directory");
+                directory.HasError = true;
+                Trace.TraceError("Illegally sized directory");
                 return;
             }
 
@@ -382,7 +456,8 @@ namespace com.drew.metadata.exif
                 int formatCode = Get16Bits(tagOffset + 2);
                 if (formatCode < 1 || formatCode > MAX_FORMAT_CODE)
                 {
-                    directory.AddError("Invalid format code: " + formatCode);
+                    directory.HasError = true;
+                    Trace.TraceError("Invalid format code: " + formatCode);
                     continue;
                 }
 
@@ -390,25 +465,28 @@ namespace com.drew.metadata.exif
                 int componentCount = Get32Bits(tagOffset + 4);
                 if (componentCount < 0)
                 {
-                    directory.AddError("Negative component count in EXIF");
+                    directory.HasError = true;
+                    Trace.TraceError("Negative component count in EXIF");
                     continue;
                 }
 
                 // each component may have more than one byte... calculate the total number of bytes
                 int byteCount = componentCount * BYTES_PER_FORMAT[formatCode];
                 int tagValueOffset = CalculateTagValueOffset(byteCount, tagOffset, tiffHeaderOffset);
-                if (tagValueOffset < 0 || tagValueOffset > _data.Length)
+                if (tagValueOffset < 0 || tagValueOffset > base.data.Length)
                 {
-                    directory.AddError("Illegal pointer offset value in EXIF");
+                    directory.HasError = true;
+                    Trace.TraceError("Illegal pointer offset value in EXIF");
                     continue;
                 }
 
 
                 // Check that this tag isn't going to allocate outside the bounds of the data array.
                 // This addresses an uncommon OutOfMemoryError.
-                if (byteCount < 0 || tagValueOffset + byteCount > _data.Length)
+                if (byteCount < 0 || tagValueOffset + byteCount > base.data.Length)
                 {
-                    directory.AddError("Illegal number of bytes: " + byteCount);
+                    directory.HasError = true;
+                    Trace.TraceError("Illegal number of bytes: " + byteCount);
                     continue;
                 }
 
@@ -418,13 +496,13 @@ namespace com.drew.metadata.exif
                 switch (tagType)
                 {
                     case TAG_EXIF_OFFSET:
-                        ProcessDirectory(_metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.ExifDirectory")), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
+                        ProcessDirectory(this.metadata.GetDirectory("com.drew.metadata.exif.ExifDirectory"), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
                         continue;
                     case TAG_INTEROP_OFFSET:
-                        ProcessDirectory(_metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.ExifInteropDirectory")), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
+                        ProcessDirectory(this.metadata.GetDirectory("com.drew.metadata.exif.ExifInteropDirectory"), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
                         continue;
                     case TAG_GPS_INFO_OFFSET:
-                        ProcessDirectory(_metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.GpsDirectory")), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
+                        ProcessDirectory(this.metadata.GetDirectory("com.drew.metadata.exif.GpsDirectory"), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
                         continue;
                     case TAG_MAKER_NOTE:
                         ProcessMakerNote(tagValueOffset, processedDirectoryOffsets, tiffHeaderOffset);
@@ -440,15 +518,14 @@ namespace com.drew.metadata.exif
             if (nextDirectoryOffset != 0)
             {
                 nextDirectoryOffset += tiffHeaderOffset;
-                if (nextDirectoryOffset >= _data.Length)
+                if (nextDirectoryOffset >= base.data.Length)
                 {
-                    // Last 4 bytes of IFD reference another IFD with an address that is out of bounds
-                    // Note this could have been caused by jhead 1.3 cropping too much
+                    Trace.TraceWarning("Last 4 bytes of IFD reference another IFD with an address that is out of bounds\nNote this could have been caused by jhead 1.3 cropping too much");
                     return;
                 }
                 else if (nextDirectoryOffset < dirStartOffset)
                 {
-                    // Last 4 bytes of IFD reference another IFD with an address that is before the start of this directory
+                    Trace.TraceWarning("Last 4 bytes of IFD reference another IFD with an address that is before the start of this directory");
                     return;
                 }
                 // the next directory is of same type as this one
@@ -462,36 +539,37 @@ namespace com.drew.metadata.exif
         /// <param name="subdirOffset">the sub lcOffset dir</param>
         /// <param name="processedDirectoryOffsets">the processed directory offsets</param>
         /// <param name="tiffHeaderOffset">the tiff lcHeader lcOffset</param>
-        private void ProcessMakerNote(int subdirOffset, Dictionary<int, string> processedDirectoryOffsets, int tiffHeaderOffset)
+        private void ProcessMakerNote(int subdirOffset, IDictionary<int, string> processedDirectoryOffsets, int tiffHeaderOffset)
         {
             // Console.WriteLine("ProcessMakerNote value="+subdirOffSet);
             // Determine the camera model and makernote format
-            AbstractDirectory exifDirectory = _metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.ExifDirectory"));
+            AbstractDirectory exifDirectory = this.metadata.GetDirectory("com.drew.metadata.exif.ExifDirectory");
             if (exifDirectory == null)
             {
                 return;
             }
 
             string cameraModel = exifDirectory.GetString(ExifDirectory.TAG_MAKE);
-            string firstTwoChars = Utils.Decode(_data, subdirOffset, 2, false);
-            string firstThreeChars = Utils.Decode(_data, subdirOffset, 3, false);
-            string firstFourChars = Utils.Decode(_data, subdirOffset, 4, false);
-            string firstFiveChars = Utils.Decode(_data, subdirOffset, 5, false);
-            string firstSixChars = Utils.Decode(_data, subdirOffset, 6, false);
-            string firstSevenChars = Utils.Decode(_data, subdirOffset, 7, false);
-            string firstEightChars = Utils.Decode(_data, subdirOffset, 8, false);
+            string firstTwoChars = Utils.Decode(base.data, subdirOffset, 2, false);
+            string firstThreeChars = Utils.Decode(base.data, subdirOffset, 3, false);
+            string firstFourChars = Utils.Decode(base.data, subdirOffset, 4, false);
+            string firstFiveChars = Utils.Decode(base.data, subdirOffset, 5, false);
+            string firstSixChars = Utils.Decode(base.data, subdirOffset, 6, false);
+            string firstSevenChars = Utils.Decode(base.data, subdirOffset, 7, false);
+            string firstEightChars = Utils.Decode(base.data, subdirOffset, 8, false);
 
             if ("OLYMP".Equals(firstFiveChars) || "EPSON".Equals(firstFiveChars) || "AGFA".Equals(firstFourChars))
             {
+                Trace.TraceInformation("Found an Olympus/Epson/Agfa directory.");
                 // Olympus Makernote
                 // Epson and Agfa use Olypus maker note standard, see:
                 //     http://www.ozhiker.com/electronics/pjmt/jpeg_info/
                 ProcessDirectory(
-                    _metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.OlympusDirectory")), processedDirectoryOffsets, subdirOffset + 8, tiffHeaderOffset);
+                    this.metadata.GetDirectory("com.drew.metadata.exif.OlympusDirectory"), processedDirectoryOffsets, subdirOffset + 8, tiffHeaderOffset);
             }
             else if (cameraModel != null && cameraModel.Trim().ToUpper().StartsWith("NIKON"))
             {
-                if ("Nikon".Equals(Utils.Decode(_data, subdirOffset, 5, false)))
+                if ("Nikon".Equals(Utils.Decode(base.data, subdirOffset, 5, false)))
                 {
                     // There are two scenarios here:
                     // Type 1:
@@ -500,121 +578,132 @@ namespace com.drew.metadata.exif
                     // Type 3:
                     // :0000: 4E 69 6B 6F 6E 00 02 00-00 00 4D 4D 00 2A 00 00 Nikon....MM.*...
                     // :0010: 00 08 00 1E 00 01 00 07-00 00 00 04 30 32 30 30 ............0200
-                    if (_data[subdirOffset + 6] == 1)
+                    if (base.data[subdirOffset + 6] == 1)
                     {
-                        // Nikon type 1 Makernote
+                        Trace.TraceInformation("Found an Nykon Type 1 directory.");
                         ProcessDirectory(
-                            _metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.NikonType1Directory")), processedDirectoryOffsets, subdirOffset + 8, tiffHeaderOffset);
+                            this.metadata.GetDirectory("com.drew.metadata.exif.NikonType1Directory"), processedDirectoryOffsets, subdirOffset + 8, tiffHeaderOffset);
                     }
-                    else if (_data[subdirOffset + 6] == 2)
+                    else if (base.data[subdirOffset + 6] == 2)
                     {
-                        // Nikon type 2 Makernote
+                        Trace.TraceInformation("Found an Nykon Type 2 directory.");
                         ProcessDirectory(
-                            _metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.NikonType2Directory")), processedDirectoryOffsets, subdirOffset + 18, subdirOffset + 10);
+                            this.metadata.GetDirectory("com.drew.metadata.exif.NikonType2Directory"), processedDirectoryOffsets, subdirOffset + 18, subdirOffset + 10);
                     }
                     else
                     {
-                        exifDirectory.AddError(
-                            "Unsupported makernote data ignored.");
+                        exifDirectory.HasError = true;
+                        Trace.TraceError(
+                            "Unsupported makernote for Nikon data ignored.");
                     }
                 }
                 else
                 {
-                    // Nikon type 2 Makernote
+                    Trace.TraceInformation("Found an Nykon Type 2 directory.");
                     ProcessDirectory(
-                        _metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.NikonType2Directory")), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
+                        this.metadata.GetDirectory("com.drew.metadata.exif.NikonType2Directory"), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
                 }
             }
             else if ("SONY CAM".Equals(firstEightChars) || "SONY DSC".Equals(firstEightChars))
             {
+                Trace.TraceInformation("Found a Sony directory.");
                 ProcessDirectory(
-                    _metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.SonyDirectory")), processedDirectoryOffsets, subdirOffset + 12, tiffHeaderOffset);
+                    this.metadata.GetDirectory("com.drew.metadata.exif.SonyDirectory"), processedDirectoryOffsets, subdirOffset + 12, tiffHeaderOffset);
             }
             else if ("KDK".Equals(firstThreeChars))
             {
+                Trace.TraceInformation("Found a Kodak directory.");
                 ProcessDirectory(
-                    _metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.KodakDirectory")), processedDirectoryOffsets, subdirOffset + 20, tiffHeaderOffset);
+                    this.metadata.GetDirectory("com.drew.metadata.exif.KodakDirectory"), processedDirectoryOffsets, subdirOffset + 20, tiffHeaderOffset);
             }
 
 
             else if ("Canon".ToUpper().Equals(cameraModel.ToUpper()))
             {
-                // Canon Makernote
+                Trace.TraceInformation("Found a Canon directory.");
                 ProcessDirectory(
-                    _metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.CanonDirectory")), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
+                    this.metadata.GetDirectory("com.drew.metadata.exif.CanonDirectory"), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
             }
             else if (cameraModel != null && cameraModel.ToUpper().StartsWith("CASIO"))
             {
                 if ("QVC\u0000\u0000\u0000".Equals(firstSixChars))
                 {
-                    ProcessDirectory(_metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.CasioType2Directory")), processedDirectoryOffsets, subdirOffset + 6, tiffHeaderOffset);
+                    Trace.TraceInformation("Found a Casion Type 2 directory.");
+                    ProcessDirectory(this.metadata.GetDirectory("com.drew.metadata.exif.CasioType2Directory"), processedDirectoryOffsets, subdirOffset + 6, tiffHeaderOffset);
                 }
                 else
                 {
-                    ProcessDirectory(_metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.CasioType1Directory")), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
+                    Trace.TraceInformation("Found a Casion Type 1 directory.");
+                    ProcessDirectory(this.metadata.GetDirectory("com.drew.metadata.exif.CasioType1Directory"), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
                 }
             }
             else if ("FUJIFILM".Equals(firstEightChars) || "Fujifilm".ToUpper().Equals(cameraModel.ToUpper()))
             {
+                Trace.TraceInformation("Found a Fujifilm directory.");
                 // TODO make this field a passed parameter, to avoid threading issues
-                bool byteOrderBefore = _isMotorollaByteOrder;
+                bool byteOrderBefore = this.isMotorollaByteOrder;
                 // bug in fujifilm makernote ifd means we temporarily use Intel byte ordering
-                _isMotorollaByteOrder = false;
+                this.isMotorollaByteOrder = false;
                 // the 4 bytes after "FUJIFILM" in the makernote point to the start of the makernote
                 // IFD, though the lcOffset is relative to the start of the makernote, not the TIFF
                 // lcHeader (like everywhere else)
                 int ifdStart = subdirOffset + Get32Bits(subdirOffset + 8);
-                ProcessDirectory(_metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.FujifilmDirectory")), processedDirectoryOffsets, ifdStart, tiffHeaderOffset);
-                _isMotorollaByteOrder = byteOrderBefore;
+                ProcessDirectory(this.metadata.GetDirectory("com.drew.metadata.exif.FujifilmDirectory"), processedDirectoryOffsets, ifdStart, tiffHeaderOffset);
+                this.isMotorollaByteOrder = byteOrderBefore;
             }
             else if (cameraModel != null && cameraModel.ToUpper().StartsWith("MINOLTA"))
             {
+                Trace.TraceInformation("Found a Minolta directory, will use Olympus directory.");
                 // Cases seen with the model starting with MINOLTA in capitals seem to have a valid Olympus makernote
                 // area that commences immediately.
-                ProcessDirectory(_metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.OlympusDirectory")), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
+                ProcessDirectory(this.metadata.GetDirectory("com.drew.metadata.exif.OlympusDirectory"), processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
             }
             else if ("KC".Equals(firstTwoChars) || "MINOL".Equals(firstFiveChars) || "MLY".Equals(firstThreeChars) || "+M+M+M+M".Equals(firstEightChars))
             {
                 // This Konica data is not understood.  Header identified in accordance with information at this site:
                 // http://www.ozhiker.com/electronics/pjmt/jpeg_info/minolta_mn.html
                 // TODO determine how to process the information described at the above website
-                exifDirectory.AddError("Unsupported Konica/Minolta data ignored.");
+                Trace.TraceError("Unsupported Konica/Minolta data ignored.");
             }
             else if ("KYOCERA".Equals(firstSevenChars))
             {
+                Trace.TraceInformation("Found a Kyocera directory");
                 // http://www.ozhiker.com/electronics/pjmt/jpeg_info/kyocera_mn.html
-                ProcessDirectory(_metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.KyoceraDirectory")), processedDirectoryOffsets, subdirOffset + 22, tiffHeaderOffset);
+                ProcessDirectory(this.metadata.GetDirectory("com.drew.metadata.exif.KyoceraDirectory"), processedDirectoryOffsets, subdirOffset + 22, tiffHeaderOffset);
             }
-            else if ("Panasonic\u0000\u0000\u0000".Equals(Utils.Decode(_data, subdirOffset, 12, false)))
+            else if ("Panasonic\u0000\u0000\u0000".Equals(Utils.Decode(base.data, subdirOffset, 12, false)))
             {
+                Trace.TraceInformation("Found a panasonic directory");
                 // NON-Standard TIFF IFD Data using Panasonic Tags. There is no Next-IFD pointer after the IFD
                 // Offsets are relative to the start of the TIFF lcHeader at the beginning of the EXIF segment
                 // more information here: http://www.ozhiker.com/electronics/pjmt/jpeg_info/panasonic_mn.html
-                ProcessDirectory(_metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.PanasonicDirectory")), processedDirectoryOffsets, subdirOffset + 12, tiffHeaderOffset);
+                ProcessDirectory(this.metadata.GetDirectory("com.drew.metadata.exif.PanasonicDirectory"), processedDirectoryOffsets, subdirOffset + 12, tiffHeaderOffset);
             }
             else if ("AOC\u0000".Equals(firstFourChars))
             {
+                Trace.TraceInformation("Found a Casio type 2 directory");
                 // NON-Standard TIFF IFD Data using Casio Type 2 Tags
                 // IFD has no Next-IFD pointer at end of IFD, and
                 // Offsets are relative to the start of the current IFD tag, not the TIFF lcHeader
                 // Observed for:
                 // - Pentax ist D
-                ProcessDirectory(_metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.CasioType2Directory")), processedDirectoryOffsets, subdirOffset + 6, subdirOffset);
+                ProcessDirectory(this.metadata.GetDirectory("com.drew.metadata.exif.CasioType2Directory"), processedDirectoryOffsets, subdirOffset + 6, subdirOffset);
             }
             else if (cameraModel != null && (cameraModel.ToUpper().StartsWith("PENTAX") || cameraModel.ToUpper().StartsWith("ASAHI")))
             {
+                Trace.TraceInformation("Found a Pentax directory");
                 // NON-Standard TIFF IFD Data using Pentax Tags
                 // IFD has no Next-IFD pointer at end of IFD, and
                 // Offsets are relative to the start of the current IFD tag, not the TIFF lcHeader
                 // Observed for:
                 // - PENTAX Optio 330
                 // - PENTAX Optio 430
-                ProcessDirectory(_metadata.GetDirectory(Type.GetType("com.drew.metadata.exif.PentaxDirectory")), processedDirectoryOffsets, subdirOffset, subdirOffset);
+                ProcessDirectory(this.metadata.GetDirectory("com.drew.metadata.exif.PentaxDirectory"), processedDirectoryOffsets, subdirOffset, subdirOffset);
             }
             else
             {
                 // TODO how to store makernote data when it'str not from a supported camera model?
-                exifDirectory.AddError("Unsupported makernote data ignored.");
+                Trace.TraceError("Unsupported directory data ignored.");
             }
         }
 
@@ -639,16 +728,18 @@ namespace com.drew.metadata.exif
             switch (formatCode)
             {
                 case FMT_UNDEFINED:
+                    Debug.Write("Found a tag made of bytes");
                     // this includes exif user comments
                     byte[] tagBytes = new byte[componentCount];
                     int byteCount = componentCount * BYTES_PER_FORMAT[formatCode];
                     for (int i = 0; i < byteCount; i++)
                     {
-                        tagBytes[i] = _data[tagValueOffset + i];
+                        tagBytes[i] = base.data[tagValueOffset + i];
                     }
                     directory.SetObject(tagType, tagBytes);
                     break;
                 case FMT_STRING:
+                    Debug.Write("Found a tag made of string");
                     string lcStr = null;
                     if (tagType == ExifDirectory.TAG_USER_COMMENT)
                     {
@@ -668,33 +759,40 @@ namespace com.drew.metadata.exif
                 case FMT_URATIONAL:
                     if (componentCount == 1)
                     {
+                        Debug.Write("Found a tag made of rational");
                         Rational rational = new Rational(Get32Bits(tagValueOffset), Get32Bits(tagValueOffset + 4));
                         directory.SetObject(tagType, rational);
+
                     }
                     else
                     {
+                        Debug.Write("Found a tag made of rationals");
                         Rational[] rationals = new Rational[componentCount];
                         for (int i = 0; i < componentCount; i++)
                         {
                             rationals[i] = new Rational(Get32Bits(tagValueOffset + (8 * i)), Get32Bits(tagValueOffset + 4 + (8 * i)));
                         }
                         directory.SetObject(tagType, rationals);
+                        
                     }
+
                     break;
                 case FMT_SBYTE: //goto case FMT_BYTE;
                 case FMT_BYTE:
                     if (componentCount == 1)
                     {
+                        Debug.Write("Found a tag made of byte");
                         // this may need to be a byte, but I think casting to int is fine
-                        int b = _data[tagValueOffset];
+                        int b = base.data[tagValueOffset];
                         directory.SetObject(tagType, b);
                     }
                     else
                     {
+                        Debug.Write("Found a tag made of bytes but will use ints");
                         int[] bytes = new int[componentCount];
                         for (int i = 0; i < componentCount; i++)
                         {
-                            bytes[i] = _data[tagValueOffset + i];
+                            bytes[i] = base.data[tagValueOffset + i];
                         }
                         directory.SetIntArray(tagType, bytes);
                     }
@@ -703,15 +801,17 @@ namespace com.drew.metadata.exif
                 case FMT_DOUBLE:
                     if (componentCount == 1)
                     {
-                        int i = _data[tagValueOffset];
+                        Debug.Write("Found a tag made of double but will use int");
+                        int i = base.data[tagValueOffset];
                         directory.SetObject(tagType, i);
                     }
                     else
                     {
+                        Debug.Write("Found a tag made of doubles but will use ints");
                         int[] ints = new int[componentCount];
                         for (int i = 0; i < componentCount; i++)
                         {
-                            ints[i] = _data[tagValueOffset + i];
+                            ints[i] = base.data[tagValueOffset + i];
                         }
                         directory.SetIntArray(tagType, ints);
                     }
@@ -720,14 +820,18 @@ namespace com.drew.metadata.exif
                 case FMT_SSHORT:
                     if (componentCount == 1)
                     {
+                        Debug.Write("Found a tag made of short but will use int");
                         int i = Get16Bits(tagValueOffset);
                         directory.SetObject(tagType, i);
                     }
                     else
                     {
+                        Debug.Write("Found a tag made of shorts but will use ints");
                         int[] ints = new int[componentCount];
                         for (int i = 0; i < componentCount; i++)
+                        {
                             ints[i] = Get16Bits(tagValueOffset + (i * 2));
+                        }
                         directory.SetIntArray(tagType, ints);
                     }
                     break;
@@ -735,19 +839,23 @@ namespace com.drew.metadata.exif
                 case FMT_ULONG:
                     if (componentCount == 1)
                     {
+                        Debug.Write("Found a tag made of long but will use int");
                         int i = Get32Bits(tagValueOffset);
                         directory.SetObject(tagType, i);
                     }
                     else
                     {
+                        Debug.Write("Found a tag made of longs but will use ints");
                         int[] ints = new int[componentCount];
                         for (int i = 0; i < componentCount; i++)
+                        {
                             ints[i] = Get32Bits(tagValueOffset + (i * 4));
+                        }
                         directory.SetIntArray(tagType, ints);
                     }
                     break;
                 default:
-                    directory.AddError("Unknown format code " + formatCode + " for tag " + tagType);
+                    Trace.TraceWarning("Unknown format code " + formatCode + " for tag " + tagType);
                     break;
             }
         }
@@ -762,13 +870,13 @@ namespace com.drew.metadata.exif
         private string ReadString(int offSet, int maxLength)
         {
             int Length = 0;
-            while ((offSet + Length) < _data.Length
-                && _data[offSet + Length] != '\0'
+            while ((offSet + Length) < base.data.Length
+                && base.data[offSet + Length] != '\0'
                 && Length < maxLength)
             {
                 Length++;
             }
-            return Utils.Decode(_data, offSet, Length, false);
+            return Utils.Decode(base.data, offSet, Length, false);
         }
 
         /// <summary>
@@ -790,9 +898,9 @@ namespace com.drew.metadata.exif
             int byteCount = componentCount * BYTES_PER_FORMAT[formatCode];
             for (int i = byteCount - 1; i >= 0; i--)
             {
-                if (_data[tagValueOffSet + i] == ' ')
+                if (base.data[tagValueOffSet + i] == ' ')
                 {
-                    _data[tagValueOffSet + i] = (byte)'\0';
+                    base.data[tagValueOffSet + i] = (byte)'\0';
                 }
                 else
                 {
@@ -800,23 +908,23 @@ namespace com.drew.metadata.exif
                 }
             }
             // Copy the comment
-            if ("ASCII".Equals(Utils.Decode(_data, tagValueOffSet, 5, false)))
+            if ("ASCII".Equals(Utils.Decode(base.data, tagValueOffSet, 5, false)))
             {
                 for (int i = 5; i < 10; i++)
                 {
-                    byte b = _data[tagValueOffSet + i];
+                    byte b = base.data[tagValueOffSet + i];
                     if (b != '\0' && b != ' ')
                     {
                         return ReadString(tagValueOffSet + i, 1999);
                     }
                 }
             }
-            else if ("UNICODE".Equals(Utils.Decode(_data, tagValueOffSet, 7, false)))
+            else if ("UNICODE".Equals(Utils.Decode(base.data, tagValueOffSet, 7, false)))
             {
                 int start = tagValueOffSet + 7;
                 for (int i = start; i < 10 + start; i++)
                 {
-                    byte b = _data[i];
+                    byte b = base.data[i];
                     if (b == 0 || (char)b == ' ')
                     {
                         continue;
@@ -828,9 +936,9 @@ namespace com.drew.metadata.exif
                     }
 
                 }
-                int end = _data.Length;
+                int end = base.data.Length;
                 // TODO find a way to cut the string properly				
-                return Utils.Decode(_data, start, end - start, true);
+                return Utils.Decode(base.data, start, end - start, true);
 
             }
 
@@ -857,26 +965,26 @@ namespace com.drew.metadata.exif
         /// </summary>
         /// <param name="offSet">the lcOffset</param>
         /// <returns>a 16 bit int</returns>
-        private int Get16Bits(int offSet)
+        protected override int Get16Bits(int offSet)
         {
-            if (offSet < 0 || offSet >= _data.Length)
+            if (offSet < 0 || offSet >= base.data.Length)
             {
                 throw new IndexOutOfRangeException(
                     "attempt to read data outside of exif segment (index "
                     + offSet
                     + " where max index is "
-                    + (_data.Length - 1)
+                    + (base.data.Length - 1)
                     + ")");
             }
-            if (_isMotorollaByteOrder)
+            if (this.isMotorollaByteOrder)
             {
                 // Motorola big first
-                return (_data[offSet] << 8 & 0xFF00) | (_data[offSet + 1] & 0xFF);
+                return (base.data[offSet] << 8 & 0xFF00) | (base.data[offSet + 1] & 0xFF);
             }
             else
             {
                 // Intel ordering
-                return (_data[offSet + 1] << 8 & 0xFF00) | (_data[offSet] & 0xFF);
+                return (base.data[offSet + 1] << 8 & 0xFF00) | (base.data[offSet] & 0xFF);
             }
         }
 
@@ -885,33 +993,33 @@ namespace com.drew.metadata.exif
         /// </summary>
         /// <param name="offSet">the lcOffset</param>
         /// <returns>a 32b int</returns>
-        private int Get32Bits(int offSet)
+        protected override int Get32Bits(int offSet)
         {
-            if (offSet < 0 || offSet >= _data.Length)
+            if (offSet < 0 || offSet >= base.data.Length)
             {
                 throw new IndexOutOfRangeException(
                     "attempt to read data outside of exif segment (index "
                     + offSet
                     + " where max index is "
-                    + (_data.Length - 1)
+                    + (base.data.Length - 1)
                     + ")");
             }
 
-            if (_isMotorollaByteOrder)
+            if (this.isMotorollaByteOrder)
             {
                 // Motorola big first
-                return (int)(((uint)(_data[offSet] << 24 & 0xFF000000))
-                    | ((uint)(_data[offSet + 1] << 16 & 0xFF0000))
-                    | ((uint)(_data[offSet + 2] << 8 & 0xFF00))
-                    | ((uint)(_data[offSet + 3] & 0xFF)));
+                return (int)(((uint)(base.data[offSet] << 24 & 0xFF000000))
+                    | ((uint)(base.data[offSet + 1] << 16 & 0xFF0000))
+                    | ((uint)(base.data[offSet + 2] << 8 & 0xFF00))
+                    | ((uint)(base.data[offSet + 3] & 0xFF)));
             }
             else
             {
                 // Intel ordering
-                return (int)(((uint)(_data[offSet + 3] << 24 & 0xFF000000))
-                    | ((uint)(_data[offSet + 2] << 16 & 0xFF0000))
-                    | ((uint)(_data[offSet + 1] << 8 & 0xFF00))
-                    | ((uint)(_data[offSet] & 0xFF)));
+                return (int)(((uint)(base.data[offSet + 3] << 24 & 0xFF000000))
+                    | ((uint)(base.data[offSet + 2] << 16 & 0xFF0000))
+                    | ((uint)(base.data[offSet + 1] << 8 & 0xFF00))
+                    | ((uint)(base.data[offSet] & 0xFF)));
             }
         }
     }

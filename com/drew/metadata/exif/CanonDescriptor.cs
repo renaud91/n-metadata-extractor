@@ -1037,7 +1037,7 @@ namespace com.drew.metadata.exif
 			switch (lcVal) 
 			{
 				case 0 :
-					if (directory
+					if (base.directory
 						.GetInt(
 						CanonDirectory
 						.TAG_CANON_STATE1_SELF_TIMER_DELAY)

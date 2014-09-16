@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using com.drew.metadata;
 using com.drew.lang;
-using com.utils;
+using com.utils.bundle;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -40,48 +40,14 @@ namespace com.drew.metadata.exif
 		public const int TAG_RELATED_IMAGE_WIDTH = 0x1001;
 		public const int TAG_RELATED_IMAGE_LENGTH = 0x1002;
 
-		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("ExifInteropMarkernote");
-        protected static readonly Dictionary<int, string> tagNameMap = ExifInteropDirectory.InitTagMap();
-
-		/// <summary>
-		/// Initialize the tag map.
-		/// </summary>
-		/// <returns>the tag map</returns>
-        private static Dictionary<int, string> InitTagMap() 
-		{
-            Dictionary<int, string> resu = new Dictionary<int, string>();
-			resu.Add(TAG_INTEROP_INDEX,	BUNDLE["TAG_INTEROP_INDEX"]);
-			resu.Add(TAG_INTEROP_VERSION, BUNDLE["TAG_INTEROP_VERSION"]);
-			resu.Add(TAG_RELATED_IMAGE_FILE_FORMAT, BUNDLE["TAG_RELATED_IMAGE_FILE_FORMAT"]);
-			resu.Add(TAG_RELATED_IMAGE_WIDTH, BUNDLE["TAG_RELATED_IMAGE_WIDTH"]);
-			resu.Add(TAG_RELATED_IMAGE_LENGTH, BUNDLE["TAG_RELATED_IMAGE_LENGTH"]);
-			return resu;
-		}
-
 		/// <summary>
 		/// Constructor of the object.
 		/// </summary>
-		public ExifInteropDirectory() : base()
+        public ExifInteropDirectory()
+            : base("ExifInteropMarkernote")
 		{
 			this.SetDescriptor(new ExifInteropDescriptor(this));
 		}
 
-		/// <summary>
-		/// Provides the name of the directory, for display purposes.  E.g. Exif 
-		/// </summary>
-		/// <returns>the name of the directory</returns>
-		public override string GetName() 
-		{
-			return BUNDLE["MARKER_NOTE_NAME"];
-		}
-
-		/// <summary>
-		/// Provides the map of tag names, hashed by tag type identifier. 
-		/// </summary>
-		/// <returns>the map of tag names</returns>
-        protected override Dictionary<int, string> GetTagNameMap() 
-		{
-			return tagNameMap;
-		}
 	}
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using com.drew.lang;
 using com.drew.metadata;
-using com.utils;
+using com.utils.bundle;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -53,38 +53,20 @@ namespace com.drew.metadata.iptc
 		public const int TAG_URGENCY = 0x0200 | 10;
 		public const int TAG_KEYWORDS = 0x0200 | 25;
 		public const int TAG_COPYRIGHT_NOTICE = 0x0274;
-		public const int TAG_RELEASE_DATE = 0x0200 | 30;
+        		
+        public const int TAG_RELEASE_DATE = 0x0200 | 30;
 		public const int TAG_RELEASE_TIME = 0x0200 | 35;
 		public const int TAG_TIME_CREATED = 0x0200 | 60;
 		public const int TAG_ORIGINATING_PROGRAM = 0x0200 | 65;
 
-		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("IptcMarkernote");
-        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.iptc.IptcDirectory"), BUNDLE);
-
-		/// <summary>
+    	/// <summary>
 		/// Constructor of the object.
 		/// </summary>
-		public IptcDirectory() : base()
+        public IptcDirectory()
+            : base("IptcMarkernote")
 		{
 			this.SetDescriptor(new IptcDescriptor(this));
 		}
 
-		/// <summary>
-		/// Provides the name of the directory, for display purposes.  E.g. Exif 
-		/// </summary>
-		/// <returns>the name of the directory</returns>
-		public override string GetName() 
-		{
-			return BUNDLE["MARKER_NOTE_NAME"];
-		}
-
-		/// <summary>
-		/// Provides the map of tag names, hashed by tag type identifier. 
-		/// </summary>
-		/// <returns>the map of tag names</returns>
-        protected override Dictionary<int, string> GetTagNameMap() 
-		{
-			return tagNameMap;
-		}
 	}
 }

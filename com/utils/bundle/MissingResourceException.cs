@@ -14,7 +14,7 @@ using com.drew.lang;
 /// <a href="mailto:renaud91@free.fr">renaud91@free.fr</a>
 /// If you find a bug in the C# code, feel free to mail me.
 /// </summary>
-namespace com.utils
+namespace com.utils.bundle
 {
 	/// <summary>
 	/// This class represents a missing resource exception.

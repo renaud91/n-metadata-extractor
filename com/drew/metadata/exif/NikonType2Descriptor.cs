@@ -36,9 +36,9 @@ namespace com.drew.metadata.exif
         /// <summary>
         /// Constructor of the object
         /// </summary>
-        /// <param name="directory">a directory</param>
-        public NikonType2Descriptor(AbstractDirectory directory)
-            : base(directory)
+        /// <param name="base.directory">a base.directory</param>
+        public NikonType2Descriptor(AbstractDirectory aDirectory)
+            : base(aDirectory)
         {
         }
 
@@ -72,7 +72,7 @@ namespace com.drew.metadata.exif
                 case NikonType2Directory.TAG_NIKON_TYPE2_FIRMWARE_VERSION:
                     return GetAutoFirmwareVersionDescription();
                 default:
-                    return directory.GetString(tagType);
+                    return base.directory.GetString(tagType);
             }
         }
 
@@ -82,14 +82,14 @@ namespace com.drew.metadata.exif
         /// <returns>the auto focus position Description.</returns>
         private string GetAutoFocusPositionDescription()
         {
-            if (!directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_AF_FOCUS_POSITION))
+            if (!base.directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_AF_FOCUS_POSITION))
             {
                 return null;
             }
-            int[] values = directory.GetIntArray(NikonType2Directory.TAG_NIKON_TYPE2_AF_FOCUS_POSITION);
+            int[] values = base.directory.GetIntArray(NikonType2Directory.TAG_NIKON_TYPE2_AF_FOCUS_POSITION);
             if (values.Length != 4 || values[0] != 0 || values[2] != 0 || values[3] != 0)
             {
-                return BUNDLE["UNKNOWN", directory.GetString(NikonType2Directory.TAG_NIKON_TYPE2_AF_FOCUS_POSITION)];
+                return BUNDLE["UNKNOWN", base.directory.GetString(NikonType2Directory.TAG_NIKON_TYPE2_AF_FOCUS_POSITION)];
             }
             switch (values[1])
             {
@@ -114,11 +114,11 @@ namespace com.drew.metadata.exif
         /// <returns>the digital zoom Description.</returns>
         private string GetDigitalZoomDescription()
         {
-            if (!directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_DIGITAL_ZOOM))
+            if (!base.directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_DIGITAL_ZOOM))
             {
                 return null;
             }
-            Rational rational = directory.GetRational(NikonType2Directory.TAG_NIKON_TYPE2_DIGITAL_ZOOM);
+            Rational rational = base.directory.GetRational(NikonType2Directory.TAG_NIKON_TYPE2_DIGITAL_ZOOM);
             if (rational.IntValue() == 1)
             {
                 return BUNDLE["NO_DIGITAL_ZOOM"];
@@ -132,14 +132,14 @@ namespace com.drew.metadata.exif
         /// <returns>the iso setting Description.</returns>
         private string GetIsoSettingDescription()
         {
-            if (!directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_ISO_1))
+            if (!base.directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_ISO_1))
             {
                 return null;
             }
-            int[] values = directory.GetIntArray(NikonType2Directory.TAG_NIKON_TYPE2_ISO_1);
+            int[] values = base.directory.GetIntArray(NikonType2Directory.TAG_NIKON_TYPE2_ISO_1);
             if (values[0] != 0 || values[1] == 0)
             {
-                return BUNDLE["UNKNOWN", directory.GetString(NikonType2Directory.TAG_NIKON_TYPE2_ISO_1)];
+                return BUNDLE["UNKNOWN", base.directory.GetString(NikonType2Directory.TAG_NIKON_TYPE2_ISO_1)];
             }
             return BUNDLE["ISO", values[1].ToString()];
         }
@@ -150,11 +150,11 @@ namespace com.drew.metadata.exif
         /// <returns>the auto flash compensation Description.</returns>
         private Rational GetAutoFlashCompensation()
         {
-            if (!directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_AUTO_FLASH_COMPENSATION))
+            if (!base.directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_AUTO_FLASH_COMPENSATION))
             {
                 return null;
             }
-            byte[] bytes = directory.GetByteArray(NikonType2Directory.TAG_NIKON_TYPE2_AUTO_FLASH_COMPENSATION);
+            byte[] bytes = base.directory.GetByteArray(NikonType2Directory.TAG_NIKON_TYPE2_AUTO_FLASH_COMPENSATION);
 
             if (bytes.Length == 3)
             {
@@ -186,16 +186,16 @@ namespace com.drew.metadata.exif
         /// <returns>the lens Description.</returns>
         private string GetLensDescription()
         {
-            if (!directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_LENS))
+            if (!base.directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_LENS))
             {
                 return null;
             }
 
-            Rational[] lensValues = directory.GetRationalArray(NikonType2Directory.TAG_NIKON_TYPE2_LENS);
+            Rational[] lensValues = base.directory.GetRationalArray(NikonType2Directory.TAG_NIKON_TYPE2_LENS);
 
             if (lensValues.Length != 4)
             {
-                return directory.GetString(NikonType2Directory.TAG_NIKON_TYPE2_LENS);
+                return base.directory.GetString(NikonType2Directory.TAG_NIKON_TYPE2_LENS);
             }
             string[] tab = new string[] { lensValues[0].IntValue().ToString(), lensValues[1].IntValue().ToString(), lensValues[2].IntValue().ToString(), lensValues[3].IntValue().ToString() };
             return BUNDLE["LENS", tab];
@@ -207,12 +207,12 @@ namespace com.drew.metadata.exif
         /// <returns>the hue adjustement Description.</returns>
         private string GetHueAdjustmentDescription()
         {
-            if (!directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_CAMERA_HUE_ADJUSTMENT))
+            if (!base.directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_CAMERA_HUE_ADJUSTMENT))
             {
                 return null;
             }
 
-            return BUNDLE["DEGREES", directory.GetString(NikonType2Directory.TAG_NIKON_TYPE2_CAMERA_HUE_ADJUSTMENT)];
+            return BUNDLE["DEGREES", base.directory.GetString(NikonType2Directory.TAG_NIKON_TYPE2_CAMERA_HUE_ADJUSTMENT)];
         }
 
         /// <summary>
@@ -221,12 +221,12 @@ namespace com.drew.metadata.exif
         /// <returns>the color mode Description.</returns>
         private string GetColorModeDescription()
         {
-            if (!directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_CAMERA_COLOR_MODE))
+            if (!base.directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_CAMERA_COLOR_MODE))
             {
                 return null;
             }
 
-            String raw = directory.GetString(NikonType2Directory.TAG_NIKON_TYPE2_CAMERA_COLOR_MODE);
+            String raw = base.directory.GetString(NikonType2Directory.TAG_NIKON_TYPE2_CAMERA_COLOR_MODE);
             if (raw.StartsWith("MODE1"))
             {
                 return BUNDLE["MODE_I_SRGB"];
@@ -241,12 +241,12 @@ namespace com.drew.metadata.exif
         /// <returns>the auto firmware version Description.</returns>
         private string GetAutoFirmwareVersionDescription()
         {
-            if (!directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_FIRMWARE_VERSION))
+            if (!base.directory.ContainsTag(NikonType2Directory.TAG_NIKON_TYPE2_FIRMWARE_VERSION))
             {
                 return null;
             }
 
-            int[] ints = directory.GetIntArray(NikonType2Directory.TAG_NIKON_TYPE2_FIRMWARE_VERSION);
+            int[] ints = base.directory.GetIntArray(NikonType2Directory.TAG_NIKON_TYPE2_FIRMWARE_VERSION);
             return ExifDescriptor.ConvertBytesToVersionString(ints);
         }
     }

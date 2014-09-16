@@ -39,15 +39,32 @@ using System.Reflection;
 namespace com.drew.metadata
 {
 	[Serializable]
-	public sealed class Metadata 
+    public sealed class Metadata : IEnumerable<AbstractDirectory>
 	{
-        private Dictionary<Type, AbstractDirectory> directoryMap;
 
-		/// <summary>
-		/// List of Directory objects set against this object.  
-		/// Keeping a list handy makes creation of an Iterator and counting tags simple. 
-		/// </summary>
-		private List<AbstractDirectory> directoryList;
+        /// <summary>
+        /// Creates an Iterator over the tag types set against this image, preserving the 
+        /// order in which they were set.  Should the same tag have been set more than once, 
+        /// it'str first position is maintained, even though the final value is used. 
+        /// </summary>
+        /// <returns>an Iterator of tag types set for this image</returns>
+        IEnumerator<AbstractDirectory> IEnumerable<AbstractDirectory>.GetEnumerator()
+        {
+            return GetDirectoryIterator();
+        }
+
+        /// <summary>
+        /// Creates an Iterator over the tag types set against this image, preserving the 
+        /// order in which they were set.  Should the same tag have been set more than once, 
+        /// it'str first position is maintained, even though the final value is used. 
+        /// </summary>
+        /// <returns>an Iterator of tag types set for this image</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetDirectoryIterator();
+        }
+
+        private IDictionary<Type, AbstractDirectory> directoryMap;
 
 		/// <summary>
 		/// Creates a new instance of Metadata. 
@@ -55,7 +72,6 @@ namespace com.drew.metadata
 		public Metadata() : base()
 		{
             this.directoryMap = new Dictionary<Type, AbstractDirectory>();
-            this.directoryList = new List<AbstractDirectory>();
 		}
 
 		/// <summary>
@@ -66,26 +82,18 @@ namespace com.drew.metadata
 		/// <returns>an Iterator of tag types set for this image</returns>
 		public IEnumerator<AbstractDirectory> GetDirectoryIterator() 
 		{
-            return this.directoryList.GetEnumerator();
-		}
-
-		/// <summary>
-		/// Returns a count of unique directories in this aMetadata collection. 
-		/// </summary>
-		/// <returns>the number of unique directory types set for this aMetadata collection</returns>
-		public int GetDirectoryCount() 
-		{
-            return this.directoryList.Count;
+            return this.directoryMap.Values.GetEnumerator();
 		}
 
 		/// <summary>
 		/// Gets a directory regarding its type
 		/// </summary>
-		/// <param name="aType">the type you are looking for</param>
+        /// <param name="aTypeStr">the type you are looking for</param>
 		/// <returns>the directory found</returns>
 		/// <exception cref="ArgumentException">if aType is not a Directory like class</exception>
-		public AbstractDirectory GetDirectory(Type aType) 
+		public AbstractDirectory GetDirectory(string aTypeStr) 
 		{
+            Type aType = Type.GetType(aTypeStr);
 			if (!Type.GetType("com.drew.metadata.AbstractDirectory").IsAssignableFrom(aType)) 
 			{
                 throw new ArgumentException("Class type passed to GetDirectory must be an implementation of com.drew.metadata.AbstractDirectory");
@@ -106,11 +114,10 @@ namespace com.drew.metadata
 			{
 				throw new SystemException(
 					"Cannot instantiate provided Directory type: "
-					+ aType.ToString(), e);
+					+ aType, e);
 			}
 			// store the directory in case it'str requested later
 			this.directoryMap.Add(aType, lcDirectory);
-			this.directoryList.Add(lcDirectory);
 		
 			return lcDirectory;
 		}

@@ -1,7 +1,7 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B46F6C6C-9184-41AF-8F8B-E0084752CA7C}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -17,7 +17,7 @@
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
     <OutputType>Exe</OutputType>
-    <RootNamespace>com</RootNamespace>
+    <RootNamespace>MetaDataExtractor</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject>com.Run</StartupObject>
     <FileUpgradeFlags>
@@ -30,6 +30,8 @@
     <TargetZone>LocalIntranet</TargetZone>
     <SignManifests>false</SignManifests>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -41,9 +43,12 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <SupportUrl>http://renaud91.free.fr/MetaDataExtractor/index.html</SupportUrl>
+    <TargetCulture>en</TargetCulture>
     <ProductName>MetaDataExtractor</ProductName>
     <PublisherName>Ferret Renaud</PublisherName>
-    <ApplicationVersion>2.3.0.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>2.4.0.0</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -99,6 +104,8 @@
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -106,6 +113,8 @@
   <ItemGroup>
     <None Include="app.config" />
     <Content Include="App.ico" />
+    <Compile Include="com\drew\imaging\tiff\TiffMetadataReader.cs" />
+    <Compile Include="com\drew\imaging\tiff\TiffProcessingException.cs" />
     <Content Include="exif.xslt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -115,22 +124,10 @@
     <None Include="MetadataExtractor.dtd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="resources\SonyMarkernote.txt" />
-    <None Include="resources\PanasonicMarkernote.txt" />
-    <None Include="resources\OlympusMarkernote.txt" />
-    <None Include="resources\NikonTypeMarkernote.txt" />
-    <None Include="resources\KyoceraMarkernote.txt" />
-    <None Include="resources\KodakMarkernote.txt" />
-    <None Include="resources\JpegMarkernote.txt" />
-    <None Include="resources\IptcMarkernote.txt" />
-    <None Include="resources\GpsMarkernote.txt" />
-    <None Include="resources\FujiFilmMarkernote.txt" />
-    <None Include="resources\ExifMarkernote.txt" />
-    <None Include="resources\ExifInteropMarkernote.txt" />
-    <None Include="resources\Commons.txt" />
-    <None Include="resources\CasioMarkernote.txt" />
-    <None Include="resources\PentaxMarkernote.txt" />
-    <None Include="resources\CanonMarkernote.txt" />
+    <None Include="MetadataExtractorNew.dtd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Properties\app.manifest" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -153,14 +150,10 @@
     <Compile Include="com\drew\imaging\jpg\JpegSegmentReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="com\drew\imaging\PhotographicConversions.cs" />
     <Compile Include="com\drew\lang\CompoundException.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="com\drew\lang\Rational.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="com\drew\metadata\DefaultTagDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="com\drew\metadata\AbstractDirectory.cs">
@@ -191,9 +184,6 @@
     <Compile Include="com\drew\metadata\exif\KyoceraDescriptor.cs" />
     <Compile Include="com\drew\metadata\exif\KodakDirectory.cs" />
     <Compile Include="com\drew\metadata\exif\KodakDescriptor.cs" />
-    <Compile Include="com\drew\metadata\exif\DataFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="com\drew\metadata\exif\ExifDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -245,6 +235,7 @@
     <Compile Include="com\drew\metadata\exif\OlympusDirectory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="com\drew\metadata\AbstractMetadataReader.cs" />
     <Compile Include="com\drew\metadata\iptc\IptcDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -296,11 +287,17 @@
     <Compile Include="com\Run.cs" />
     <Compile Include="com\SimpleRun.cs" />
     <Compile Include="com\test\resouces\TestAllKeyWords.cs" />
+    <Compile Include="com\utils\bundle\AbstractResourceBundle.cs" />
+    <Compile Include="com\utils\bundle\SpecialResourceWriter.cs" />
+    <Compile Include="com\utils\bundle\ResourceBundleFactory.cs" />
+    <Compile Include="com\utils\bundle\IResourceBundle.cs" />
+    <Compile Include="com\utils\bundle\ResourceBundleWithManager.cs" />
+    <Compile Include="com\utils\xml\XmlNewOutPutStreamHandler.cs" />
     <Compile Include="com\utils\xml\TxtOutPutStreamHandler.cs" />
     <Compile Include="com\utils\xml\IOutPutTextStreamHandler.cs" />
     <Compile Include="com\utils\xml\XmlOutPutStreamHandler.cs" />
-    <Compile Include="com\utils\MissingResourceException.cs" />
-    <Compile Include="com\utils\ResourceBundle.cs">
+    <Compile Include="com\utils\bundle\MissingResourceException.cs" />
+    <Compile Include="com\utils\bundle\ResourceBundle.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="com\utils\Utils.cs">
@@ -310,32 +307,57 @@
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
       <Visible>False</Visible>
-      <ProductName>.NET Framework 2.0</ProductName>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
       <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CanonMarkernote.resources" />
-    <EmbeddedResource Include="CasioMarkernote.resources" />
-    <EmbeddedResource Include="Commons.resources" />
-    <EmbeddedResource Include="ExifInteropMarkernote.resources" />
-    <EmbeddedResource Include="ExifMarkernote.resources">
-    </EmbeddedResource>
-    <EmbeddedResource Include="FujiFilmMarkernote.resources" />
-    <EmbeddedResource Include="GpsMarkernote.resources" />
-    <EmbeddedResource Include="IptcMarkernote.resources" />
-    <EmbeddedResource Include="JpegMarkernote.resources" />
-    <EmbeddedResource Include="KodakMarkernote.resources" />
-    <EmbeddedResource Include="KyoceraMarkernote.resources" />
-    <EmbeddedResource Include="NikonTypeMarkernote.resources" />
-    <EmbeddedResource Include="OlympusMarkernote.resources" />
-    <EmbeddedResource Include="PanasonicMarkernote.resources" />
-    <EmbeddedResource Include="PentaxMarkernote.resources" />
-    <EmbeddedResource Include="SonyMarkernote.resources" />
+    <EmbeddedResource Include="resources\CanonMarkernote.txt" />
+    <EmbeddedResource Include="resources\CasioMarkernote.txt" />
+    <EmbeddedResource Include="resources\Commons.txt" />
+    <EmbeddedResource Include="resources\en\CanonMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\CasioMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\Commons.txt" />
+    <EmbeddedResource Include="resources\en\ExifInteropMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\ExifMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\FujiFilmMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\GpsMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\IptcMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\JpegMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\KodakMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\KyoceraMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\NikonTypeMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\OlympusMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\PanasonicMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\PentaxMarkernote.txt" />
+    <EmbeddedResource Include="resources\en\SonyMarkernote.txt" />
+    <EmbeddedResource Include="resources\ExifInteropMarkernote.txt" />
+    <EmbeddedResource Include="resources\ExifMarkernote.txt" />
+    <EmbeddedResource Include="resources\FujiFilmMarkernote.txt" />
+    <EmbeddedResource Include="resources\GpsMarkernote.txt" />
+    <EmbeddedResource Include="resources\IptcMarkernote.txt" />
+    <EmbeddedResource Include="resources\JpegMarkernote.txt" />
+    <EmbeddedResource Include="resources\KodakMarkernote.txt" />
+    <EmbeddedResource Include="resources\KyoceraMarkernote.txt" />
+    <EmbeddedResource Include="resources\NikonTypeMarkernote.txt" />
+    <EmbeddedResource Include="resources\OlympusMarkernote.txt" />
+    <EmbeddedResource Include="resources\PanasonicMarkernote.txt" />
+    <EmbeddedResource Include="resources\PentaxMarkernote.txt" />
+    <EmbeddedResource Include="resources\SonyMarkernote.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="dll\" />
     <Folder Include="obj\" />
-    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

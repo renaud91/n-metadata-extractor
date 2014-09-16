@@ -36,9 +36,9 @@ namespace com.drew.metadata.exif
         /// <summary>
         /// Constructor of the object
         /// </summary>
-        /// <param name="directory">a directory</param>
-        public PentaxDescriptor(AbstractDirectory directory)
-            : base(directory)
+        /// <param name="base.directory">a base.directory</param>
+        public PentaxDescriptor(AbstractDirectory aDirectory)
+            : base(aDirectory)
         {
         }
 
@@ -80,7 +80,7 @@ namespace com.drew.metadata.exif
                 case PentaxDirectory.TAG_PENTAX_PRINT_IMAGE_MATCHING_INFO:
                     return GetPrintImageMatchingInfoDescription();
                 default:
-                    return directory.GetString(tagType);
+                    return base.directory.GetString(tagType);
             }
         }
 
@@ -90,11 +90,11 @@ namespace com.drew.metadata.exif
         /// <returns>the color Description.</returns>
         private string GetColorDescription()
         {
-            if (!directory.ContainsTag(PentaxDirectory.TAG_PENTAX_COLOR))
+            if (!base.directory.ContainsTag(PentaxDirectory.TAG_PENTAX_COLOR))
             {
                 return null;
             }
-            int aValue = directory.GetInt(PentaxDirectory.TAG_PENTAX_COLOR);
+            int aValue = base.directory.GetInt(PentaxDirectory.TAG_PENTAX_COLOR);
             switch (aValue)
             {
                 case 1: return BUNDLE["NORMAL"];
@@ -110,11 +110,11 @@ namespace com.drew.metadata.exif
         /// <returns>the iso speed Description.</returns>
         private string GetIsoSpeedDescription()
         {
-            if (!directory.ContainsTag(PentaxDirectory.TAG_PENTAX_ISO_SPEED))
+            if (!base.directory.ContainsTag(PentaxDirectory.TAG_PENTAX_ISO_SPEED))
             {
                 return null;
             }
-            int aValue = directory.GetInt(PentaxDirectory.TAG_PENTAX_ISO_SPEED);
+            int aValue = base.directory.GetInt(PentaxDirectory.TAG_PENTAX_ISO_SPEED);
             switch (aValue)
             {
                 case 100:
@@ -131,11 +131,11 @@ namespace com.drew.metadata.exif
         /// <returns>the saturation Description.</returns>
         private string GetSaturationDescription()
         {
-            if (!directory.ContainsTag(PentaxDirectory.TAG_PENTAX_SATURATION))
+            if (!base.directory.ContainsTag(PentaxDirectory.TAG_PENTAX_SATURATION))
             {
                 return null;
             }
-            int aValue = directory.GetInt(PentaxDirectory.TAG_PENTAX_SATURATION);
+            int aValue = base.directory.GetInt(PentaxDirectory.TAG_PENTAX_SATURATION);
             switch (aValue)
             {
                 case 0: return BUNDLE["NORMAL"];
@@ -151,11 +151,11 @@ namespace com.drew.metadata.exif
         /// <returns>the contrast Description.</returns>
         private string GetContrastDescription()
         {
-            if (!directory.ContainsTag(PentaxDirectory.TAG_PENTAX_CONTRAST))
+            if (!base.directory.ContainsTag(PentaxDirectory.TAG_PENTAX_CONTRAST))
             {
                 return null;
             }
-            int aValue = directory.GetInt(PentaxDirectory.TAG_PENTAX_CONTRAST);
+            int aValue = base.directory.GetInt(PentaxDirectory.TAG_PENTAX_CONTRAST);
             switch (aValue)
             {
                 case 0: return BUNDLE["NORMAL"];
@@ -171,11 +171,11 @@ namespace com.drew.metadata.exif
         /// <returns>the sharpness Description.</returns>
         private string GetSharpnessDescription()
         {
-            if (!directory.ContainsTag(PentaxDirectory.TAG_PENTAX_SHARPNESS))
+            if (!base.directory.ContainsTag(PentaxDirectory.TAG_PENTAX_SHARPNESS))
             {
                 return null;
             }
-            int aValue = directory.GetInt(PentaxDirectory.TAG_PENTAX_SHARPNESS);
+            int aValue = base.directory.GetInt(PentaxDirectory.TAG_PENTAX_SHARPNESS);
             switch (aValue)
             {
                 case 0: return BUNDLE["NORMAL"];
@@ -191,11 +191,11 @@ namespace com.drew.metadata.exif
         /// <returns>the digital zoom Description.</returns>
         private string GetDigitalZoomDescription()
         {
-            if (!directory.ContainsTag(PentaxDirectory.TAG_PENTAX_DIGITAL_ZOOM))
+            if (!base.directory.ContainsTag(PentaxDirectory.TAG_PENTAX_DIGITAL_ZOOM))
             {
                 return null;
             }
-            float aValue = directory.GetFloat(PentaxDirectory.TAG_PENTAX_DIGITAL_ZOOM);
+            float aValue = base.directory.GetFloat(PentaxDirectory.TAG_PENTAX_DIGITAL_ZOOM);
             if (aValue == 0)
             {
                 return BUNDLE["OFF"];
@@ -209,11 +209,11 @@ namespace com.drew.metadata.exif
         /// <returns>the white balance Description.</returns>
         private string GetWhiteBalanceDescription()
         {
-            if (!directory.ContainsTag(PentaxDirectory.TAG_PENTAX_WHITE_BALANCE))
+            if (!base.directory.ContainsTag(PentaxDirectory.TAG_PENTAX_WHITE_BALANCE))
             {
                 return null;
             }
-            int aValue = directory.GetInt(PentaxDirectory.TAG_PENTAX_WHITE_BALANCE);
+            int aValue = base.directory.GetInt(PentaxDirectory.TAG_PENTAX_WHITE_BALANCE);
             switch (aValue)
             {
                 case 0: return BUNDLE["AUTO"];
@@ -232,11 +232,11 @@ namespace com.drew.metadata.exif
         /// <returns>the dlash mode Description.</returns>
         private string GetFlashModeDescription()
         {
-            if (!directory.ContainsTag(PentaxDirectory.TAG_PENTAX_FLASH_MODE))
+            if (!base.directory.ContainsTag(PentaxDirectory.TAG_PENTAX_FLASH_MODE))
             {
                 return null;
             }
-            int aValue = directory.GetInt(PentaxDirectory.TAG_PENTAX_FLASH_MODE);
+            int aValue = base.directory.GetInt(PentaxDirectory.TAG_PENTAX_FLASH_MODE);
             switch (aValue)
             {
                 case 1: return BUNDLE["AUTO"];
@@ -253,11 +253,11 @@ namespace com.drew.metadata.exif
         /// <returns>the focus mode Description.</returns>
         private string GetFocusModeDescription()
         {
-            if (!directory.ContainsTag(PentaxDirectory.TAG_PENTAX_FOCUS_MODE))
+            if (!base.directory.ContainsTag(PentaxDirectory.TAG_PENTAX_FOCUS_MODE))
             {
                 return null;
             }
-            int aValue = directory.GetInt(PentaxDirectory.TAG_PENTAX_FOCUS_MODE);
+            int aValue = base.directory.GetInt(PentaxDirectory.TAG_PENTAX_FOCUS_MODE);
             switch (aValue)
             {
                 case 2: return BUNDLE["CUSTOM"];
@@ -272,11 +272,11 @@ namespace com.drew.metadata.exif
         /// <returns>the quality level Description.</returns>
         private string GetQualityLevelDescription()
         {
-            if (!directory.ContainsTag(PentaxDirectory.TAG_PENTAX_QUALITY_LEVEL))
+            if (!base.directory.ContainsTag(PentaxDirectory.TAG_PENTAX_QUALITY_LEVEL))
             {
                 return null;
             }
-            int aValue = directory.GetInt(PentaxDirectory.TAG_PENTAX_QUALITY_LEVEL);
+            int aValue = base.directory.GetInt(PentaxDirectory.TAG_PENTAX_QUALITY_LEVEL);
             switch (aValue)
             {
                 case 0: return BUNDLE["GOOD"];
@@ -292,11 +292,11 @@ namespace com.drew.metadata.exif
         /// <returns>the capture mode Description.</returns>
         private string GetCaptureModeDescription()
         {
-            if (!directory.ContainsTag(PentaxDirectory.TAG_PENTAX_CAPTURE_MODE))
+            if (!base.directory.ContainsTag(PentaxDirectory.TAG_PENTAX_CAPTURE_MODE))
             {
                 return null;
             }
-            int aValue = directory.GetInt(PentaxDirectory.TAG_PENTAX_CAPTURE_MODE);
+            int aValue = base.directory.GetInt(PentaxDirectory.TAG_PENTAX_CAPTURE_MODE);
             switch (aValue)
             {
                 case 1: return BUNDLE["AUTO"];
@@ -313,11 +313,11 @@ namespace com.drew.metadata.exif
         /// <returns>the print image matching info Description.</returns>
         private string GetPrintImageMatchingInfoDescription()
         {
-            if (!directory.ContainsTag(PentaxDirectory.TAG_PENTAX_PRINT_IMAGE_MATCHING_INFO))
+            if (!base.directory.ContainsTag(PentaxDirectory.TAG_PENTAX_PRINT_IMAGE_MATCHING_INFO))
             {
                 return null;
             }
-            byte[] bytes = directory.GetByteArray(PentaxDirectory.TAG_PENTAX_PRINT_IMAGE_MATCHING_INFO);
+            byte[] bytes = base.directory.GetByteArray(PentaxDirectory.TAG_PENTAX_PRINT_IMAGE_MATCHING_INFO);
             return BUNDLE["BYTES", bytes.Length.ToString()];
         }
 

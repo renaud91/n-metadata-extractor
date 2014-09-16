@@ -33,14 +33,14 @@ namespace com.utils.xml
         /// </summary>
         /// <param name="aBuff">where to put informations</param>
         /// <param name="someParam">Can be used for anything</param>
-        void startTextStream(StringBuilder aBuff, string[] someParam);
+        void StartTextStream(StringBuilder aBuff, string[] someParam);
 
         /// <summary>
         /// Finish out put stream
         /// </summary>
         /// <param name="aBuff">where to put informations</param>
         /// <param name="someParam">Can be used for anything</param>
-        void endTextStream(StringBuilder aBuff, string[] someParam);
+        void EndTextStream(StringBuilder aBuff, string[] someParam);
 
 
         /// <summary>

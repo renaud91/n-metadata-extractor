@@ -4,6 +4,7 @@ using System.Collections;
 using System.IO;
 using com.drew.metadata;
 using com.drew.imaging.jpg;
+using System.Diagnostics;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -31,77 +32,61 @@ namespace com.drew.metadata.jpeg
 	/// <summary>
 	/// The JPEG reader class
 	/// </summary>
-	public class JpegReader : IMetadataReader 
+    public class JpegReader : AbstractMetadataReader 
 	{
-		/// <summary>
-		/// The SOF0 data segment. 
-		/// </summary>
-		private byte[] _data;
 
 		/// <summary>
-		/// Creates a new IptcReader for the specified Jpeg jpegFile.
+		/// Creates a new JpegReader for the specified Jpeg jpegFile.
 		/// </summary>
-		/// <param name="jpegFile">where to read</param>
-		public JpegReader(FileInfo jpegFile) : this(
-			new JpegSegmentReader(jpegFile).ReadSegment(
-			JpegSegmentReader.SEGMENT_SOF0)) 
+        /// <param name="aFile">where to read</param>
+		public JpegReader(FileInfo aFile) : base(aFile, JpegSegmentReader.SEGMENT_SOF0)
 		{
 		}
 
-		/// <summary>
-		/// Constructor of the object
-		/// </summary>
-		/// <param name="data">the data to read</param>
-		public JpegReader(byte[] data) 
-		{
-			_data = data;
-		}
-
-		/// <summary>
-		/// Performs the Exif data extraction, returning a new instance of Metadata. 
-		/// </summary>
-		/// <returns>a new instance of Metadata</returns>
-		public Metadata Extract() 
-		{
-			return Extract(new Metadata());
-		}
+        /// <summary>
+        /// Constructor of the object
+        /// </summary>
+        /// <param name="data">the data to read</param>
+        public JpegReader(byte[] aData)
+            : base(aData)
+        {
+        }
 
 		/// <summary>
 		/// Extracts aMetadata
 		/// </summary>
 		/// <param name="aMetadata">where to add aMetadata</param>
 		/// <returns>the aMetadata found</returns>
-		public Metadata Extract(Metadata metadata) 
+		public override Metadata Extract(Metadata aMetadata) 
 		{
-			if (_data == null) 
+			if (base.data == null) 
 			{
-				return metadata;
+				return aMetadata;
 			}
 
-			JpegDirectory directory =
-				(JpegDirectory) metadata.GetDirectory(Type.GetType("com.drew.metadata.jpeg.JpegDirectory"));
+			AbstractDirectory lcDirectory = aMetadata.GetDirectory("com.drew.metadata.jpeg.JpegDirectory");
 
 			try 
 			{
 				// data precision
 				int dataPrecision =
-					Get16Bits(JpegDirectory.TAG_JPEG_DATA_PRECISION);
-				directory.SetObject(
+					base.Get16Bits(JpegDirectory.TAG_JPEG_DATA_PRECISION);
+				lcDirectory.SetObject(
 					JpegDirectory.TAG_JPEG_DATA_PRECISION,
 					dataPrecision);
 
 				// process height
-				int height = Get32Bits(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT);
-				directory.SetObject(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT, height);
+				int height = base.Get32Bits(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT);
+				lcDirectory.SetObject(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT, height);
 
 				// process width
-				int width = Get32Bits(JpegDirectory.TAG_JPEG_IMAGE_WIDTH);
-				directory.SetObject(JpegDirectory.TAG_JPEG_IMAGE_WIDTH, width);
+				int width = base.Get32Bits(JpegDirectory.TAG_JPEG_IMAGE_WIDTH);
+				lcDirectory.SetObject(JpegDirectory.TAG_JPEG_IMAGE_WIDTH, width);
 
 				// number of components
 				int numberOfComponents =
-					Get16Bits(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS);
-				directory.SetObject(
+					base.Get16Bits(JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS);
+				lcDirectory.SetObject(
 					JpegDirectory.TAG_JPEG_NUMBER_OF_COMPONENTS,
 					numberOfComponents);
 
@@ -112,56 +97,28 @@ namespace com.drew.metadata.jpeg
 				int offset = 6;
 				for (int i = 0; i < numberOfComponents; i++) 
 				{
-					int componentId = Get16Bits(offset++);
-					int samplingFactorByte = Get16Bits(offset++);
-					int quantizationTableNumber = Get16Bits(offset++);
-					JpegComponent component =
+					int componentId = base.Get16Bits(offset++);
+					int samplingFactorByte = base.Get16Bits(offset++);
+					int quantizationTableNumber = base.Get16Bits(offset++);
+					JpegComponent lcJpegComponent =
 						new JpegComponent(
 						componentId,
 						samplingFactorByte,
 						quantizationTableNumber);
-					directory.SetObject(
+					lcDirectory.SetObject(
 						JpegDirectory.TAG_JPEG_COMPONENT_DATA_1 + i,
-						component);
+						lcJpegComponent);
 				}
 
 			} 
 			catch (MetadataException me) 
 			{
-				directory.AddError("MetadataException: " + me);
+                lcDirectory.HasError = true;
+				Trace.TraceError("MetadataException: " + me.Message);
 			}
 
-			return metadata;
+			return aMetadata;
 		}
 
-		/// <summary>
-		/// Returns an int calculated from two bytes of data at the specified lcOffset (MSB, LSB). 
-		/// </summary>
-		/// <param name="lcOffset">position within the data buffer to read first byte</param>
-		/// <returns>the 32 bit int value, between 0x0000 and 0xFFFF</returns>
-		private int Get32Bits(int offset) 
-		{
-			if (offset + 1 >= _data.Length) 
-			{
-				throw new MetadataException("Attempt to read bytes from outside Jpeg segment data buffer");
-			}
-
-			return ((_data[offset] & 255) << 8) | (_data[offset + 1] & 255);
-		}
-
-		/// <summary>
-		/// Returns an int calculated from one byte of data at the specified lcOffset.
-		/// </summary>
-		/// <param name="lcOffset">position within the data buffer to read byte</param>
-		/// <returns>the 16 bit int value, between 0x00 and 0xFF</returns>
-		private int Get16Bits(int offset) 
-		{
-			if (offset >= _data.Length) 
-			{
-				throw new MetadataException("Attempt to read bytes from outside Jpeg segment data buffer");
-			}
-
-			return (_data[offset] & 255);
-		}
 	}
 }

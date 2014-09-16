@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using com.codec.jpeg;
 using com.drew.metadata;
@@ -44,25 +45,29 @@ namespace com.drew.imaging.jpg
         }
 
 		/// <summary>
-		/// Reads MetaData from a stream
-		/// </summary>
-		/// <param name="aStream">where to read information</param>
-		/// <returns>the aMetadata object</returns>
-		public static Metadata ReadMetadata(Stream aStream) 
-		{
-			JpegSegmentReader lcSegmentReader = new JpegSegmentReader(aStream);
-            return JpegMetadataReader.ExtractJpegSegmentReaderMetadata(lcSegmentReader);
-		}
-
-		/// <summary>
 		/// Reads MetaData from a aFile
 		/// </summary>
 		/// <param name="aFile">where to read information</param>
 		/// <returns>the aMetadata object</returns>
 		public static Metadata ReadMetadata(FileInfo aFile) 
 		{
-			JpegSegmentReader lcSegmentReader = new JpegSegmentReader(aFile);
-            return JpegMetadataReader.ExtractJpegSegmentReaderMetadata(lcSegmentReader);
+            JpegSegmentReader lcSegmentReader = null;
+            Metadata lcMetadata = null;
+            try
+            {
+                lcSegmentReader = new JpegSegmentReader(aFile);
+                lcMetadata = JpegMetadataReader.ExtractJpegSegmentReaderMetadata(lcSegmentReader);
+
+            }
+            finally
+            {
+                if (lcSegmentReader != null)
+                {
+                    // Dispose will call close for this class
+                    lcSegmentReader.Dispose();
+                }
+            } 
+            return lcMetadata;
 		}
 
 		/// <summary>
@@ -78,11 +83,11 @@ namespace com.drew.imaging.jpg
 				byte[] lcExifSegment =
 					aSegmentReader.ReadSegment(JpegSegmentReader.SEGMENT_APP1);
 				new ExifReader(lcExifSegment).Extract(lcMetadata);
-			} 
-			catch (JpegProcessingException ) 
+			}
+            catch (Exception e) 
 			{
+                Trace.TraceWarning("Error in reading Exif segment ("+e.Message+")");
 				// in the interests of catching as much data as possible, continue
-				// TODO log error aMessage within exif directory?
 			}
 
 			try 
@@ -91,9 +96,9 @@ namespace com.drew.imaging.jpg
 					aSegmentReader.ReadSegment(JpegSegmentReader.SEGMENT_APPD);
 				new IptcReader(lcIptcSegment).Extract(lcMetadata);
 			} 
-			catch (Exception ) 
+			catch (Exception e) 
 			{
-				// TODO log error aMessage within iptc directory?
+                Trace.TraceWarning("Error in reading Iptc segment (" + e.Message + ")");
 			}
 
 			try 
@@ -101,10 +106,10 @@ namespace com.drew.imaging.jpg
 				byte[] lcJpegSegment =
 					aSegmentReader.ReadSegment(JpegSegmentReader.SEGMENT_SOF0);
 				new JpegReader(lcJpegSegment).Extract(lcMetadata);
-			} 
-			catch (JpegProcessingException ) 
+			}
+            catch (Exception e) 
 			{
-				// TODO log error aMessage within jpeg directory?
+                Trace.TraceWarning("Error in reading Jpeg segment (" + e.Message + ")");
 			}
 
 			try 
@@ -112,10 +117,10 @@ namespace com.drew.imaging.jpg
 				byte[] lcJpegCommentSegment =
 					aSegmentReader.ReadSegment(JpegSegmentReader.SEGMENT_COM);
 				new JpegCommentReader(lcJpegCommentSegment).Extract(lcMetadata);
-			} 
-			catch (JpegProcessingException ) 
+			}
+            catch (Exception e) 
 			{
-				// TODO log error aMessage within jpegcomment directory?
+                Trace.TraceWarning("Error in reading Jpeg Comment segment (" + e.Message + ")");
 			}
 
 			return lcMetadata;

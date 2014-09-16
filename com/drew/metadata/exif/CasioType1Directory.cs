@@ -53,23 +53,14 @@ namespace com.drew.metadata.exif
 		public const int TAG_CASIO_UNKNOWN_8 = 0x0013;
 		public const int TAG_CASIO_CCD_SENSITIVITY = 0x0014;
 
-        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.exif.CasioType1Directory"), BUNDLE);
-		
 		/// <summary>
 		/// Constructor of the object.
 		/// </summary>
-		public CasioType1Directory() : base()
+        public CasioType1Directory()
+            : base("CasioMarkernote")
 		{
 			base.SetDescriptor(new CasioType1Descriptor(this));
 		}
 
-		/// <summary>
-		/// Provides the map of tag names, hashed by tag type identifier. 
-		/// </summary>
-		/// <returns>the map of tag names</returns>
-        protected override Dictionary<int, string> GetTagNameMap() 
-		{
-            return CasioType1Directory.tagNameMap;
-		}
 	}
 }

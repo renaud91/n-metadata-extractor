@@ -36,9 +36,9 @@ namespace com.drew.metadata.exif
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
-		/// <param name="directory">a directory</param>
-        public PanasonicDescriptor(AbstractDirectory directory)
-            : base(directory)
+		/// <param name="aDirectory">a base.directory</param>
+        public PanasonicDescriptor(AbstractDirectory aDirectory)
+            : base(aDirectory)
 		{		
 		}
 
@@ -62,7 +62,7 @@ namespace com.drew.metadata.exif
                 case PanasonicDirectory.TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO:
                     return GetPrintImageMatchingInfoDescription();
                 default:
-                    return directory.GetString(tagType);
+                    return base.directory.GetString(tagType);
             }
         }
 
@@ -72,11 +72,11 @@ namespace com.drew.metadata.exif
         /// <returns>the print image matching info Description.</returns>
         private string GetPrintImageMatchingInfoDescription()
         {
-            if (!directory.ContainsTag(PanasonicDirectory.TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO))
+            if (!base.directory.ContainsTag(PanasonicDirectory.TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO))
             {
                 return null;
             }
-            byte[] bytes = directory.GetByteArray(PanasonicDirectory.TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO);
+            byte[] bytes = base.directory.GetByteArray(PanasonicDirectory.TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO);
             return BUNDLE["BYTES", bytes.Length.ToString()];
         }
 
@@ -86,11 +86,11 @@ namespace com.drew.metadata.exif
         /// <returns>the macro mode Description.</returns>
         private string GetMacroModeDescription()
         {
-            if (!directory.ContainsTag(PanasonicDirectory.TAG_PANASONIC_MACRO_MODE))
+            if (!base.directory.ContainsTag(PanasonicDirectory.TAG_PANASONIC_MACRO_MODE))
             {
                 return null;
             }
-            int value = directory.GetInt(PanasonicDirectory.TAG_PANASONIC_MACRO_MODE);
+            int value = base.directory.GetInt(PanasonicDirectory.TAG_PANASONIC_MACRO_MODE);
             switch (value)
             {
                 case 1:
@@ -108,11 +108,11 @@ namespace com.drew.metadata.exif
         /// <returns>the record mode Description.</returns>
         private string GetRecordModeDescription()
         {
-            if (!directory.ContainsTag(PanasonicDirectory.TAG_PANASONIC_RECORD_MODE))
+            if (!base.directory.ContainsTag(PanasonicDirectory.TAG_PANASONIC_RECORD_MODE))
             {
                 return null;
             }
-            int value = directory.GetInt(PanasonicDirectory.TAG_PANASONIC_RECORD_MODE);
+            int value = base.directory.GetInt(PanasonicDirectory.TAG_PANASONIC_RECORD_MODE);
             switch (value)
             {
                 case 1:

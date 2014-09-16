@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using com.drew.metadata;
-using com.utils;
+using com.utils.bundle;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -80,33 +80,13 @@ namespace com.drew.metadata.jpeg
 		/// </summary>
 		public const int TAG_JPEG_COMPONENT_DATA_4 = 9;
 
-		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("JpegMarkernote");
-        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.jpeg.JpegDirectory"), BUNDLE);
-
 		/// <summary>
 		/// Constructor of the object.
 		/// </summary>
-		public JpegDirectory() : base()
+        public JpegDirectory()
+            : base("JpegMarkernote")
 		{
 			this.SetDescriptor(new JpegDescriptor(this));
-		}
-
-		/// <summary>
-		/// Provides the name of the directory, for display purposes.  E.g. Exif 
-		/// </summary>
-		/// <returns>the name of the directory</returns>
-		public override string GetName() 
-		{
-			return BUNDLE["MARKER_NOTE_NAME"];
-		}
-
-		/// <summary>
-		/// Provides the map of tag names, hashed by tag type identifier. 
-		/// </summary>
-		/// <returns>the map of tag names</returns>
-        protected override Dictionary<int, string> GetTagNameMap() 
-		{
-			return tagNameMap;
 		}
 
 		/// <summary>

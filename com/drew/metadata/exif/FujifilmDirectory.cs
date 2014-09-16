@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using com.drew.metadata;
 using com.drew.lang;
-using com.utils;
+using com.utils.bundle;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -54,33 +54,14 @@ namespace com.drew.metadata.exif
 		public const int TAG_FUJIFILM_FOCUS_WARNING = 0x1301;
 		public const int TAG_FUJIFILM_AE_WARNING = 0x1302;
 
-		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("FujiFilmMarkernote");
-        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.exif.FujifilmDirectory"), BUNDLE);
-
 		/// <summary>
 		/// Constructor of the object.
 		/// </summary>
-		public FujifilmDirectory() : base()
+        public FujifilmDirectory()
+            : base("FujiFilmMarkernote")
 		{
 			this.SetDescriptor(new FujifilmDescriptor(this));
 		}
 
-		/// <summary>
-		/// Provides the name of the directory, for display purposes.  E.g. Exif 
-		/// </summary>
-		/// <returns>the name of the directory</returns>
-		public override string GetName() 
-		{
-			return BUNDLE["MARKER_NOTE_NAME"];
-		}
-
-		/// <summary>
-		/// Provides the map of tag names, hashed by tag type identifier. 
-		/// </summary>
-		/// <returns>the map of tag names</returns>
-        protected override Dictionary<int, string> GetTagNameMap() 
-		{
-			return tagNameMap;
-		}
 	}
 }

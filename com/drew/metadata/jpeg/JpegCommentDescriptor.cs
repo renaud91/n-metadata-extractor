@@ -48,7 +48,7 @@ namespace com.drew.metadata.jpeg
 		/// <returns>a description of the image'str value for the specified tag, or null if the tag hasn't been defined.</returns>
 		public override string GetDescription(int tagType) 
 		{
-			return directory.GetString(tagType);
+			return base.directory.GetString(tagType);
 		}
 	}
 }

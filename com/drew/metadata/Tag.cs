@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Text;
+using com.drew.metadata.exif;
+using com.drew.metadata.iptc;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -74,7 +76,7 @@ namespace com.drew.metadata
 		/// <returns>a description of the tag'str value</returns>
 		public string GetDescription() 
 		{
-            return this.directory.GetDescription(tagType);
+            return this.directory.GetDescription(this.tagType);
 		}
 
 		/// <summary>
@@ -83,8 +85,35 @@ namespace com.drew.metadata
 		/// <returns>the tag'str name</returns>
 		public string GetTagName() 
 		{
-            return this.directory.GetTagName(tagType);
+            return this.directory.GetTagName(this.tagType);
 		}
+
+        /// <summary>
+        /// Gets the tag value.
+        /// </summary>
+        /// <returns>the tag value</returns>
+        public object GetTagValue()
+        {
+            object obj = this.directory.GetObject(this.tagType);
+            // In order to make the XML import/export work
+            // We need to handle Date manually
+            if (this.tagType == ExifDirectory.TAG_DATETIME
+                || this.tagType == ExifDirectory.TAG_DATETIME_DIGITIZED
+                || this.tagType == ExifDirectory.TAG_DATETIME_ORIGINAL
+                || this.tagType == IptcDirectory.TAG_DATE_CREATED)
+            {
+                try
+                {
+                    return this.directory.GetDate(this.tagType);
+                }
+                catch (MetadataException)
+                {
+                    // Do nothing                    
+                }
+            }
+            return obj;
+        }
+
 
 		/// <summary>
 		/// Get the name of the directory in which the tag exists, such as Exif, GPS or Interoperability. 

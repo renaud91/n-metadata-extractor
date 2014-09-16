@@ -34,7 +34,8 @@ namespace com.drew.metadata.iptc
 		/// Constructor of the object
 		/// </summary>
 		/// <param name="aMessage">The error aMessage</param>
-		public IptcProcessingException(string message) : base(message)
+        public IptcProcessingException(string aMessage)
+            : base(aMessage)
 		{
 		}
 
@@ -43,7 +44,8 @@ namespace com.drew.metadata.iptc
 		/// </summary>
 		/// <param name="aMessage">The error aMessage</param>
 		/// <param name="aCause">The aCause of the exception</param>
-		public IptcProcessingException(string message, Exception cause) : base(message, cause)
+        public IptcProcessingException(string aMessage, Exception aCause)
+            : base(aMessage, aCause)
 		{
 		}
 
@@ -51,7 +53,8 @@ namespace com.drew.metadata.iptc
 		/// Constructor of the object
 		/// </summary>
 		/// <param name="aCause">The aCause of the exception</param>
-		public IptcProcessingException(Exception cause) : base(cause)
+        public IptcProcessingException(Exception aCause)
+            : base(aCause.Message, aCause)
 		{
 		}
 	}

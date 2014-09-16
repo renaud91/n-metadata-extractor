@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using com.drew.metadata;
 using com.drew.lang;
-using com.utils;
+using com.utils.bundle;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -52,34 +52,13 @@ namespace com.drew.metadata.exif
         public const int TAG_PANASONIC_RECORD_MODE = 0x001F;
         public const int TAG_PANASONIC_PRINT_IMAGE_MATCHING_INFO = 0x0E00;
 
-		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("PanasonicMarkernote");
-        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.exif.PanasonicDirectory"), BUNDLE);
-
 		/// <summary>
 		/// Constructor of the object.
 		/// </summary>
         public PanasonicDirectory()
-            : base()
+            : base("PanasonicMarkernote")
 		{
 			this.SetDescriptor(new PanasonicDescriptor(this));
-		}
-
-		/// <summary>
-		/// Provides the name of the directory, for display purposes.  E.g. Exif 
-		/// </summary>
-		/// <returns>the name of the directory</returns>
-		public override string GetName() 
-		{
-			return BUNDLE["MARKER_NOTE_NAME"];
-		}
-
-		/// <summary>
-		/// Provides the map of tag names, hashed by tag type identifier. 
-		/// </summary>
-		/// <returns>the map of tag names</returns>
-        protected override Dictionary<int, string> GetTagNameMap() 
-		{
-			return tagNameMap;
 		}
 	}
 }

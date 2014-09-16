@@ -13,6 +13,7 @@ using com.drew.metadata.jpeg;
 using com.drew.imaging.jpg;
 
 using com.utils;
+using com.utils.bundle;
 using com.utils.xml;
 
 /// <summary>
@@ -31,7 +32,7 @@ namespace com.test.resources
         ///// Where are all cs file, asking for the top root folder (ex: c:/temp/com")
         ///// </summary>
         //private static string CS_ROOT_FOLDER = "C:/Documents and Settings/Renaud91/Mes documents/MetaDataExtractorCSharp/MetaDataExtractor/com";
-        //private static ResourceBundle BUNDLE = new ResourceBundle("Commons");
+        //private static IResourceBundle BUNDLE = ResourceBundleFactory.CreateDefaultBundle("Commons", null);
 
         //public static void SearchAndExecuteBundle(string aCsFileName)
         //{

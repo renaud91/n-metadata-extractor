@@ -188,7 +188,7 @@ namespace com.drew.metadata.exif
                     return GetExposureModeDescription();
 
 				default :
-					return this.directory.GetString(aTagType);
+					return base.directory.GetString(aTagType);
 			}
 		}
 
@@ -198,11 +198,11 @@ namespace com.drew.metadata.exif
         /// <returns>The custom rendered description</returns>
         private string GetCustomRenderedDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_CUSTOM_RENDERED))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_CUSTOM_RENDERED))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_CUSTOM_RENDERED);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_CUSTOM_RENDERED);
             switch (lcVal)
             {
                 case 0:
@@ -220,11 +220,11 @@ namespace com.drew.metadata.exif
         /// <returns>The exposure mode description</returns>
         private string GetExposureModeDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_EXPOSURE_MODE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_EXPOSURE_MODE))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_EXPOSURE_MODE);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_EXPOSURE_MODE);
             switch (lcVal)
             {
                 case 0:
@@ -245,11 +245,11 @@ namespace com.drew.metadata.exif
         /// <returns>The white balance mode description</returns>
         private string GetWhiteBalanceModeDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_WHITE_BALANCE_MODE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_WHITE_BALANCE_MODE))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_WHITE_BALANCE_MODE);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_WHITE_BALANCE_MODE);
             switch (lcVal)
             {
                 case 0:
@@ -268,11 +268,11 @@ namespace com.drew.metadata.exif
         /// <returns>The digital zoom ratio description</returns>
         private string GetDigitalZoomRatioDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_DIGITAL_ZOOM_RATIO))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_DIGITAL_ZOOM_RATIO))
             {
                 return null;
             }
-            Rational lcRational = this.directory.GetRational(ExifDirectory.TAG_DIGITAL_ZOOM_RATIO);
+            Rational lcRational = base.directory.GetRational(ExifDirectory.TAG_DIGITAL_ZOOM_RATIO);
             if (lcRational.GetNumerator() == 0)
             {
                 return BUNDLE["DIGITAL_ZOOM_NOT_USED"];
@@ -287,11 +287,11 @@ namespace com.drew.metadata.exif
         /// <returns>The 35mm film equivalent focal length description</returns>
         private string Get35mmFilmEquivFocalLengthDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_FOCAL_LENGTH_IN_35MM_FILM))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_FOCAL_LENGTH_IN_35MM_FILM))
             {
                 return null;
             }
-            int lcEquivalentFocalLength = this.directory.GetInt(ExifDirectory.TAG_FOCAL_LENGTH_IN_35MM_FILM);
+            int lcEquivalentFocalLength = base.directory.GetInt(ExifDirectory.TAG_FOCAL_LENGTH_IN_35MM_FILM);
 
             if (lcEquivalentFocalLength == 0)
             {
@@ -306,11 +306,11 @@ namespace com.drew.metadata.exif
         /// <returns>The scene capture type description</returns>
         private string GetSceneCaptureTypeDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_SCENE_CAPTURE_TYPE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_SCENE_CAPTURE_TYPE))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_SCENE_CAPTURE_TYPE);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_SCENE_CAPTURE_TYPE);
             switch (lcVal)
             {
                 case 0:
@@ -332,11 +332,11 @@ namespace com.drew.metadata.exif
         /// <returns>The gain control description</returns>
         private string GetGainControlDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_GAIN_CONTROL))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_GAIN_CONTROL))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_GAIN_CONTROL);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_GAIN_CONTROL);
             switch (lcVal)
             {
                 case 0:
@@ -361,11 +361,11 @@ namespace com.drew.metadata.exif
         /// <returns>The constrast description</returns>
         private string GetContrastDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_CONTRAST))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_CONTRAST))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_CONTRAST);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_CONTRAST);
             switch (lcVal)
             {
                 case 0:
@@ -385,11 +385,11 @@ namespace com.drew.metadata.exif
         /// <returns>The subfile type description</returns>
         private string getSubfileTypeDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_SUBFILE_TYPE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_SUBFILE_TYPE))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_SUBFILE_TYPE);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_SUBFILE_TYPE);
             switch (lcVal)
             {
                 case 1: return BUNDLE["FULL_RESOLUTION_IMAGE"];
@@ -406,11 +406,11 @@ namespace com.drew.metadata.exif
         /// <returns>The new subfile type description</returns>
         private string GetNewSubfileTypeDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_NEW_SUBFILE_TYPE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_NEW_SUBFILE_TYPE))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_NEW_SUBFILE_TYPE);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_NEW_SUBFILE_TYPE);
             switch (lcVal)
             {
                 case 1: return BUNDLE["FULL_RESOLUTION_IMAGE"];
@@ -431,11 +431,11 @@ namespace com.drew.metadata.exif
         /// <returns>The thresholding description</returns>
         private string GetThresholdingDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_THRESHOLDING))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_THRESHOLDING))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_THRESHOLDING);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_THRESHOLDING);
             switch (lcVal)
             {
                 case 1: return BUNDLE["NO_DITHERING_OR_HALFTONING"];
@@ -452,11 +452,11 @@ namespace com.drew.metadata.exif
         /// <returns>The fill order description</returns>
         private string GetFillOrderDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_FILL_ORDER))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_FILL_ORDER))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_FILL_ORDER);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_FILL_ORDER);
             switch (lcVal)
             {
                 case 1: return BUNDLE["NORMAL"];
@@ -472,11 +472,11 @@ namespace com.drew.metadata.exif
         /// <returns>The subject distance range description</returns>
         private string GetSubjectDistanceRangeDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_SUBJECT_DISTANCE_RANGE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_SUBJECT_DISTANCE_RANGE))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_SUBJECT_DISTANCE_RANGE);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_SUBJECT_DISTANCE_RANGE);
             switch (lcVal)
             {
                 case 1:
@@ -496,11 +496,11 @@ namespace com.drew.metadata.exif
         /// <returns>The sharpness description</returns>
         private string GetSharpnessDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_SHARPNESS))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_SHARPNESS))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_SHARPNESS);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_SHARPNESS);
             switch (lcVal)
             {
                 case 0:
@@ -520,11 +520,11 @@ namespace com.drew.metadata.exif
         /// <returns>The saturation description</returns>
         private string GetSaturationDescription()
         {
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_SATURATION))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_SATURATION))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_SATURATION);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_SATURATION);
             switch (lcVal)
             {
                 case 0:
@@ -546,12 +546,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Thumbnail Description.</returns>
 		private string GetThumbnailDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_THUMBNAIL_DATA))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_THUMBNAIL_DATA))
             {
                 return null;
             }
 			int[] lcThumbnailBytes =
-				this.directory.GetIntArray(ExifDirectory.TAG_THUMBNAIL_DATA);
+				base.directory.GetIntArray(ExifDirectory.TAG_THUMBNAIL_DATA);
 			return BUNDLE["THUMBNAIL_BYTES", lcThumbnailBytes.Length.ToString()];
 		}
 
@@ -561,11 +561,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Iso Equivalent Description.</returns>
 		private string GetIsoEquivalentDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_ISO_EQUIVALENT))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_ISO_EQUIVALENT))
             {
                 return null;
             }
-			int lcIsoEquiv = this.directory.GetInt(ExifDirectory.TAG_ISO_EQUIVALENT);
+			int lcIsoEquiv = base.directory.GetInt(ExifDirectory.TAG_ISO_EQUIVALENT);
 			if (lcIsoEquiv < 50) 
 			{
 				lcIsoEquiv *= 200;
@@ -579,12 +579,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Reference Black White Description.</returns>
 		private string GetReferenceBlackWhiteDescription()
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_REFERENCE_BLACK_WHITE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_REFERENCE_BLACK_WHITE))
             {
                 return null;
             }
 			int[] lcInts =
-				this.directory.GetIntArray(ExifDirectory.TAG_REFERENCE_BLACK_WHITE);
+				base.directory.GetIntArray(ExifDirectory.TAG_REFERENCE_BLACK_WHITE);
 
 			string[] lcSPos = new string[] {lcInts[0].ToString(), lcInts[1].ToString(),lcInts[2].ToString(),lcInts[3].ToString(),lcInts[4].ToString(),lcInts[5].ToString()};
 			return BUNDLE["POS",lcSPos];
@@ -596,11 +596,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Exif Version Description.</returns>
 		private string GetExifVersionDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_EXIF_VERSION))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_EXIF_VERSION))
             {
                 return null;
             }
-			int[] lcInts = this.directory.GetIntArray(ExifDirectory.TAG_EXIF_VERSION);
+			int[] lcInts = base.directory.GetIntArray(ExifDirectory.TAG_EXIF_VERSION);
 			return ExifDescriptor.ConvertBytesToVersionString(lcInts);
 		}
 
@@ -610,11 +610,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Flash Pix Version Description.</returns>
 		private string GetFlashPixVersionDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_FLASHPIX_VERSION))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_FLASHPIX_VERSION))
             {
                 return null;
             }
-			int[] lcInts = this.directory.GetIntArray(ExifDirectory.TAG_FLASHPIX_VERSION);
+			int[] lcInts = base.directory.GetIntArray(ExifDirectory.TAG_FLASHPIX_VERSION);
 			return ExifDescriptor.ConvertBytesToVersionString(lcInts);
 		}
 
@@ -624,11 +624,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Scene Type Description.</returns>
 		private string GetSceneTypeDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_SCENE_TYPE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_SCENE_TYPE))
             {
                 return null;
             }
-			int lcSceneType = this.directory.GetInt(ExifDirectory.TAG_SCENE_TYPE);
+			int lcSceneType = base.directory.GetInt(ExifDirectory.TAG_SCENE_TYPE);
 			if (lcSceneType == 1) 
 			{
 				return BUNDLE["DIRECTLY_PHOTOGRAPHED_IMAGE"];
@@ -642,11 +642,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the File Source Description.</returns>
 		private string GetFileSourceDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_FILE_SOURCE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_FILE_SOURCE))
             {
                 return null;
             }
-			int lcFileSource = this.directory.GetInt(ExifDirectory.TAG_FILE_SOURCE);
+			int lcFileSource = base.directory.GetInt(ExifDirectory.TAG_FILE_SOURCE);
 			if (lcFileSource == 3) 
 			{
 				return BUNDLE["DIGITAL_STILL_CAMERA"];
@@ -660,12 +660,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Exposure Bias Description.</returns>
 		private string GetExposureBiasDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_EXPOSURE_BIAS))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_EXPOSURE_BIAS))
             {
                 return null;
             }
 			Rational lcExposureBias =
-				this.directory.GetRational(ExifDirectory.TAG_EXPOSURE_BIAS);
+				base.directory.GetRational(ExifDirectory.TAG_EXPOSURE_BIAS);
 			return lcExposureBias.ToSimpleString(true);
 		}
 
@@ -675,12 +675,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Max Aperture Value Description.</returns>
 		private string GetMaxApertureValueDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_MAX_APERTURE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_MAX_APERTURE))
             {
                 return null;
             }
 			double lcApertureApex =
-				this.directory.GetDouble(ExifDirectory.TAG_MAX_APERTURE);
+				base.directory.GetDouble(ExifDirectory.TAG_MAX_APERTURE);
 			double lcRootTwo = Math.Sqrt(2);
 			double lcFStop = Math.Pow(lcRootTwo, lcApertureApex);
 			return BUNDLE["APERTURE", lcFStop.ToString("0.#")];
@@ -692,11 +692,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Aperture Value Description.</returns>
 		private string GetApertureValueDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_APERTURE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_APERTURE))
             {
                 return null;
             }
-			double lcApertureApex = this.directory.GetDouble(ExifDirectory.TAG_APERTURE);
+			double lcApertureApex = base.directory.GetDouble(ExifDirectory.TAG_APERTURE);
 			double lcRootTwo = Math.Sqrt(2);
 			double lcFStop = Math.Pow(lcRootTwo, lcApertureApex);
 			return BUNDLE["APERTURE", lcFStop.ToString("0.#")];
@@ -708,11 +708,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Exposure Program Description.</returns>
 		private string GetExposureProgramDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_EXPOSURE_PROGRAM))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_EXPOSURE_PROGRAM))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_EXPOSURE_PROGRAM);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_EXPOSURE_PROGRAM);
 			switch (lcVal) 
 			{
 				case 1 :
@@ -742,12 +742,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the YCbCr Subsampling Description.</returns>
 		private string GetYCbCrSubsamplingDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_YCBCR_SUBSAMPLING))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_YCBCR_SUBSAMPLING))
             {
                 return null;
             }
 			int[] lcPositions =
-				this.directory.GetIntArray(ExifDirectory.TAG_YCBCR_SUBSAMPLING);
+				base.directory.GetIntArray(ExifDirectory.TAG_YCBCR_SUBSAMPLING);
 			if (lcPositions[0] == 2 && lcPositions[1] == 1) 
 			{
 				return BUNDLE["YCBCR_422"];
@@ -765,7 +765,7 @@ namespace com.drew.metadata.exif
 		/// <returns>the Planar Configuration Description.</returns>
 		private string GetPlanarConfigurationDescription()
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_PLANAR_CONFIGURATION))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_PLANAR_CONFIGURATION))
             {
                 return null;
             }
@@ -774,7 +774,7 @@ namespace com.drew.metadata.exif
 			// pixel. If aValue is '2', Y/Cb/Cr aValue is separated and stored to Y plane/Cb plane/Cr
 			// plane format.
 
-			switch (this.directory.GetInt(ExifDirectory.TAG_PLANAR_CONFIGURATION)) 
+			switch (base.directory.GetInt(ExifDirectory.TAG_PLANAR_CONFIGURATION)) 
 			{
 				case 1 :
 					return BUNDLE["CHUNKY"];
@@ -791,11 +791,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Samples Per Pixel Description.</returns>
 		private string GetSamplesPerPixelDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_SAMPLES_PER_PIXEL))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_SAMPLES_PER_PIXEL))
             {
                 return null;
             }
-			return BUNDLE["SAMPLES_PIXEL", this.directory.GetString(ExifDirectory.TAG_SAMPLES_PER_PIXEL)];
+			return BUNDLE["SAMPLES_PIXEL", base.directory.GetString(ExifDirectory.TAG_SAMPLES_PER_PIXEL)];
 		}
 
 		/// <summary>
@@ -804,11 +804,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Rows Per Strip Description.</returns>
 		private string GetRowsPerStripDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_ROWS_PER_STRIP))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_ROWS_PER_STRIP))
             {
                 return null;
             }
-			return BUNDLE["ROWS_STRIP", this.directory.GetString(ExifDirectory.TAG_ROWS_PER_STRIP)];
+			return BUNDLE["ROWS_STRIP", base.directory.GetString(ExifDirectory.TAG_ROWS_PER_STRIP)];
 		}
 
 		/// <summary>
@@ -817,11 +817,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Strip Byte Counts Description.</returns>
 		private string GetStripByteCountsDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_STRIP_BYTE_COUNTS))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_STRIP_BYTE_COUNTS))
             {
                 return null;
             }
-			return BUNDLE["BYTES", this.directory.GetString(ExifDirectory.TAG_STRIP_BYTE_COUNTS)];
+			return BUNDLE["BYTES", base.directory.GetString(ExifDirectory.TAG_STRIP_BYTE_COUNTS)];
 		}
 
 		/// <summary>
@@ -830,14 +830,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Photometric Interpretation Description.</returns>
 		private string GetPhotometricInterpretationDescription()
 		{
-            if (!this.directory
+            if (!base.directory
                 .ContainsTag(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION))
             {
                 return null;
             }
 			// Shows the color space of the image data components. '1' means monochrome,
 			// '2' means RGB, '6' means YCbCr.
-            switch (this.directory
+            switch (base.directory
                 .GetInt(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION))
             {
                 case 0: return BUNDLE["WHITE_IS_ZERO"];
@@ -864,12 +864,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Compression Description.</returns>
 		private string GetCompressionDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_COMPRESSION))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_COMPRESSION))
             {
                 return null;
             }
 			// '1' means no compression, '6' means JPEG compression.
-            switch (this.directory.GetInt(ExifDirectory.TAG_COMPRESSION))
+            switch (base.directory.GetInt(ExifDirectory.TAG_COMPRESSION))
             {
                 case 1: return BUNDLE["UNCOMPRESSED"];
                 case 2: return BUNDLE["CCITT_1D"];
@@ -908,11 +908,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Bits Per Sample Description.</returns>
 		private string GetBitsPerSampleDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_BITS_PER_SAMPLE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_BITS_PER_SAMPLE))
             {
                 return null;
             }
-			return BUNDLE["BITS_COMPONENT_PIXEL",this.directory.GetString(ExifDirectory.TAG_BITS_PER_SAMPLE)];
+			return BUNDLE["BITS_COMPONENT_PIXEL",base.directory.GetString(ExifDirectory.TAG_BITS_PER_SAMPLE)];
 		}
 
 		/// <summary>
@@ -921,11 +921,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Thumbnail Image Width Description.</returns>
 		private string GetThumbnailImageWidthDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_THUMBNAIL_IMAGE_WIDTH))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_THUMBNAIL_IMAGE_WIDTH))
             {
                 return null;
             }
-			return BUNDLE["PIXELS", this.directory.GetString(ExifDirectory.TAG_THUMBNAIL_IMAGE_WIDTH)];
+			return BUNDLE["PIXELS", base.directory.GetString(ExifDirectory.TAG_THUMBNAIL_IMAGE_WIDTH)];
 		}
 
 		/// <summary>
@@ -934,11 +934,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Thumbnail Image Height Description.</returns>
 		private string GetThumbnailImageHeightDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT))
             {
                 return null;
             }
-			return BUNDLE["PIXELS", this.directory.GetString(ExifDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT)];
+			return BUNDLE["PIXELS", base.directory.GetString(ExifDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT)];
 		}
 
 		/// <summary>
@@ -947,12 +947,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Focal Plane X Resolution Description.</returns>
 		private string GetFocalPlaneXResolutionDescription()
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_FOCAL_PLANE_X_RES))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_FOCAL_PLANE_X_RES))
             {
                 return null;
             }
 			Rational lcRational =
-				this.directory.GetRational(ExifDirectory.TAG_FOCAL_PLANE_X_RES);
+				base.directory.GetRational(ExifDirectory.TAG_FOCAL_PLANE_X_RES);
 			return BUNDLE["FOCAL_PLANE", lcRational.GetReciprocal().ToSimpleString(allowDecimalRepresentationOfRationals),
 			GetFocalPlaneResolutionUnitDescription().ToLower()];
 		}
@@ -963,12 +963,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Focal Plane Y Resolution Description.</returns>
 		private string GetFocalPlaneYResolutionDescription()
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_COMPRESSION))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_FOCAL_PLANE_Y_RES))
             {
                 return null;
             }
 			Rational lcRational =
-				this.directory.GetRational(ExifDirectory.TAG_FOCAL_PLANE_Y_RES);
+				base.directory.GetRational(ExifDirectory.TAG_FOCAL_PLANE_Y_RES);
 			return BUNDLE["FOCAL_PLANE", lcRational.GetReciprocal().ToSimpleString(allowDecimalRepresentationOfRationals),
 				GetFocalPlaneResolutionUnitDescription().ToLower()];
 		}
@@ -979,13 +979,13 @@ namespace com.drew.metadata.exif
 		/// <returns>the Focal Plane Resolution Unit Description.</returns>
 		private string GetFocalPlaneResolutionUnitDescription()
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_FOCAL_PLANE_UNIT))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_FOCAL_PLANE_UNIT))
             {
                 return null;
             }
 			// Unit of FocalPlaneXResoluton/FocalPlaneYResolution. '1' means no-unit,
 			// '2' inch, '3' centimeter.
-			switch (this.directory.GetInt(ExifDirectory.TAG_FOCAL_PLANE_UNIT)) 
+			switch (base.directory.GetInt(ExifDirectory.TAG_FOCAL_PLANE_UNIT)) 
 			{
 				case 1 :
 					return BUNDLE["NO_UNIT"];
@@ -1004,11 +1004,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Exif Image Width Description.</returns>
 		private string GetExifImageWidthDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_EXIF_IMAGE_WIDTH))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_EXIF_IMAGE_WIDTH))
             {
                 return null;
             }
-			return BUNDLE["PIXELS", this.directory.GetInt(ExifDirectory.TAG_EXIF_IMAGE_WIDTH).ToString()];
+			return BUNDLE["PIXELS", base.directory.GetInt(ExifDirectory.TAG_EXIF_IMAGE_WIDTH).ToString()];
 		}
 
 		/// <summary>
@@ -1017,11 +1017,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Exif Image Height Description.</returns>
 		private string GetExifImageHeightDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT))
             {
                 return null;
             }
-			return BUNDLE["PIXELS", this.directory.GetInt(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT).ToString()];
+			return BUNDLE["PIXELS", base.directory.GetInt(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT).ToString()];
 		}
 
 		/// <summary>
@@ -1030,11 +1030,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Color Space Description.</returns>
 		private string GetColorSpaceDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_COLOR_SPACE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_COLOR_SPACE))
             {
                 return null;
             }
-			int lcColorSpace = this.directory.GetInt(ExifDirectory.TAG_COLOR_SPACE);
+			int lcColorSpace = base.directory.GetInt(ExifDirectory.TAG_COLOR_SPACE);
             switch (lcColorSpace)
             {
                 case 1: return BUNDLE["SRGB"];
@@ -1049,12 +1049,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Focal Length Description.</returns>
 		private string GetFocalLengthDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_FOCAL_LENGTH))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_FOCAL_LENGTH))
             {
                 return null;
             }
 			Rational lcFocalLength =
-				this.directory.GetRational(ExifDirectory.TAG_FOCAL_LENGTH);
+				base.directory.GetRational(ExifDirectory.TAG_FOCAL_LENGTH);
 			return BUNDLE["DISTANCE_MM", (lcFocalLength.DoubleValue()).ToString("0.0##")];
 		}
 
@@ -1064,11 +1064,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Flash Description.</returns>
 		private string GetFlashDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_FLASH))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_FLASH))
             {
                 return null;
             }          
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_FLASH);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_FLASH);
             StringBuilder sb = new StringBuilder();
 
             if ((lcVal & 0x1) != 0)
@@ -1113,11 +1113,11 @@ namespace com.drew.metadata.exif
         /// <returns>the light source Description.</returns>
 		private string GetLightSourceDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_LIGHT_SOURCE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_LIGHT_SOURCE))
             {
                 return null;
             }
-            int lcVal = this.directory.GetInt(ExifDirectory.TAG_LIGHT_SOURCE);
+            int lcVal = base.directory.GetInt(ExifDirectory.TAG_LIGHT_SOURCE);
 			switch (lcVal) 
 			{
 				case 0 :
@@ -1155,13 +1155,13 @@ namespace com.drew.metadata.exif
 		/// <returns>the Metering Mode Description.</returns>
 		private string GetMeteringModeDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_METERING_MODE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_METERING_MODE))
             {
                 return null;
             }
 			// '0' means unknown, '1' average, '2' center weighted average, '3' spot
 			// '4' multi-spot, '5' multi-segment, '6' partial, '255' other
-			int lcMeteringMode = this.directory.GetInt(ExifDirectory.TAG_METERING_MODE);
+			int lcMeteringMode = base.directory.GetInt(ExifDirectory.TAG_METERING_MODE);
 			switch (lcMeteringMode) 
 			{
 				case 0 :
@@ -1191,12 +1191,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Subject Distance Description.</returns>
 		private string GetSubjectDistanceDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_SUBJECT_DISTANCE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_SUBJECT_DISTANCE))
             {
                 return null;
             }
 			Rational lcDistance =
-				this.directory.GetRational(ExifDirectory.TAG_SUBJECT_DISTANCE);
+				base.directory.GetRational(ExifDirectory.TAG_SUBJECT_DISTANCE);
 			return BUNDLE["METRES", (lcDistance.DoubleValue()).ToString("0.0##")];
 		}
 
@@ -1206,12 +1206,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Compression Level Description.</returns>
 		private string GetCompressionLevelDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_COMPRESSION_LEVEL))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_COMPRESSION_LEVEL))
             {
                 return null;
             }
 			Rational lcCompressionRatio =
-				this.directory.GetRational(ExifDirectory.TAG_COMPRESSION_LEVEL);
+				base.directory.GetRational(ExifDirectory.TAG_COMPRESSION_LEVEL);
 			string lcRatio =
 				lcCompressionRatio.ToSimpleString(
 				allowDecimalRepresentationOfRationals);
@@ -1228,11 +1228,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Thumbnail Length Description.</returns>
 		private string GetThumbnailLengthDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_THUMBNAIL_LENGTH))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_THUMBNAIL_LENGTH))
             {
                 return null;
             }
-			return BUNDLE["BYTES", this.directory.GetString(ExifDirectory.TAG_THUMBNAIL_LENGTH)];
+			return BUNDLE["BYTES", base.directory.GetString(ExifDirectory.TAG_THUMBNAIL_LENGTH)];
 		}
 
 		/// <summary>
@@ -1241,11 +1241,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Thumbnail OffSet Description.</returns>
 		private string GetThumbnailOffSetDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_THUMBNAIL_OFFSET))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_THUMBNAIL_OFFSET))
             {
                 return null;
             }
-			return BUNDLE["BYTES", this.directory.GetString(ExifDirectory.TAG_THUMBNAIL_OFFSET)];
+			return BUNDLE["BYTES", base.directory.GetString(ExifDirectory.TAG_THUMBNAIL_OFFSET)];
 		}
 
 		/// <summary>
@@ -1254,12 +1254,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Y Resolution Description.</returns>
 		private string GetYResolutionDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_Y_RESOLUTION))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_Y_RESOLUTION))
             {
                 return null;
             }
 			Rational lcResolution =
-				this.directory.GetRational(ExifDirectory.TAG_Y_RESOLUTION);
+				base.directory.GetRational(ExifDirectory.TAG_Y_RESOLUTION);
 			return BUNDLE["DOTS_PER", lcResolution.ToSimpleString(allowDecimalRepresentationOfRationals),GetResolutionDescription().ToLower()];
 		}
 
@@ -1269,12 +1269,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the X Resolution Description.</returns>
 		private string GetXResolutionDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_X_RESOLUTION))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_X_RESOLUTION))
             {
                 return null;
             }
 			Rational lcResolution =
-				this.directory.GetRational(ExifDirectory.TAG_X_RESOLUTION);
+				base.directory.GetRational(ExifDirectory.TAG_X_RESOLUTION);
 			return BUNDLE["DOTS_PER", lcResolution.ToSimpleString(allowDecimalRepresentationOfRationals),GetResolutionDescription().ToLower()];
 		}
 
@@ -1284,11 +1284,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Exposure Time Description.</returns>
 		private string GetExposureTimeDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_EXPOSURE_TIME))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_EXPOSURE_TIME))
             {
                 return null;
             }
-			return BUNDLE["SEC", this.directory.GetString(ExifDirectory.TAG_EXPOSURE_TIME)];
+			return BUNDLE["SEC", base.directory.GetString(ExifDirectory.TAG_EXPOSURE_TIME)];
 		}
 
 		/// <summary>
@@ -1300,14 +1300,14 @@ namespace com.drew.metadata.exif
             // I believe this method to now be stable, but am leaving some 
             // alternative snippets of code in here, to assist anyone who'lcStr 
             // looking into this (given that I don't have a public CVS).
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_SHUTTER_SPEED))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_SHUTTER_SPEED))
             {
                 return null;
             }
             // Thanks to Mark Edwards for spotting and patching a bug in the calculation of this
             // description (spotted bug using a Canon EOS 300D)
             // thanks also to Gli Blr for spotting this bug
-            float lcApexValue = this.directory.GetFloat(ExifDirectory.TAG_SHUTTER_SPEED);
+            float lcApexValue = base.directory.GetFloat(ExifDirectory.TAG_SHUTTER_SPEED);
             if (lcApexValue <= 1)
             {
                 float lcApexPower = (float)(1 / (Math.Exp(lcApexValue * Math.Log(2))));
@@ -1323,7 +1323,7 @@ namespace com.drew.metadata.exif
 
             // This alternative implementation offered by Bill Richards
             // TODO determine which is the correct / more-correct implementation
-            // double apexValue = this.directory.GetDouble(ExifDirectory.TAG_SHUTTER_SPEED);
+            // double apexValue = base.directory.GetDouble(ExifDirectory.TAG_SHUTTER_SPEED);
             // double apexPower = Math.Pow(2.0, apexValue);
 
             // StringBuilder sb = new StringBuilder();
@@ -1346,11 +1346,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the F Number Description.</returns>
 		private string GetFNumberDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_FNUMBER))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_FNUMBER))
             {
                 return null;
             }
-			Rational lcFNumber = this.directory.GetRational(ExifDirectory.TAG_FNUMBER);
+			Rational lcFNumber = base.directory.GetRational(ExifDirectory.TAG_FNUMBER);
 			return BUNDLE["APERTURE", lcFNumber.DoubleValue().ToString("0.#")];
 		}
 
@@ -1360,12 +1360,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the YCbCr Positioning Description.</returns>
 		private string GetYCbCrPositioningDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_YCBCR_POSITIONING))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_YCBCR_POSITIONING))
             {
                 return null;
             }
 			int lcYCbCrPosition =
-				this.directory.GetInt(ExifDirectory.TAG_YCBCR_POSITIONING);
+				base.directory.GetInt(ExifDirectory.TAG_YCBCR_POSITIONING);
 			switch (lcYCbCrPosition) 
 			{
 				case 1 :
@@ -1383,11 +1383,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the Orientation Description.</returns>
 		private string GetOrientationDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_ORIENTATION))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_ORIENTATION))
             {
                 return null;
             }
-			int lcOrientation = this.directory.GetInt(ExifDirectory.TAG_ORIENTATION);
+			int lcOrientation = base.directory.GetInt(ExifDirectory.TAG_ORIENTATION);
 			switch (lcOrientation) 
 			{
 				case 1 :
@@ -1417,12 +1417,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Resolution Description.</returns>
 		private string GetResolutionDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_RESOLUTION_UNIT))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_RESOLUTION_UNIT))
             {
                 return "";
             }
 			// '1' means no-unit, '2' means inch, '3' means centimeter. Default aValue is '2'(inch)
-			int lcResolutionUnit = this.directory.GetInt(ExifDirectory.TAG_RESOLUTION_UNIT);
+			int lcResolutionUnit = base.directory.GetInt(ExifDirectory.TAG_RESOLUTION_UNIT);
 			switch (lcResolutionUnit) 
 			{
 				case 1 :
@@ -1442,14 +1442,14 @@ namespace com.drew.metadata.exif
 		/// <returns>the Sensing Method Description.</returns>
 		private string GetSensingMethodDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_SENSING_METHOD))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_SENSING_METHOD))
             {
                 return null;
             }
 			// '1' Not defined, '2' One-chip color area sensor, '3' Two-chip color area sensor
 			// '4' Three-chip color area sensor, '5' Color sequential area sensor
 			// '7' Trilinear sensor '8' Color sequential linear sensor,  'Other' reserved
-			int lcSensingMethod = this.directory.GetInt(ExifDirectory.TAG_SENSING_METHOD);
+			int lcSensingMethod = base.directory.GetInt(ExifDirectory.TAG_SENSING_METHOD);
 			switch (lcSensingMethod) 
 			{
 				case 1 :
@@ -1477,11 +1477,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the XP author description.</returns>
 		private string GetXPAuthorDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_XP_AUTHOR))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_XP_AUTHOR))
             {
                 return null;
             }
-			return Utils.Decode(this.directory.GetByteArray(ExifDirectory.TAG_XP_AUTHOR), true);
+			return Utils.Decode(base.directory.GetByteArray(ExifDirectory.TAG_XP_AUTHOR), true);
 		}
 
 		/// <summary>
@@ -1490,11 +1490,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the XP comments description.</returns>
 		private string GetXPCommentsDescription()
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_XP_COMMENTS))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_XP_COMMENTS))
             {
                 return null;
             }
-			return Utils.Decode(this.directory.GetByteArray(ExifDirectory.TAG_XP_COMMENTS), true);
+			return Utils.Decode(base.directory.GetByteArray(ExifDirectory.TAG_XP_COMMENTS), true);
         } 
 
 		/// <summary>
@@ -1503,11 +1503,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the XP keywords description.</returns>
 		private string  GetXPKeywordsDescription()
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_XP_KEYWORDS))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_XP_KEYWORDS))
             {
                 return null;
             }
-			return Utils.Decode(this.directory.GetByteArray(ExifDirectory.TAG_XP_KEYWORDS), true);
+			return Utils.Decode(base.directory.GetByteArray(ExifDirectory.TAG_XP_KEYWORDS), true);
 		} 
 
 		/// <summary>
@@ -1516,11 +1516,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the XP subject description.</returns>
 		private string  GetXPSubjectDescription()
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_XP_SUBJECT))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_XP_SUBJECT))
             {
                 return null;
             }
-			return Utils.Decode(this.directory.GetByteArray(ExifDirectory.TAG_XP_SUBJECT), true);
+			return Utils.Decode(base.directory.GetByteArray(ExifDirectory.TAG_XP_SUBJECT), true);
 		} 
 
 		/// <summary>
@@ -1529,11 +1529,11 @@ namespace com.drew.metadata.exif
 		/// <returns>the XP title description.</returns>
 		private string  GetXPTitleDescription() 
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_XP_TITLE))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_XP_TITLE))
             {
                 return null;
             }
-			return Utils.Decode(this.directory.GetByteArray(ExifDirectory.TAG_XP_TITLE), true);
+			return Utils.Decode(base.directory.GetByteArray(ExifDirectory.TAG_XP_TITLE), true);
 		}
 
 
@@ -1543,12 +1543,12 @@ namespace com.drew.metadata.exif
 		/// <returns>the Component Configuration Description.</returns>
 		private string GetComponentConfigurationDescription()
 		{
-            if (!this.directory.ContainsTag(ExifDirectory.TAG_COMPONENTS_CONFIGURATION))
+            if (!base.directory.ContainsTag(ExifDirectory.TAG_COMPONENTS_CONFIGURATION))
             {
                 return null;
             }
 			int[] lcComponents =
-				this.directory.GetIntArray(ExifDirectory.TAG_COMPONENTS_CONFIGURATION);
+				base.directory.GetIntArray(ExifDirectory.TAG_COMPONENTS_CONFIGURATION);
 			string[] lcComponentStrings = { "", "Y", "Cb", "Cr", "R", "G", "B" };
 			StringBuilder lcComponentConfig = new StringBuilder();
 			for (int i = 0; i < Math.Min(4, lcComponents.Length); i++) 

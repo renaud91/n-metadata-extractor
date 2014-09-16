@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using com.drew.metadata;
 using com.drew.lang;
-using com.utils;
+using com.utils.bundle;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -571,36 +571,13 @@ namespace com.drew.metadata.exif
         public const int TAG_MARKER_NOTE = 0x927C;
         public const int TAG_INTEROPERABILITY_OFFSET = 0xA005;
 
-
-
-        protected static readonly ResourceBundle BUNDLE = new ResourceBundle("ExifMarkernote");
-        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.exif.ExifDirectory"), BUNDLE);
-
         /// <summary>
         /// Constructor of the object.
         /// </summary>
         public ExifDirectory()
-            : base()
+            : base("ExifMarkernote")
         {
             this.SetDescriptor(new ExifDescriptor(this));
-        }
-
-        /// <summary>
-        /// Provides the name of the directory, for display purposes.  E.g. Exif 
-        /// </summary>
-        /// <returns>the name of the directory</returns>
-        public override string GetName()
-        {
-            return BUNDLE["MARKER_NOTE_NAME"];
-        }
-
-        /// <summary>
-        /// Provides the map of tag names, hashed by tag type identifier. 
-        /// </summary>
-        /// <returns>the map of tag names</returns>
-        protected override Dictionary<int, string> GetTagNameMap()
-        {
-            return tagNameMap;
         }
 
         /// <summary>
@@ -640,7 +617,10 @@ namespace com.drew.metadata.exif
             finally
             {
                 if (stream != null)
+                {
                     stream.Close();
+                    stream.Dispose();
+                }
             }
         }
 

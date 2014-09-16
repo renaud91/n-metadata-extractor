@@ -100,10 +100,8 @@ namespace com.utils.xml
                 else
                 {
                     // check if value contains strange char and replace them if needed
-                    IEnumerator lcEnumChar = FORBIDEN_CHAR.GetEnumerator();
-                    while(lcEnumChar.MoveNext()) 
+                    foreach(KeyValuePair<string, string> lcPair in FORBIDEN_CHAR)
                     {
-                        KeyValuePair<string, string> lcPair = (KeyValuePair<string, string>)lcEnumChar.Current;
                         aValue = aValue.Replace(lcPair.Key, lcPair.Value);
                     }
                     aBuff.Append(aValue);
@@ -153,12 +151,8 @@ namespace com.utils.xml
             {
                 aBuff.Append("--| ").Append(aDirectory.GetName()).Append(" |--");
                 aBuff.AppendLine();
-                IEnumerator<Tag> lcTagsEnum = aDirectory.GetTagIterator();
-                while (lcTagsEnum.MoveNext())
-                {
-                    Tag lcTag = lcTagsEnum.Current;
+                foreach(Tag lcTag in aDirectory) {
                     CreateTag(aBuff, lcTag);
-                    lcTag = null;
                 }
             }
         }
@@ -170,12 +164,9 @@ namespace com.utils.xml
         public virtual string AsText()
         {
             StringBuilder lcBuff = new StringBuilder();
-			IEnumerator<AbstractDirectory> lcDirectoryEnum = this.Metadata.GetDirectoryIterator();
-			while (lcDirectoryEnum.MoveNext()) 
+			foreach(AbstractDirectory lcDirectory in this.Metadata)
 			{
-				AbstractDirectory lcDirectory = lcDirectoryEnum.Current;
                 CreateDirectory(lcBuff, lcDirectory);
-                lcDirectory = null;
             }
             return lcBuff.ToString();
         }
@@ -185,7 +176,7 @@ namespace com.utils.xml
         /// </summary>
         /// <param name="aBuff">where to put informations</param>
         /// <param name="someParam">Can be used for anything</param>
-        public void startTextStream(StringBuilder aBuff, string[] someParam)
+        public void StartTextStream(StringBuilder aBuff, string[] someParam)
         {
             // Does nothing
         }
@@ -195,7 +186,7 @@ namespace com.utils.xml
         /// </summary>
         /// <param name="aBuff">where to put informations</param>
         /// <param name="someParam">Can be used for anything</param>
-        public void endTextStream(StringBuilder aBuff, string[] someParam)
+        public void EndTextStream(StringBuilder aBuff, string[] someParam)
         {
             // Does nothing
         }

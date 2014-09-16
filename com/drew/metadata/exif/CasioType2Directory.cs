@@ -189,24 +189,13 @@ namespace com.drew.metadata.exif
         /// </summary>
         public const int TAG_CASIO_TYPE2_FILTER = 0x3017;
 
-        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.exif.CasioType2Directory"), BUNDLE);
-
         /// <summary>
         /// Constructor of the object.
         /// </summary>
         public CasioType2Directory()
-            : base()
+            : base("CasioMarkernote")
         {
             base.SetDescriptor(new CasioType2Descriptor(this));
-        }
-
-        /// <summary>
-        /// Provides the map of tag names, hashed by tag type identifier. 
-        /// </summary>
-        /// <returns>the map of tag names</returns>
-        protected override Dictionary<int, string> GetTagNameMap()
-        {
-            return CasioType2Directory.tagNameMap;
         }
     }
 }

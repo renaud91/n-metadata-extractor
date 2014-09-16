@@ -50,7 +50,8 @@ namespace com.drew.metadata
 		/// Constructor of the object
 		/// </summary>
 		/// <param name="aCause">The aCause of the exception</param>
-		public MetadataException(Exception aCause) : base(aCause)
+        public MetadataException(Exception aCause)
+            : base(aCause.Message, aCause)
 		{
 		}
 	}

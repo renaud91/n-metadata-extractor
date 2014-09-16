@@ -31,62 +31,42 @@ namespace com.drew.metadata.jpeg
 	/// <summary>
 	/// The Jpeg reader class
 	/// </summary>
-	public class JpegCommentReader : IMetadataReader 
+    public class JpegCommentReader : AbstractMetadataReader 
 	{
-		/// <summary>
-		/// The COM data segment.
-		/// </summary>
-		private byte[] _data;
 
-		/// <summary>
-		/// Creates a new JpegReader for the specified Jpeg jpegFile.
+        /// <summary>
+		/// Creates a new JpegCommentReader for the specified Jpeg jpegFile.
 		/// </summary>
-		/// <param name="jpegFile">where to read</param>
-		public JpegCommentReader(FileInfo jpegFile) : this(
-			new JpegSegmentReader(jpegFile).ReadSegment(
-			JpegSegmentReader.SEGMENT_COM))
+        /// <param name="aFile">where to read</param>
+		public JpegCommentReader(FileInfo aFile) : base(aFile, JpegSegmentReader.SEGMENT_COM)
 		{
 		}
 
-		/// <summary>
-		/// Creates a new JpegReader for the specified Jpeg jpegFile.
-		/// </summary>
-		/// <param name="data">where to read</param>
-		public JpegCommentReader(byte[] data) 
-		{
-			_data = data;
-		}
-
-		/// <summary>
-		/// Performs the Jpeg data extraction, returning a new instance of Metadata. 
-		/// </summary>
-		/// <returns>a new instance of Metadata</returns>
-		public Metadata Extract() 
-		{
-			return Extract(new Metadata());
-		}
+        /// <summary>
+        /// Constructor of the object
+        /// </summary>
+        /// <param name="data">the data to read</param>
+        public JpegCommentReader(byte[] aData)
+            : base(aData)
+        {
+        }
 
 		/// <summary>
 		/// Extracts aMetadata
 		/// </summary>
 		/// <param name="aMetadata">where to add aMetadata</param>
 		/// <returns>the aMetadata found</returns>
-		public Metadata Extract(Metadata metadata) 
+		public override Metadata Extract(Metadata aMetadata) 
 		{
-			if (_data == null) 
+			if (base.data == null) 
 			{
-				return metadata;
+				return aMetadata;
 			}
 
-			JpegCommentDirectory directory =
-				(JpegCommentDirectory) metadata.GetDirectory(
-				Type.GetType("com.drew.metadata.jpeg.JpegCommentDirectory"));
-            string comment = Utils.Decode(_data, true);
-			directory.SetObject(
-				JpegCommentDirectory.TAG_JPEG_COMMENT,
-				comment);
-
-			return metadata;
+			AbstractDirectory lcDirectory = aMetadata.GetDirectory("com.drew.metadata.jpeg.JpegCommentDirectory");
+            string comment = Utils.Decode(base.data, true);
+			lcDirectory.SetObject(JpegCommentDirectory.TAG_JPEG_COMMENT,comment);
+			return aMetadata;
 		}
 	}
 }

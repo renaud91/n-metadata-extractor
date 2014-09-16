@@ -37,7 +37,7 @@ namespace com.drew.imaging.jpg
         /// <summary>
         /// A map of byte[], keyed by the segment marker.
         /// </summary>
-        private Dictionary<byte, List<byte[]>> segmentDataMap;
+        private IDictionary<byte, IList<byte[]>> segmentDataMap;
 
         /// <summary>
         /// Constructor of the object.
@@ -45,7 +45,7 @@ namespace com.drew.imaging.jpg
         public JpegSegmentData()
             : base()
         {
-            this.segmentDataMap = new Dictionary<byte, List<byte[]>>(10);
+            this.segmentDataMap = new Dictionary<byte, IList<byte[]>>(10);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace com.drew.imaging.jpg
         /// <param name="aSegmentBytes">the value of the segment</param>
         public void AddSegment(byte aSegmentMarker, byte[] aSegmentBytes)
         {
-            List<byte[]> lcSegmentList = this.GetOrCreateSegmentList(aSegmentMarker);
+            IList<byte[]> lcSegmentList = this.GetOrCreateSegmentList(aSegmentMarker);
             lcSegmentList.Add(aSegmentBytes);
         }
 
@@ -77,7 +77,7 @@ namespace com.drew.imaging.jpg
         /// <returns>the segment found at the given occurence, or null if none found</returns>
         public byte[] GetSegment(byte aSegmentMarker, int anOccurrence)
         {
-            List<byte[]> lcSegmentList = this.GetSegmentList(aSegmentMarker);
+            IList<byte[]> lcSegmentList = this.GetSegmentList(aSegmentMarker);
 
             if (lcSegmentList == null || lcSegmentList.Count <= anOccurrence)
             {
@@ -93,7 +93,7 @@ namespace com.drew.imaging.jpg
         /// <returns>the size of the marker, zero if none found</returns>
         public int GetSegmentCount(byte aSegmentMarker)
         {
-            List<byte[]> lcSegmentList = this.GetSegmentList(aSegmentMarker);
+            IList<byte[]> lcSegmentList = this.GetSegmentList(aSegmentMarker);
             if (lcSegmentList == null)
             {
                 return 0;
@@ -108,7 +108,7 @@ namespace com.drew.imaging.jpg
         /// <param name="anOccurrence">the segment'str occurence</param>
         public void RemoveSegmentOccurrence(byte aSegmentMarker, int anOccurrence)
         {
-            List<byte[]> lcSegmentList = this.GetSegmentList(aSegmentMarker);
+            IList<byte[]> lcSegmentList = this.GetSegmentList(aSegmentMarker);
             if (lcSegmentList != null)
             {
                 lcSegmentList.RemoveAt(anOccurrence);
@@ -133,7 +133,7 @@ namespace com.drew.imaging.jpg
         /// </summary>
         /// <param name="aSegmentMarker">the segment marker</param>
         /// <returns>the segemnt list of value, null if none found</returns>
-        private List<byte[]> GetSegmentList(byte aSegmentMarker)
+        private IList<byte[]> GetSegmentList(byte aSegmentMarker)
         {
             if (this.segmentDataMap.ContainsKey(aSegmentMarker))
             {
@@ -147,9 +147,9 @@ namespace com.drew.imaging.jpg
         /// </summary>
         /// <param name="aSegmentMarker">the segment'str marker</param>
         /// <returns>the segment marker you were looking for, or a new one if none exist</returns>
-        private List<byte[]> GetOrCreateSegmentList(byte aSegmentMarker)
+        private IList<byte[]> GetOrCreateSegmentList(byte aSegmentMarker)
         {
-            List<byte[]> lcSegmentList = null;
+            IList<byte[]> lcSegmentList = null;
             if (this.segmentDataMap.ContainsKey(aSegmentMarker))
             {
                 lcSegmentList = this.segmentDataMap[aSegmentMarker];
@@ -191,6 +191,7 @@ namespace com.drew.imaging.jpg
                 if (lcFileStream != null)
                 {
                     lcFileStream.Close();
+                    lcFileStream.Dispose();
                 }
             }
         }
@@ -214,6 +215,7 @@ namespace com.drew.imaging.jpg
                 if (lcFileStream != null)
                 {
                     lcFileStream.Close();
+                    lcFileStream.Dispose();
                 }
             }
         }

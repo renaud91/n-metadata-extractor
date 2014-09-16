@@ -3,6 +3,7 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using System.Resources;
 using System.Globalization;
 
@@ -19,10 +20,10 @@ using System.Globalization;
 /// <a href="mailto:renaud91@free.fr">renaud91@free.fr</a>
 /// If you find a bug in the C# code, feel free to mail me.
 /// </summary>
-namespace com.utils
+namespace com.utils.bundle
 {
     /// <summary>
-    /// This class is a bundle class.<br/>
+    /// This class is an abstract bundle class.<br/>
     /// 
     /// Used for internationalisation (multi-language).<br/>
     /// 
@@ -40,14 +41,28 @@ namespace com.utils
     /// myBundle["KEY3", new string[] {"Jhon", 32.ToString()}];
     /// </pre>
     /// </summary>
-    public sealed class ResourceBundle // : IResourceReader
+    abstract class AbstractResourceBundle : IResourceBundle
     {
-        /// <summary>
-        /// Put here the same value as you can see in your project property on tab Application for information default namespace.
-        /// </summary>
-        private const string DEFAULT_NAME_SPACE = "com";
+        private string name;
 
-        private ResourceManager resourceManager;
+        public string Name
+        {
+            get { return this.name; }
+            set { this.name = value; }
+        }
+
+        private string fullName;
+
+        public string Fullname
+        {
+            get { return this.fullName; }
+            set { this.fullName = value; }
+        }
+
+        public abstract IDictionary<string, string> Entries
+        {
+            get;
+        }
 
         /// <summary>
         /// Indexator on a simple aMessage.
@@ -91,23 +106,16 @@ namespace com.utils
             }
         }
 
+
         /// <summary>
         /// Indexator on a aMessage with many holes {0}, {1}, {2] ... in it.
         /// </summary>
         /// <param name="aKey">the referenced key</param>
         /// <param name="fillGapWith">what to put in holes. fillGapWith[0] used for {0}, fillGapWith[1] used for {1} ...</param>
         /// <returns>the aMessage attached to this key, or launch a MissingResourceException if none found</returns>
-        public string this[string aKey, string[] fillGapWith]
+        public abstract string this[string aKey, string[] fillGapWith]
         {
-            get
-            {
-                string resu = this.resourceManager.GetString(aKey, CultureInfo.CurrentCulture);
-                if (resu == null)
-                {
-                    throw new MissingResourceException("\"" + aKey + "\" Not found");
-                }
-                return replace(resu, fillGapWith);
-            }
+            get;
         }
 
         /// <summary>
@@ -115,36 +123,11 @@ namespace com.utils
         /// 
         /// Keep private, use the other one.
         /// </summary>
-        private ResourceBundle()
+        protected AbstractResourceBundle()
             : base()
         {
         }
 
-        /// <summary>
-        /// Constructor of the object.
-        /// </summary>
-        /// <param name="aPropertyFileName">The resource file where to find keys. Do not add the extension and do not forget to add your resource file into the assembly.</param>
-        public ResourceBundle(string aPropertyFileName)
-            : base()
-        {
-            if (DEFAULT_NAME_SPACE != null && !"".Equals(DEFAULT_NAME_SPACE.Trim()))
-            {
-                aPropertyFileName = DEFAULT_NAME_SPACE + "." + aPropertyFileName;
-            }
-            this.resourceManager = new ResourceManager(aPropertyFileName, this.GetType().Assembly);
-        }
-
-        /// <summary>
-        /// Clean the object.
-        /// </summary>				
-        public void Dispose()
-        {
-            if (this.resourceManager != null)
-            {
-                this.resourceManager.ReleaseAllResources();
-                this.resourceManager = null;
-            }
-        }
 
         /// <summary>
         /// Fills the gap in a string.
@@ -152,7 +135,7 @@ namespace com.utils
         /// <param name="aLine">where to fill the gap. A gap is {0} or {1} ...</param>
         /// <param name="fillGapWith">what to put in the gap. fillGapWith[0] will go in {0} and so on</param>
         /// <returns></returns>
-        private string replace(string aLine, string[] fillGapWith)
+        protected string replace(string aLine, string[] fillGapWith)
         {
             for (int i = 0; i < fillGapWith.Length; i++)
             {

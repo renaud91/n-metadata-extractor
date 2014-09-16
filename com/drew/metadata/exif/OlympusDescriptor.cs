@@ -36,8 +36,8 @@ namespace com.drew.metadata.exif
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
-		/// <param name="directory">a directory</param>
-		public OlympusDescriptor(AbstractDirectory directory) : base(directory)
+		/// <param name="aDirectory">a base.directory</param>
+		public OlympusDescriptor(AbstractDirectory aDirectory) : base(aDirectory)
 		{		
 		}
 
@@ -63,7 +63,7 @@ namespace com.drew.metadata.exif
 				case OlympusDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO :
 					return GetDigiZoomRatioDescription();
 				default:
-					return directory.GetString(tagType);
+					return base.directory.GetString(tagType);
 			}
 		}
 
@@ -73,13 +73,13 @@ namespace com.drew.metadata.exif
 		/// <returns>the Digi Zoom Ratio Description.</returns>
 		private string GetDigiZoomRatioDescription()  
 		{
-            if (!directory
+            if (!base.directory
                 .ContainsTag(OlympusDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO))
             {
                 return null;
             }
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				OlympusDirectory.TAG_OLYMPUS_DIGI_ZOOM_RATIO);
 			switch (aValue) 
 			{
@@ -100,13 +100,13 @@ namespace com.drew.metadata.exif
 		/// <returns>the Macro Mode Description.</returns>
 		private string GetMacroModeDescription()  
 		{
-            if (!directory
+            if (!base.directory
                 .ContainsTag(OlympusDirectory.TAG_OLYMPUS_MACRO_MODE))
             {
                 return null;
             }
 			int aValue =
-				directory.GetInt(OlympusDirectory.TAG_OLYMPUS_MACRO_MODE);
+				base.directory.GetInt(OlympusDirectory.TAG_OLYMPUS_MACRO_MODE);
 			switch (aValue) 
 			{
 				case 0 :
@@ -124,13 +124,13 @@ namespace com.drew.metadata.exif
 		/// <returns>the Jpeg Quality Description.</returns>
 		private string GetJpegQualityDescription()  
 		{
-            if (!directory
+            if (!base.directory
                 .ContainsTag(OlympusDirectory.TAG_OLYMPUS_JPEG_QUALITY))
             {
                 return null;
             }
 			int aValue =
-				directory.GetInt(
+				base.directory.GetInt(
 				OlympusDirectory.TAG_OLYMPUS_JPEG_QUALITY);
 			switch (aValue) 
 			{
@@ -151,13 +151,13 @@ namespace com.drew.metadata.exif
 		/// <returns>the Special Mode Description.</returns>
 		private string GetSpecialModeDescription()  
 		{
-            if (!directory
+            if (!base.directory
                 .ContainsTag(OlympusDirectory.TAG_OLYMPUS_SPECIAL_MODE))
             {
                 return null;
             }
 			int[] values =
-				directory.GetIntArray(
+				base.directory.GetIntArray(
 				OlympusDirectory.TAG_OLYMPUS_SPECIAL_MODE);
 			StringBuilder desc = new StringBuilder();
 			switch (values[0]) 

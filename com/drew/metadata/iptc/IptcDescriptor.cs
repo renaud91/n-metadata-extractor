@@ -33,8 +33,8 @@ namespace com.drew.metadata.iptc
 		/// <summary>
 		/// Constructor of the object
 		/// </summary>
-		/// <param name="directory">a directory</param>
-		public IptcDescriptor(AbstractDirectory directory) : base(directory)
+		/// <param name="aDirectory">a base.directory</param>
+		public IptcDescriptor(AbstractDirectory aDirectory) : base(aDirectory)
 		{
 		}
 
@@ -54,7 +54,7 @@ namespace com.drew.metadata.iptc
                 case IptcDirectory.TAG_URGENCY :
                     return GetUrgencyDescription();
                 default:
-                    return directory.GetString(tagType);
+                    return base.directory.GetString(tagType);
             }
 			
 		}
@@ -65,13 +65,13 @@ namespace com.drew.metadata.iptc
         /// <returns>the urgency Description.</returns>
         private string GetUrgencyDescription()
         {
-            if (!directory
+            if (!base.directory
                 .ContainsTag(IptcDirectory.TAG_URGENCY))
             {
                 return null;
             }
             int aValue =
-                directory.GetInt(
+                base.directory.GetInt(
                 IptcDirectory.TAG_URGENCY);
             switch (aValue)
             {

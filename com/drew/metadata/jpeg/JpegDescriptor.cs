@@ -67,7 +67,7 @@ namespace com.drew.metadata.jpeg
 				case JpegDirectory.TAG_JPEG_IMAGE_WIDTH :
 					return GetImageWidthDescription();
 				default :
-					return directory.GetString(tagType);
+					return base.directory.GetString(tagType);
 			}
 		}
 
@@ -77,7 +77,7 @@ namespace com.drew.metadata.jpeg
 		/// <returns>the image width description</returns>
 		public string GetImageWidthDescription() 
 		{
-			return BUNDLE["PIXELS", directory.GetString(JpegDirectory.TAG_JPEG_IMAGE_WIDTH)];
+            return BUNDLE["PIXELS", base.directory.GetString(JpegDirectory.TAG_JPEG_IMAGE_WIDTH)];
 		}
 
 		/// <summary>
@@ -86,7 +86,7 @@ namespace com.drew.metadata.jpeg
 		/// <returns>the image height description</returns>
 		public string GetImageHeightDescription() 
 		{
-			return BUNDLE["PIXELS", directory.GetString(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT)];
+            return BUNDLE["PIXELS", base.directory.GetString(JpegDirectory.TAG_JPEG_IMAGE_HEIGHT)];
 		}
 
 		/// <summary>
@@ -95,7 +95,7 @@ namespace com.drew.metadata.jpeg
 		/// <returns>the Data Precision description</returns>
 		public string GetDataPrecisionDescription() 
 		{
-			return BUNDLE["BITS",directory.GetString(JpegDirectory.TAG_JPEG_DATA_PRECISION)];
+            return BUNDLE["BITS", base.directory.GetString(JpegDirectory.TAG_JPEG_DATA_PRECISION)];
 		}
 
 		/// <summary>
@@ -106,7 +106,7 @@ namespace com.drew.metadata.jpeg
 		public string GetComponentDataDescription(int componentNumber) 
 		{
 			JpegComponent component =
-				((JpegDirectory) directory).GetComponent(componentNumber);
+                ((JpegDirectory)base.directory).GetComponent(componentNumber);
 			if (component == null) 
 			{
 				throw new MetadataException("No Jpeg component exists with number " + componentNumber);
@@ -114,9 +114,9 @@ namespace com.drew.metadata.jpeg
 
 			// {0} component: Quantization table {1}, Sampling factors {2} horiz/{3} vert
 			string[] tab = new string[] {component.GetComponentName(), 
-											component.GetQuantizationTableNumber().ToString(),
-											component.GetHorizontalSamplingFactor().ToString(),
-											component.GetVerticalSamplingFactor().ToString()};
+											component.QuantizationTableNumber.ToString(),
+											component.HorizontalSamplingFactor.ToString(),
+											component.VerticalSamplingFactor.ToString()};
 
 			return BUNDLE["COMPONENT_DATA", tab];
 		}

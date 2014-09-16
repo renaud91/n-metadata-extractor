@@ -44,23 +44,13 @@ namespace com.drew.metadata.exif
 		public const int TAG_NIKON_TYPE1_CONVERTER = 0x000B;
 		public const int TAG_NIKON_TYPE1_UNKNOWN_3 = 0x0F00;
 
-        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.exif.NikonType1Directory"), BUNDLE);
-
 		/// <summary>
 		/// Constructor of the object.
 		/// </summary>
-		public NikonType1Directory() : base()
+        public NikonType1Directory()
+            : base("NikonTypeMarkernote")
 		{
 			this.SetDescriptor(new NikonType1Descriptor(this));
-		}
-
-		/// <summary>
-		/// Provides the map of tag names, hashed by tag type identifier. 
-		/// </summary>
-		/// <returns>the map of tag names</returns>
-        protected override Dictionary<int, string> GetTagNameMap() 
-		{
-			return tagNameMap;
 		}
 	}
 }

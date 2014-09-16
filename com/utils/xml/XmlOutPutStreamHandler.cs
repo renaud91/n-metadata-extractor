@@ -119,10 +119,12 @@ namespace com.utils.xml
                 if (lcStreamReader != null)
                 {
                     lcStreamReader.Close();
+                    lcStreamReader.Dispose();
                 }
                 if (lcStream != null)
                 {
                     lcStream.Close();
+                    lcStream.Dispose();
                 }
             }
         }
@@ -132,7 +134,7 @@ namespace com.utils.xml
         /// Gives all forbiden letter in XML standard and their correspondance.
         /// </summary>
         /// <returns>All forbiden chars and their XML correspondance</returns>
-        private static Dictionary<string, string> BuildForbidenChar()
+        protected static Dictionary<string, string> BuildForbidenChar()
         {
             Dictionary<string, string> lcResu = new Dictionary<string, string>(5);
             lcResu.Add("<", "&lt;");
@@ -148,10 +150,9 @@ namespace com.utils.xml
         /// </summary>
         /// <param name="aBuff">where to put informations</param>
         /// <param name="someParam">Specify encoding here in 0, in 1 you can add a XSLT ref, in 2 the number of files, in 3 the dtd path</param>
-        public void startTextStream(StringBuilder aBuff, string[] someParam)
+        public void StartTextStream(StringBuilder aBuff, string[] someParam)
         {
             aBuff.Append("<?xml version=\"1.0\" encoding=\"").Append(someParam[0]).Append("\" ?>").AppendLine();
-
             if (someParam.Length > 3)
             {
                 // We've got a DTD
@@ -189,7 +190,7 @@ namespace com.utils.xml
                 finally
                 {
                     // Then we deal with more than one file
-                    Open(aBuff, "metadataExtractor nbFile=\"" + lcNbFile.ToString() + "\"", true);
+                    Open(aBuff, "metadataExtractor", "nbFile", lcNbFile.ToString(), true);
                 }
             }
         }
@@ -199,7 +200,7 @@ namespace com.utils.xml
         /// </summary>
         /// <param name="aBuff">where to put informations</param>
         /// <param name="someParam">Should contain nb file in [2]</param>
-        public void endTextStream(StringBuilder aBuff, string[] someParam)
+        public void EndTextStream(StringBuilder aBuff, string[] someParam)
         {
             if (someParam.Length >= 2)
             {
@@ -282,6 +283,29 @@ namespace com.utils.xml
         }
 
         /// <summary>
+        /// Opens an XML tag.
+        /// </summary>
+        /// <param name="aBuff">where to open tag</param>
+        /// <param name="aTagName">what to put inside the tag</param>
+        /// <param name="attName1">name of an attribute for this tag (can be null)</param>
+        /// <param name="attValue1">value of the first attribute for this tag</param>
+        /// <param name="isNewLine">if true will go to new line after open</param>
+        private void Open(StringBuilder aBuff, string aTagName, string attName1, object attValue1, bool isNewLine)
+        {
+            aBuff.Append('<').Append(aTagName);
+            if (attName1 != null)
+            {
+                aBuff.Append(' ').Append(attName1).Append("=\"");
+                aBuff.Append(attValue1).Append('\"');
+            }
+            aBuff.Append('>');
+            if (isNewLine)
+            {
+                aBuff.AppendLine();
+            }
+        }
+
+        /// <summary>
         /// Creates an XML tag using the Tag object info.
         /// Examples :
         /// <pre>
@@ -326,13 +350,13 @@ namespace com.utils.xml
                     // No unKnown and is unKnown so do nothing
                     return;
                 }
-                Open(aBuff, "tag type=\"" + lcHexName + "\"", true);
+                Open(aBuff, "tag", "type", lcHexName, true);
 
                 Open(aBuff, "tagLabel", false);
                 Normalize(aBuff, lcName, false); 
                 Close(aBuff, "tagLabel", false);
 
-                if (lcDescription != null)
+                if (lcDescription != null && lcDescription.Length > 0)
                 {
                     Open(aBuff, "tagDescription", false);
                     Normalize(aBuff, lcDescription, false);
@@ -381,12 +405,8 @@ namespace com.utils.xml
             if (aDirectory != null)
             {
                 Open(aBuff, "directory name=\"" + aDirectory.GetName() + "\"", true);
-                IEnumerator<Tag> lcTagsEnum = aDirectory.GetTagIterator();
-                while (lcTagsEnum.MoveNext())
-                {
-                    Tag lcTag = lcTagsEnum.Current;
+                foreach(Tag lcTag in aDirectory) {
                     CreateTag(aBuff, lcTag);
-                    lcTag = null;
                 }
                 Close(aBuff, "directory", true);
             }
@@ -400,12 +420,9 @@ namespace com.utils.xml
         public virtual string AsText()
         {
             StringBuilder lcBuff = new StringBuilder();
-			IEnumerator<AbstractDirectory> lcDirectoryEnum = this.Metadata.GetDirectoryIterator();
-			while (lcDirectoryEnum.MoveNext()) 
+			foreach(AbstractDirectory lcDirectory in this.Metadata)
 			{
-				AbstractDirectory lcDirectory = lcDirectoryEnum.Current;
                 CreateDirectory(lcBuff, lcDirectory);
-                lcDirectory = null;
             }
             return lcBuff.ToString();
         }

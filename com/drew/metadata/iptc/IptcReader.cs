@@ -5,6 +5,7 @@ using com.drew.lang;
 using com.drew.metadata;
 using com.drew.imaging.jpg;
 using com.utils;
+using System.Diagnostics;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -32,54 +33,24 @@ namespace com.drew.metadata.iptc
     /// <summary>
     /// The Iptc reader class
     /// </summary>
-    public class IptcReader : IMetadataReader
+    public class IptcReader : AbstractMetadataReader
     {
-        /*
-            public const int DIRECTORY_IPTC = 2;
-	
-            public const int ENVELOPE_RECORD = 1;
-            public const int APPLICATION_RECORD_2 = 2;
-            public const int APPLICATION_RECORD_3 = 3;
-            public const int APPLICATION_RECORD_4 = 4;
-            public const int APPLICATION_RECORD_5 = 5;
-            public const int APPLICATION_RECORD_6 = 6;
-            public const int PRE_DATA_RECORD = 7;
-            public const int DATA_RECORD = 8;
-            public const int POST_DATA_RECORD = 9;
-        */
 
         /// <summary>
-        /// The Iptc data segment
-        /// </summary>
-        private readonly byte[] _data;
-
-        /// <summary>
-        /// Creates a new IptcReader for the specified Jpeg jpegFile.
-        /// </summary>
-        /// <param name="jpegFile">where to read</param>
-        public IptcReader(FileInfo jpegFile)
-            : this(
-            new JpegSegmentReader(jpegFile).ReadSegment(
-            JpegSegmentReader.SEGMENT_APPD))
-        {
-        }
+		/// Creates a new IptcReader for the specified Jpeg jpegFile.
+		/// </summary>
+        /// <param name="aFile">where to read</param>
+		public IptcReader(FileInfo aFile) : base(aFile, JpegSegmentReader.SEGMENT_APPD)
+		{
+		}
 
         /// <summary>
         /// Constructor of the object
         /// </summary>
         /// <param name="data">the data to read</param>
-        public IptcReader(byte[] data)
+        public IptcReader(byte[] aData)
+            : base(aData)
         {
-            _data = data;
-        }
-
-        /// <summary>
-        /// Performs the Iptc data extraction, returning a new instance of Metadata. 
-        /// </summary>
-        /// <returns>a new instance of Metadata</returns>
-        public Metadata Extract()
-        {
-            return Extract(new Metadata());
         }
 
         /// <summary>
@@ -87,41 +58,42 @@ namespace com.drew.metadata.iptc
         /// </summary>
         /// <param name="aMetadata">where to add aMetadata</param>
         /// <returns>the aMetadata found</returns>
-        public Metadata Extract(Metadata metadata)
+        public override Metadata Extract(Metadata aMetadata)
         {
-            if (_data == null)
+            if (base.data == null)
             {
-                return metadata;
+                return aMetadata;
             }
 
-            AbstractDirectory directory = metadata.GetDirectory(Type.GetType("com.drew.metadata.iptc.IptcDirectory"));
+            AbstractDirectory lcDirectory = aMetadata.GetDirectory("com.drew.metadata.iptc.IptcDirectory");
 
             // find start of data
             int offset = 0;
             try
             {
-                while (offset < _data.Length - 1 && Get32Bits(offset) != 0x1c02)
+                while (offset < base.data.Length - 1 && Get32Bits(offset) != 0x1c02)
                 {
                     offset++;
                 }
             }
-            catch (MetadataException)
+            catch (MetadataException e)
             {
-                directory.AddError(
-                    "Couldn't find start of Iptc data (invalid segment)");
-                return metadata;
+                lcDirectory.HasError = true;
+                Trace.TraceError(
+                    "Couldn't find start of Iptc data (invalid segment) ("+e.Message+")");
+                return aMetadata;
             }
 
             // for each tag
-            while (offset < _data.Length)
+            while (offset < base.data.Length)
             {
                 // identifies start of a tag
-                if (_data[offset] != 0x1c)
+                if (base.data[offset] != 0x1c)
                 {
                     break;
                 }
                 // we need at least five bytes left to read a tag
-                if ((offset + 5) >= _data.Length)
+                if ((offset + 5) >= base.data.Length)
                 {
                     break;
                 }
@@ -133,90 +105,78 @@ namespace com.drew.metadata.iptc
                 int tagByteCount;
                 try
                 {
-                    directoryType = _data[offset++];
-                    tagType = _data[offset++];
+                    directoryType = base.data[offset++];
+                    tagType = base.data[offset++];
                     tagByteCount = Get32Bits(offset);
                 }
-                catch (MetadataException)
+                catch (MetadataException e)
                 {
-                    directory.AddError(
-                        "Iptc data segment ended mid-way through tag descriptor");
-                    return metadata;
+                    lcDirectory.HasError = true;
+                    Trace.TraceError(
+                        "Iptc data segment ended mid-way through tag descriptor ("+e.Message+")");
+                    return aMetadata;
                 }
                 offset += 2;
-                if ((offset + tagByteCount) > _data.Length)
+                if ((offset + tagByteCount) > base.data.Length)
                 {
-                    directory.AddError(
-                        "data for tag extends beyond end of iptc segment");
+                    lcDirectory.HasError = true;
+                    Trace.TraceError(
+                        "Data for tag extends beyond end of IPTC segment");
                     break;
                 }
 
-                ProcessTag(directory, directoryType, tagType, offset, tagByteCount);
+                ProcessTag(lcDirectory, directoryType, tagType, offset, tagByteCount);
                 offset += tagByteCount;
             }
 
-            return metadata;
+            return aMetadata;
         }
 
-        /// <summary>
-        /// Returns an int calculated from two bytes of data at the specified lcOffset (MSB, LSB).
-        /// </summary>
-        /// <param name="lcOffset">position within the data buffer to read first byte</param>
-        /// <returns>the 32 bit int value, between 0x0000 and 0xFFFF</returns>
-        private int Get32Bits(int offset)
-        {
-            if (offset >= _data.Length)
-            {
-                throw new MetadataException("Attempt to read bytes from outside Iptc data buffer");
-            }
-            return ((_data[offset] & 255) << 8) | (_data[offset + 1] & 255);
-        }
 
         /// <summary>
         /// This method serves as marsheller of objects for dataset. 
         /// It converts from IPTC octets to relevant java object.
         /// </summary>
-        /// <param name="directory">the directory</param>
-        /// <param name="directoryType">the directory type</param>
+        /// <param name="aDirectory">the directory</param>
+        /// <param name="aDirectoryType">the directory type</param>
         /// <param name="aTagType">the tag type</param>
-        /// <param name="lcOffset">the lcOffset</param>
-        /// <param name="tagByteCount">the tag byte count</param>
+        /// <param name="anOffset">the lcOffset</param>
+        /// <param name="aTagByteCount">the tag byte count</param>
         private void ProcessTag(
-            AbstractDirectory directory,
-            int directoryType,
-            int tagType,
-            int offset,
-            int tagByteCount)
+            AbstractDirectory aDirectory,
+            int aDirectoryType,
+            int aTagType,
+            int anOffset,
+            int aTagByteCount)
         {
-            int tagIdentifier = tagType | (directoryType << 8);
-
+            int tagIdentifier = aTagType | (aDirectoryType << 8);
             switch (tagIdentifier)
             {
                 case IptcDirectory.TAG_RECORD_VERSION:
                     // short
-                    short shortValue = (short)((_data[offset] << 8) | _data[offset + 1]);
-                    directory.SetObject(tagIdentifier, shortValue);
+                    short shortValue = (short)((base.data[anOffset] << 8) | base.data[anOffset + 1]);
+                    aDirectory.SetObject(tagIdentifier, shortValue);
                     return;
                 case IptcDirectory.TAG_URGENCY:
                     // byte
-                    directory.SetObject(tagIdentifier, _data[offset]);
+                    aDirectory.SetObject(tagIdentifier, base.data[anOffset]);
                     return;
                 case IptcDirectory.TAG_RELEASE_DATE:
                 case IptcDirectory.TAG_DATE_CREATED:
                     // Date object
-                    if (tagByteCount >= 8)
+                    if (aTagByteCount >= 8)
                     {
-                        string dateStr = Utils.Decode(_data, offset, tagByteCount, false);
+                        string dateStr = Utils.Decode(base.data, anOffset, aTagByteCount, false);
                         try
                         {
                             int year = Convert.ToInt32(dateStr.Substring(0, 4));
                             int month = Convert.ToInt32(dateStr.Substring(4, 2)); //No -1 here;
                             int day = Convert.ToInt32(dateStr.Substring(6, 2));
                             DateTime date = new DateTime(year, month, day);
-                            directory.SetObject(tagIdentifier, date);
+                            aDirectory.SetObject(tagIdentifier, date);
                             return;
                         }
-                        catch (FormatException)
+                        catch (Exception)
                         {
                             // fall through and we'll store whatever was there as a String
                         }
@@ -226,22 +186,22 @@ namespace com.drew.metadata.iptc
                 //case IptcDirectory.TAG_TIME_CREATED: 
             }
             // If no special handling by now, treat it as a string
-            string str;
-            if (tagByteCount < 1)
+            string str = null;
+            if (aTagByteCount < 1)
             {
                 str = "";
             }
             else
             {
-                str = Utils.Decode(_data, offset, tagByteCount, false);
+                str = Utils.Decode(base.data, anOffset, aTagByteCount, false);
             }
-            if (directory.ContainsTag(tagIdentifier))
+            if (aDirectory.ContainsTag(tagIdentifier))
             {
                 string[] oldStrings;
                 string[] newStrings;
                 try
                 {
-                    oldStrings = directory.GetStringArray(tagIdentifier);
+                    oldStrings = aDirectory.GetStringArray(tagIdentifier);
                 }
                 catch (MetadataException)
                 {
@@ -260,11 +220,11 @@ namespace com.drew.metadata.iptc
                     }
                 }
                 newStrings[newStrings.Length - 1] = str;
-                directory.SetObject(tagIdentifier, newStrings);
+                aDirectory.SetObject(tagIdentifier, newStrings);
             }
             else
             {
-                directory.SetObject(tagIdentifier, str);
+                aDirectory.SetObject(tagIdentifier, str);
             }
         }
     }

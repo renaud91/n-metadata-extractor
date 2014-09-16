@@ -36,9 +36,9 @@ namespace com.drew.metadata.exif
         /// <summary>
         /// Constructor of the object
         /// </summary>
-        /// <param name="directory">a directory</param>
-        public KyoceraDescriptor(AbstractDirectory directory)
-            : base(directory)
+        /// <param name="aDirectory">a base.directory</param>
+        public KyoceraDescriptor(AbstractDirectory aDirectory)
+            : base(aDirectory)
         {
         }
 
@@ -60,7 +60,7 @@ namespace com.drew.metadata.exif
                 case KyoceraDirectory.TAG_KYOCERA_PROPRIETARY_THUMBNAIL:
                     return GetProprietaryThumbnailDataDescription();
                 default:
-                    return directory.GetString(aTagType);
+                    return base.directory.GetString(aTagType);
             }
         }
 
@@ -70,11 +70,11 @@ namespace com.drew.metadata.exif
         /// <returns>the Print Image Matching (PIM) Info Description.</returns>
         private string GetPrintImageMatchingInfoDescription()
         {
-            if (!directory.ContainsTag(KyoceraDirectory.TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO))
+            if (!base.directory.ContainsTag(KyoceraDirectory.TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO))
             {
                 return null;
             }
-            byte[] bytes = directory.GetByteArray(KyoceraDirectory.TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO);
+            byte[] bytes = base.directory.GetByteArray(KyoceraDirectory.TAG_KYOCERA_PRINT_IMAGE_MATCHING_INFO);
             return BUNDLE["BYTES",bytes.Length.ToString()];
         }
 
@@ -84,11 +84,11 @@ namespace com.drew.metadata.exif
         /// <returns>the Proprietary Thumbnail Format Data Description.</returns>
         private string GetProprietaryThumbnailDataDescription()
         {
-            if (!directory.ContainsTag(KyoceraDirectory.TAG_KYOCERA_PROPRIETARY_THUMBNAIL))
+            if (!base.directory.ContainsTag(KyoceraDirectory.TAG_KYOCERA_PROPRIETARY_THUMBNAIL))
             {
                 return null;
             }
-            byte[] bytes = directory.GetByteArray(KyoceraDirectory.TAG_KYOCERA_PROPRIETARY_THUMBNAIL);
+            byte[] bytes = base.directory.GetByteArray(KyoceraDirectory.TAG_KYOCERA_PROPRIETARY_THUMBNAIL);
             return BUNDLE["BYTES", bytes.Length.ToString()];
         }
     }

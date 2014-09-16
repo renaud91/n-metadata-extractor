@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using com.drew.metadata;
 using com.drew.lang;
-using com.utils;
+using com.utils.bundle;
 
 /// <summary>
 /// This class was first written by Drew Noakes in Java.
@@ -187,34 +187,13 @@ namespace com.drew.metadata.exif
         public const int TAG_OLYMPUS_FINAL_HEIGHT = 0x102F;
         public const int TAG_OLYMPUS_COMPRESSION_RATIO = 0x1034;
 
-
-		protected static readonly ResourceBundle BUNDLE = new ResourceBundle("OlympusMarkernote");
-        protected static readonly Dictionary<int, string> tagNameMap = FillTagMap(Type.GetType("com.drew.metadata.exif.OlympusDirectory"), BUNDLE);
-
 		/// <summary>
 		/// Constructor of the object.
 		/// </summary>
-		public OlympusDirectory() : base()
+        public OlympusDirectory()
+            : base("OlympusMarkernote")
 		{
 			this.SetDescriptor(new OlympusDescriptor(this));
-		}
-
-		/// <summary>
-		/// Provides the name of the directory, for display purposes.  E.g. Exif 
-		/// </summary>
-		/// <returns>the name of the directory</returns>
-		public override string GetName() 
-		{
-			return BUNDLE["MARKER_NOTE_NAME"];
-		}
-
-		/// <summary>
-		/// Provides the map of tag names, hashed by tag type identifier. 
-		/// </summary>
-		/// <returns>the map of tag names</returns>
-        protected override Dictionary<int, string> GetTagNameMap() 
-		{
-			return tagNameMap;
 		}
 	}
 }
